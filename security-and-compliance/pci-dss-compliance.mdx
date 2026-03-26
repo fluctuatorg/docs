@@ -1,0 +1,45 @@
+---
+title: "PCI DSS compliance"
+---
+
+PCI DSS ([Payment Card Industry Data Security Standard](https://www.pcisecuritystandards.org/)) is a global security standard established by major credit card companies to protect cardholder data and reduce credit card fraud.
+
+It consists of 12 requirements covering areas like network security, data protection, access control, and vulnerability management that any organization storing, processing, or transmitting credit card information must comply with.
+
+All businesses that store, process or transmit cardholder data must comply with PCI DSS. By complying with this framework, businesses can:
+
+- Build customer trust by ensuring their card data is secure
+- Protect themselves from fraud and data breaches
+- Avoid fines for PCI compliance violations
+
+### Understanding the different levels of PCI DSS compliance
+
+As a PCI advocate for merchants on our platform, Xendit uses the following matrix to determine which requirements apply to your organization. The requirements are based on the volume of card transactions your business processes during a 12-month period and merchants' integration method
+
+| Compliance Level | Applies to | Available Card Payment integrations | | | |
+| --- | --- | --- | --- | --- | --- |
+| Payment Links | Payment API via Components | Payment API Direct integration | Third party service providers (TPSP) |
+| Level 1 | Merchants that annually process more than 6 million online transactions on Visa or Mastercard | - Merchant’s Attestation of Compliance (AOC) or Report on Compliance (ROC) signed by a Qualified Security Assessor (QSA) or security officer - Quarterly network scans in accordance with industry security standards | | | - Third party service providers AOC or ROC signed by a QSA |
+| Level 2 | Merchants that annually process between 1-6 million online transactions on Visa or Mastercard | - Merchant’s SAQ-A, SAQ-A-EP, SAQ-D | - Merchant’s SAQ-A, SAQ-D | - Merchant’s SAQ-D |
+| - Merchants may submit completed AOC or ROC instead of an SAQ - SAQ documents must be signed by a PCI Qualified Security Assessor (QSA) or a PCI-Certified Internal Security Assessor (ISA) - Quarterly network scans in accordance with industry security standards | | |
+| Level 3 | Merchants that annually process between between 20,000–1 million online transactions on Visa or Mastercard | - Merchant’s SAQ-A, SAQ-A-EP, SAQ-D | - Merchant’s SAQ-A-EP, SAQ-D | - Merchant’s SAQ-D |
+| - Merchants may submit completed AOC or ROC instead of an SAQ - SAQ documents must be signed by a QSA, ISA or self-signed - Quarterly network scans in accordance with industry security standards | | |
+| Level 4 | Merchants that annually process below 20,000 online transactions on Visa or Mastercard | - Level 4 merchants are required to comply with the PCI DSS, and typically validate compliance using an SAQ and quarterly network scans, unless otherwise specified by their acquiring bank or applicable regulatory requirements | | |
+
+### Third party service providers
+
+A Third Party Service Provider (TPSP) is a party that stores, processes, or transmits cardholder data on your behalf. Either they
+
+- Have access to your shoppers' cardholder data environment
+- Manage in-scope PCI system components on your’s behalf, and/or
+- Can impact the security of the customer’s cardholder data and/or sensitive authentication data
+
+In such cases, you are outsourcing part of your PCI DSS responsibilities and are therefore required to ask your service provider for their Attestation of Compliance (AOC) or Report of Compliance (ROC). You will be required to provide us the name of your service provider, along with their AOC or ROC.
+
+Note that the use of service providers does not relieve you of the ultimate responsibility for your own PCI DSS compliance. You must manage the relationship with the service provider, including listing all the service providers you use, maintaining agreements and acknowledgement of responsibilities, carrying out due diligence prior to engagement, and monitoring the service provider's PCI DSS compliance status (by requesting their AoC every year).
+
+### How Xendit helps merchants maintain PCI DSS compliance
+
+When you activate Cards as a payment channel, Xendit will prompt you to fill in relevant information about your volumes and integration method, and we’ll take care of determining and applying the correct PCI requirements so that you can focus on running your business!
+
+We will also notify you ahead of time if a growing transaction volume will require a change in how you validate compliance.

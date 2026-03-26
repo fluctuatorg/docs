@@ -1,0 +1,40 @@
+---
+title: "Handling webhooks"
+---
+
+Webhooks are necessary in payments processing as we model payment scenarios where there are often asynchronous end user authentication required by the payment method providers. In particular, local payment methods can take up to hours or days for processing. Due to the nature of real-time messaging and asynchronous events, there are always possibility for webhooks to deviate from expected behaviour.
+
+[See here for an explanation on Xendit’s webhook behaviour.](https://xendit-docs.document360.io/apidocs/webhook-behavior)
+
+## Handling duplicate webhooks for the same event
+
+There are cases where a system might receive duplicate webhooks for the same event. For example:
+
+- when an acknowledgement wasn’t received, Xendit will retry webhook delivery to the destination system
+- when a payment channel provider system was temporary down, the source system might not track what was delivered and resends all webhooks in an attempt to recover service
+
+To prevent duplicated processing and money loss, we recommend you to validate the webhook before any delivery of product or services. Xendit provides unique server side IDs for each requests to our endpoints for you to do so. In payments, `payment_id` and `capture_id` will help you to identify unique events.
+
+## Always authenticate the webhook sender
+
+Xendit can sign each webhook event that is sent to your endpoints. We do so by including a token in each event's `x-callback-token` header. This allows you to verify that the events were sent by Xendit, not by a third party. It is strongly recommended that you perform this verification and keep the token a secret. Doing so lowers the risk of man in the middle attacks, preventing money loss incidents.
+
+Retrieve your webhook token from Dashboard's [Webhook settings](https://dashboard.xendit.co/settings/developers#callbacks) to start this verification.
+
+## Always use server side handling for webhooks
+
+Do not handle webhooks on the client application. When webhook data and webhook endpoints are exposed, the risk of data manipulation and man in the middle attacks increase drastically. It is always recommended for your server to securely receive the webhooks before informing the client application of the outcome securely.
+
+## Quick acknowledgement
+
+Your webhook endpoint must quickly respond with a successful status code (2xx) upon receiving a webhook. Do not process any complex logic synchronously as that can cause a timeout or a failed processing on your end. For example, you must return a 200 response before fetching the historical list of payments for display to the user. This good practice can help your system scale better as there are less resource hogging on your endpoint.
+
+## Using webhooks retries
+
+Failing to respond with 2xx to our endpoint call will trigger a retry from Xendit. We will perform retries up to six times with exponential backoff. If your system is temporarily unavailable, you can wait for one of our retries or go to Xendit dashboard to re-trigger a webhook.
+
+## Do not expect any fixed sequence with webhooks
+
+Sometimes when webhooks arrive, they might arrive in a jumbled sequence possibly due to network issues or additional latency for particular event processing. In this scenario, a system that is designed to expect a particular sequence of events will malfunction. As we are unable to avoid network or processing speed deviations, it is recommended to build resiliency into system design. An example in our payment flows could be the expectation to always receive a subscriptions plan activation webhook before we receive a subscriptions cycle success webhook.
+
+To guard against such a scenario, we recommend our merchants to build a messaging queue as a buffer for webhooks received from Xendit. If you are not able to process webhooks immediately, your system could pick it up again when all webhooks have been received.

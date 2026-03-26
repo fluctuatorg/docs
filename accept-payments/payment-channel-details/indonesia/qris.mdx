@@ -1,0 +1,129 @@
+---
+title: "QRIS"
+---
+
+![](/images/doc360/qris-logo.svg)QR code payments in Indonesia uses QRIS (Quick Response Code Indonesian Standard), an Indonesian QR code standard developed by Bank Indonesia (BI) and Indonesian Payment System Association for cashless payments in Indonesia.
+
+---
+
+## Features
+
+|  |  |
+| --- | --- |
+| Channel Code | QRIS |
+| Display Name | QRIS |
+| Currency | IDR |
+| Country | ID |
+| Type | QR CODE |
+| Min Amount | 1 |
+| Max Amount | 10,000,000.00 |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Reusable Payment Code | ✓ |
+| Save | - |
+| Merchant Initiated Transaction | - |
+| Auth & Capture | - |
+| Partial Capture | - |
+| Multiple Partial Capture | - |
+| Desktop Support | - |
+| Mobile Support | - |
+| Custom Payment Code | - |
+| Display Merchant Name | MERCHANT |
+| Display User Name | - |
+| Set Expiry | - |
+| Payment Request Expiry (hours) | 48 |
+| Payment Token Validity (years) | - |
+| Payment Processing Time (hours) | INSTANT |
+| Settlement Time | T+2 CALENDAR DAYS\* |
+| Installments | - |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Multiple Partial Refund | ✓ |
+| Refund Validity (days) | 7\* |
+| Payment Link | ✓ |
+| Fund Flow | AGGREGATOR |
+
+## Payment flow
+
+![](/images/doc360/image_37_.png)
+
+1. On the checkout page, select QRIS as payment method
+2. A QR code will appear on the screen
+3. Open your mobile banking or e-wallet app, then find the Scan QR Code feature
+4. Point your phone camera at the QR code
+5. Make sure the payment amount and merchant is correct
+6. Confirm payment
+
+## Limitations
+
+The QRIS refund process is limited to the following issuers:
+
+| Issuer | Refund full amount & within 24 hours of payment completion | Refund full amount & after 24 hours of payment completion | Partial refund |
+| --- | --- | --- | --- |
+| DANA | ✅ | ✅ | ✅ |
+| ShopeePay | ✅ | ✅ | ✅ |
+| OVO | ✅ | ✅ | ✅ |
+| Gopay | ✅ | ✅ | ✅ |
+| CIMB | ❌ | ✅ | ✅ |
+| Permata | ✅ | ✅ | ✅ |
+| Jenius / SMBC | ✅ | ✅ | ✅ |
+| BSI | ✅ | ✅ | ✅ |
+
+## Chargebacks
+
+### What is a QR Dispute?
+
+A QR Dispute occurs when a customer challenges a payment made via QR code on online purchase or physical stores through their bank or e-wallet (the Issuer). Generally, customers can initiate a dispute within 90 days of the transaction.
+
+### Common QR Disputes
+
+Disputes typically fall into these categories:
+
+- Billing Errors: Transaction failed / incomplete, but the funds were still deducted
+- Duplicate Processing: The customer was charged twice for a single purchase. For example an end user scanned a code that was no longer in use and so the store owner/merchant made the end user pay afresh.
+- Fraud: Customer claims the transaction was unauthorized or they were tricked by a fake QR code.
+- Unprocessed Credit: Merchant failed to issue a refund for a returned item
+- Fulfillment Issues: Goods/services were not received or did not match the description
+- Mismatch Refund: Refund amount does not match the original amount of the transaction.
+
+The merchant needs to contact the end users and clarifies regarding the QR dispute reason
+
+### The Dispute Workflow
+
+![](/images/doc360/Documentation_Inconsistency-2025-12-29-062956.png)
+
+When a dispute is raised, the information flows as follows:
+
+1. End-User contacts their QR Issuer (Bank/E-wallet).
+2. QR Issuer notifies the QR Acquiring Partner
+3. QR Acquiring Partner notifies Xendit.
+4. Xendit alerts the Merchant to provide evidence or accept the dispute.
+
+### Prevention Checklist
+
+To minimize the risk of disputes and fraud, follow these best practices:
+
+- Verify Success: Only release goods/services once you receive a "Success" notification or SMS alert. It is the merchant’s responsibility to confirm the genuineness of the QR code being used.
+- Physical Security: Regularly inspect physical QR codes for tampering or "sticker" overlays.
+- Maintain Records: Save all transaction proofs (e.g. screenshots), invoices, receipts, and communication logs.
+- Hygiene: Immediately remove/deactivate QR codes that are no longer in use to prevent double billing error dispute
+- Responsiveness: Resolve customer inquiries and process necessary refunds promptly to prevent them from escalating to their bank.
+
+### QR Dispute Timeline
+
+![](/images/doc360/Documentation_Inconsistency-2025-12-29-062626.png)
+
+| Stage | Description | Window |
+| --- | --- | --- |
+| Retrieval | Acquiring Partner informs Xendit; Merchant must provide evidence. | T+90 days from transaction date |
+| Dispute | If the initial evidence is rejected, the merchant may re-submit evidence. | T+30 days from Retrieval Information |
+
+### Understanding QR Fraud Types
+
+The documented types of fraud (so far) are listed below:
+
+- Cyber fraud: Fraud attempt by replicate or counterfeit QR Code data such as
+
+  - Quishing (QR Phishing):Malicious QR codes sent by phishing email / text that direct users to fake sites to steal login or payment credentials
+  - QRLjacking: Tricking users into scanning a "Quick Response Login" code to take over their account session.
+- Friendly Fraud/ Returned Fraud: A legitimate customer makes a purchase but later claims they don't recognize it to get their money back.
+- Internal/Employee fraud. An employee replaced the original QR code with their own personal code to divert funds. Commonly happened in in-store payments

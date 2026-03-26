@@ -1,0 +1,145 @@
+---
+title: "Route & split payments for sub-accounts"
+---
+
+![](/images/doc360/image_116_.png)
+
+One powerful feature you can utilize with xenPlatform is the ability to route payments for your merchants. There are multiple ways to route your payments based on your use cases.
+
+Split Payments allows you to set up automatic fee deduction or payment splitting between multiple parties. It offers flexible payment routing options to suit various business needs. After a customer completes a payment, you can decide how the incoming funds would be split once the funds settle.
+
+## Region Support for Global Accounts
+
+Cross-border transfers and split payments (between accounts incorporated in different countries) are not supported for merchants incorporated in 🇮🇩 Indonesia. You may still transfer funds between accounts incorporated in the same country.
+
+Additionally, transfers and split payments can only be made between balances of the same currency. You may use the conversion feature before or afterwards to convert currencies.
+
+## Use Cases
+
+### From merchant to Master Account
+
+Example use cases: Multi-Branch Business, Payment resellers, Bookkeeping
+
+|  | Customer | Master Account | Sub-account |
+| --- | --- | --- | --- |
+| Payment | -IDR 100.000 |  | +IDR 100.000 |
+| Transfer |  | +IDR 30.000 | -IDR 30.000 |
+| Ending Balance |  | IDR 30.000 | IDR 70.000 |
+
+### From Merchant to Merchant
+
+Example use cases: Food delivery SaaS, Dropshipping
+
+|  | Customer | Sub-account 1 | Sub-account 2 |
+| --- | --- | --- | --- |
+| Payment | -PHP 100 | +PHP 100 |  |
+| Transfer |  | -PHP 50 | +PHP 50 |
+| Ending Balance |  | PHP 50 | PHP 50 |
+
+### From Master Account to Merchant
+
+Example use cases: Online Marketplace
+
+|  | Customer | Master Account | Sub-account |
+| --- | --- | --- | --- |
+| Payment | -IDR 100.000 | +IDR 100.000 |  |
+| Transfer |  | -IDR 30.000 | +IDR 30.000 |
+| Ending Balance |  | IDR 70.000 | IDR 30.000 |
+
+### Set multiple destinations
+
+You can also set multiple destinations for a split (each with its own flat or percentage amount), by setting different `destination_account_id` in the `routes` array.
+
+## Implementation
+
+### Create a Split Rule via API
+
+The first step is creating your Split Rules, which is an object that could be created in our system to set a rule for splitting payments in your platform.
+
+- Send a POST request to `https://api.xendit.co/split_rules`
+- Split Rules lets you set a `flat` or `percent` amount from each transaction
+- You also need to specify one of our supported currencies regardless of flat or percentage amount: `IDR`, `PHP`, `THB`, `VND`, `MYR`
+- Add the destination account where the amount will be routed. If destination account is null, it will default to Platform account.
+- Xendit will transfer the calculated Split Rule amount from the total transaction amount minus transaction fees.
+
+  - Note that the amount split must leave some remainder for transaction fees, otherwise the split will fail upon settlement. A 100% split rule will fail because the fee cannot be deducted after transferring the entire amount.
+
+An example of how the split is calculated is as follows:
+
+|  | Customer | Master Account | Sub-account |
+| --- | --- | --- | --- |
+| Payment | -IDR 100.000 |  | +IDR 100.000 |
+| Split Rule - 50% to Platform |  | +IDR 50.000 | -IDR 50.000 |
+| Fees & VAT |  |  | -IDR 700 |
+| Ending Balance |  | IDR 50.000 | IDR 49.300 |
+
+You can also create multiple split rules based on your needs. E.g: as a franchise business you're looking to receive IDR 5,000 flat fee for each transaction made in Jakarta stores, and 5% of revenue made by stores in Bali. You can create two fee rules that take 5% IDR percent fee and IDR 5,000 flat fee.
+
+You can view [the API Reference here](https://docs.xendit.co/apidocs/create-split-rule).
+
+#### Multiple Routes
+
+You can define several `routes` in a single transaction. E.g: For incoming funds to Sub-account A, transfer 5% to the Platform and an additional 3% to Sub-account B.
+
+### Create a Transaction via API with the Split Rule
+
+You can apply a fee rule to a specific transaction. Use with-split-rule header on the API call when you are creating a transaction on behalf of your partners. The exact setup of your API request depends on your desired money flow:
+
+|  | for-user-id header | with-split-rule header |
+| --- | --- | --- |
+| Sub-account to Master account | Sub-account Business ID | Split rule with destination set to the platform |
+| Sub-account to Sub-account | Sub-account Business ID | Split rule with destination set to the sub-account |
+| Master account to sub-account | ❌ | Split rule with destination set to the sub-account |
+
+Steps to create Transaction with Split Rule:
+
+1. Create a charge of any type (e.g., Credit Cards, E-Wallets) using the `with-split-rule` header, which should contain the unique Split Rule ID.
+2. Include a `for-user-id` header to transact on behalf of a sub-account (applicable for Sub-account to Master Account and Sub-account to Sub-account flows).
+
+   - You can find the Split ID on your Split Payments Dashboard.
+
+The `with-split-rule` header is set at the transaction level, allowing for highly customizable splits. Common examples include:
+
+- Online Marketplaces: Charging a 10% commission only on apparel purchase transactions by applying a specific fee rule to that transaction type.
+- Dynamic Commission Rates: Charging merchants different commission rates based on the customer's selected payment method (e.g., 5% for Credit Cards, 3% for E-Wallets).
+
+### Split payment status webhook
+
+You can subscribe to the Split Payment Status webhook using the webhook configurations page to detect when each split payment has completed or failed. If you have set multiple `routes` for one rule, each route will create one unique split payment and send separate webhooks.
+
+You can view [the API Reference here](https://docs.xendit.co/apidocs/split-payment-status-notification-webhook).
+
+## Monitor and track splits on your dashboard
+
+xenPlatform provides robust tools to monitor and track all your split payments and created split rules directly from your Dashboard.
+
+## Track created Split Rules
+
+You can easily track the list of created Split Rules on the dashboard. Use the search bar to filter by Split Rule ID. This page displays essential details for each rule, including its name, ID, creation date, amount, and reference.
+
+![](/images/doc360/image_146_.png)
+
+## Monitor and Export Split Payments
+
+The Split Payments page allows you to track all processed split fees. This comprehensive list displays successful, pending, and failed splits, which you can filter or search. Each split entry provides detailed information such as its ID, reference, creation date, source and destination Account IDs, and the split amount.
+
+For each sub-account, split fees will be conveniently shown in their consolidated Transaction or Balance reports.
+
+![](/images/doc360/image_147_.png)
+
+---
+
+### FAQ
+
+#### Why did my split payment fail even when the payment itself was successful?
+
+When a payment succeeds, but only the split fee fails to be processed, then the amount settled will still remain in the balance of the account that receives the funds. There are several possibilities on why this happens:
+
+1. The amount that is split exceeds the remaining funds after deducting fees and VAT
+2. The destination account cannot receive transfers
+
+To resolve this, you may reconcile and execute a [Transfer](/xenplatform/xenplatform-route-payments/transfer-balances).
+
+What happens to the split payment when the original payment is refunded?
+
+Upon issuing refunds, your split fees will *not* be returned to the source account automatically. It is advised to plan on how split fees are handled in case of refunds and chargebacks.

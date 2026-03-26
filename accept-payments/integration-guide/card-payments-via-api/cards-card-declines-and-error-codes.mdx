@@ -1,0 +1,291 @@
+---
+title: "Card declines and error codes"
+description: "Learn why credit card declines happen and how Xendit helps merchants understand decline reasons with actionable insights and network response codes."
+---
+
+When a customer's credit or debit card transaction is declined, it can be frustrating for both the customer and the merchant. At Xendit, we've optimized our system to minimize declines originating from the acquiring bank. This means most declines you encounter are likely due to the issuing bank—the bank that issued the customer's card.
+
+## Why do declines happen?
+
+Issuing banks are the primary source of decline information, but they only share the exact reason directly with the cardholder. To get details, the cardholder must contact their bank, providing transaction specifics like the amount and date.
+
+Since asking every customer to call their bank isn't practical, Xendit uses heuristics. These are intelligent estimates based on signals from the issuing bank and regional factors, helping us determine the most probable reasons for declines. These insights are available in the Decline Insights section of the Card Transaction Details page in your Xendit Dashboard.
+
+## Xendit decline reasons and network response codes
+
+For a comprehensive list of Xendit's specific error and failure codes, please refer to [this page](/docs/error-scenarios).
+
+In addition to Xendit's codes, card networks also return their own error codes. These are provided as additional data in our API responses, giving you more granular information about a decline.
+
+Here's an example of a network response:
+
+```json
+"payment_details": {
+    //payment detail fields
+    "authorization_data": {
+        "card_network_response_code": "65",
+        "card_network_descriptor": "Exceeds withdrawal count limit",
+        "merchant_advice_code": "28",
+        "merchant_advice_descriptor": "Retry after 6 days",
+        "three_ds_trans_status": "Y",
+        "three_ds_flow": "CHALLENGE"
+    }
+}
+```
+
+## Network response code data
+
+- `card_network_response_code` - The response code returned by the scheme (Visa, Mastercard, JCB, China Unionpay or Amex)
+- `card_network_descriptor` - Description of the response code
+- `merchant_advice_code` - Only returned when present, only returned for Mastercard. Mastercard has codes which describe what action to take towards merchants. Not following Mastercard's advice may lead to "excessive retry fines". These fines can go up to USD 0.50 per transaction.
+- `merchant_advice_descriptor` - Only returned when present. Only returned for Mastercard. Description / action to take for the merchant advice code.
+- `three_ds_trans_status` - The `transStatus` result, directly from the 3DS2 response, indicating the authentication status of the transaction.
+- `three_ds_flow` - The 3DS2 authentication flow the customer experienced when completing 3DS2.
+
+## Card network response codes
+
+### `TransStatus` (`three_ds_trans_status`) and 3DS Flow (`three_ds_flow`)
+
+`three_ds_trans_status` Indicates whether a transaction was authenticated, as per EMVCo 3DS2 specification.
+
+#### Possible values:
+
+| Error / response code | Description |
+| --- | --- |
+| Y | Account verification successful |
+| I | Authentication / Exemption granted by Issuer |
+| N | Not Authenticated / account not verified, challenge failed |
+| U | Authentication / account verification could not be performed (could be due to authentication not being available for the card/issuer). Could potentially still proceed with transaction, if no 3DS is enabled |
+| A | Authentication / verification was attempted |
+| C | Challenge Required. Additional authentication is required using a challenge |
+| R | Authentication / account verification rejected by the issuer. |
+
+`three_ds_flow` can return either FRICTIONLESS or CHALLENGE, indicating which flow the shopper has gone through when completing 3DS2.
+
+#### Possible values:
+
+| Value | Description |
+| --- | --- |
+| FRICTIONLESS | The shopper went through a [frictionless 3DS flow](/accept-payments/integration-guide/card-payments-via-api/cards-authentication-3ds2) |
+| CHALLENGE | The shopper went through a [challenge 3DS flow](/accept-payments/integration-guide/card-payments-via-api/cards-authentication-3ds2) |
+
+## Mastercard Merchant Advice Codes
+
+Merchant advice codes provide guidance on handling declined transactions. These codes help you understand why a transaction was declined and what actions to take next.
+
+A Mastercard merchant advice code will usually come in combination with one of the following `card_network_response_code` codes: 14, 41, 43, 54, 57, 62, 65, 75, 82, 83, 85, 91, 93 and 96 ([explained in the overview](/accept-payments/integration-guide/card-payments-via-api/cards-card-declines-and-error-codes#card-network-response-code-overview-cardnetworkresponsecode)).
+
+### How to use Mastercard merchant advice codes:
+
+- Identify the Decline Reason:   
+  Each code corresponds to a specific reason for decline. Use it to determine whether the issue is technical, policy-related, or cardholder-specific.
+
+  - Example: Code 03 — Don't retry, penalty fees may apply. Consider contacting the cardholder.
+- Actionable vs. Non-actionable Codes: Some codes suggest retrying, while others require no further action.
+
+  - Example: Code 24 — Retry after 1 hour.
+  - Code 40 — No action required.
+- Avoid Penalties: Codes may warn of penalties for retrying certain transactions.
+
+  - Example: Code 21 — Don't retry, penalty fees may apply.
+- Contact Support for Technical Issues: If the code refers to technical problems, direct developers to reach out to support.
+
+  - Example: Code 04 — Contact support for token issues.
+- Installments and Recurring Payments: Some codes indicate restrictions on specific payment types, like installments.
+
+  - Example: Code 22 — Installments not allowed, do not retry.
+
+By integrating these codes into your payment processing logic, you can handle declined transactions appropriately, avoid penalties, and provide better guidance to merchants.
+
+#### Possible values:
+
+| Code | Description | Additional information |
+| --- | --- | --- |
+| 1 | Update card information | Ask the shopper to provide new card information |
+| 2 | Try the again payment after 72 hours. |  |
+| 3 | Do not retry this payment. Retries can be subject to penalty fees by Mastercard. Consider reaching out directly to the shopper. |  |
+| 4 | Technical token issue, reach out to Xendit support. |  |
+| 8 | Blocked by payment processor. | Contact Xendit support |
+| 21 | Do not retry this payment. Retries can be subject to penalty fees by Mastercard. | Penalties can go up to USD$0.50 per call. |
+| 22 | Do not retry this payment, installments not allowed for this transaction. | Installments are not supported |
+| 24 | Retry the payment after 1 hour. |  |
+| 25 | Retry the payment after 24 hours. |  |
+| 26 | Retry the payment after 2 days. |  |
+| 27 | Retry the payment after 4 days. |  |
+| 28 | Retry the payment after 6 days. |  |
+| 29 | Retry the payment after 8 days. |  |
+| 30 | Retry the payment after 10 days. |  |
+| 40 | No action required. |  |
+| 41 | No action required. |  |
+| 42 | No action required. |  |
+| 99 | No action possible. |  |
+
+## Card network response code overview (`card_network_response_code)`
+
+| Network response code | Description | Action | Xendit mapped code | Additional information |
+| --- | --- | --- | --- | --- |
+| 01 | Refer to card issuer | Recommend cardholder to contact their card issuing bank to resolve the problem on online transaction Or, try to use different card. Or, use other form of payment. | DECLINED\_BY\_ISSUER |  |
+| 02 | Refer to card issuer | Shopper to contact the card issuer | DECLINED\_BY\_ISSUER |  |
+| 03 | Invalid merchant | Reach out to Xendit | DECLINED\_BY\_ISSUER |  |
+| 04 | Capture card | Retain card | STOLEN\_CARD |  |
+| 05 | Do not honor | Try again using a different card | DECLINED\_BY\_ISSUER | Often used by issuers when they don't trust a transaction or did not properly map a different error code. |
+| 06 | Try again using a different card | Try again using a different card | DECLINED\_BY\_ISSUER |  |
+| 07 | Pick up card, special condition (fraud account) | - | STOLEN\_CARD | Used in physical situations, telling merchants to retain the card |
+| 10 | Partial Approval | - | PARTIAL\_APPROVAL | A partial amount was accepted, the rest of the transaction needs to be completed using a different card. |
+| 11 | Approved (V.I.P) | - | SUCCESS | Used by visa when they stand in for the issuer, accepting a transaction on behalf of. |
+| 12 | Invalid transaction | Do not try again | INACTIVE\_OR\_UNAUTHORIZED\_CARD |  |
+| 13 | Invalid amount | Use a different amount | INACTIVE\_OR\_UNAUTHORIZED\_CARD |  |
+| 14 | Invalid card number | Try again with a different card (number) | INVALID\_CARD |  |
+| 15 | Invalid issuer | Retry at a later time | INVALID\_CARD |  |
+| 19 | Re-enter transaction | Retry the transaction | PROCESSOR\_ERROR |  |
+| 21 | Payment cancellation | Do not retry | DECLINED\_BY\_ISSUER | The user cancelled the transaction during processing, only relevant on EDC |
+| 25 | Unable to locate record in file | Reach out to Xendit support | PROCESSOR\_ERROR | This will not occur |
+| 28 | File temporarily not available for update or inquiry | Reach out to Xendit support | PROCESSOR\_ERROR | Indicator of problems on the scheme side |
+| 30 | Format error | The card issuer does not recognize the transaction details being entered. This is due to a format error. The shopper should check the transaction information and try again. | PROCESSOR\_ERROR |  |
+| 39 | No credit account | Try again using a different card | INVALID\_CVV | The card is not suitable for this type of transactino. For example when adttempting to use prepaid for recurring. |
+| 41 | Stolen card | Do not retry | STOLEN\_CARD |  |
+| 42 | Processor error | Try again in a few minutes | PROCESS\_ERROR | Recommend cardholder to try again in a few minutes. Alternatively, they can try to use other form of payment. |
+| 43 | Stolen card | Do not retry | STOLEN\_CARD |  |
+| 46 | Closed account | Try again using a different card | INACTIVE\_OR\_UNAUTHORIZED\_CARD |  |
+| 51 | Insufficient funds |  | INSUFFICIENT\_BALANCE |  |
+| 52 | No checking account |  | PROCESSOR\_ERROR |  |
+| 53 | No savings account |  | PROCESSOR\_ERROR |  |
+| 54 | Expired card |  | EXPIRED\_CARD | Could also mean expiration date is missing |
+| 55 | Invalid PIN |  | INACTIVE\_OR\_UNAUTHORIZED\_CARD |  |
+| 57 | Transaction not permitted to cardholder | Retry with a different card | INACTIVE\_OR\_UNAUTHORIZED\_CARD | The card is not suitable for this type of transactino. For example when adttempting to use prepaid for recurring. |
+| 58 | Transaction not permitted |  | DECLINED\_BY\_ISSUER |  |
+| 59 | Suspected fraud |  | ISSUER\_SUSPECT\_FRAUD | Issuer suspects fraud |
+| 61 | Limit exceeded |  | INSUFFICIENT\_BALANCE |  |
+| 62 | Restricted card | Shopper could contact issuer or use a different card | DECLINED\_BY\_ISSUER | Card no. valid in country or region |
+| 63 | Security violation |  | DECLINED\_BY\_ISSUER |  |
+| 64 | Card declined |  | DECLINED\_BY\_PROCESSOR |  |
+| 65 | Limit exceeded |  | DECLINED\_BY\_ISSUER |  |
+| 70 | Contact card issuer |  | DECLINED\_BY\_ISSUER |  |
+| 71 | PIN not changed |  | CARD\_DECLINED | Does not happen on eCommerce |
+| 72 | Account not yet active | Only happens for Mastercard | DECLINED\_BY\_ISSUER |  |
+| 74 | Invalid PIN |  | DECLINED\_BY\_PROCESSOR |  |
+| 75 | Allowable number of PIN tries exceeded |  | DECLINED\_BY\_ISSUER |  |
+| 78 | Invalid / nonexistent account specified (general) |  | INACTIVE\_OR\_UNAUTHORIZED\_CARD | The transaction is from a new cardholder and the card has not been properly unblocked or activated. |
+| 79 | Life cycle |  | DECLINED\_BY\_PROCESSOR | Mastercard only |
+| 80 | Credit issuer unavailable |  | PROCESSOR\_ERROR |  |
+| 81 | Suspected fraud |  | DECLINED\_BY\_PROCESSOR |  |
+| 82 | Invalid CVN |  | INVALID\_CVV | Do not tell shoppers their CVN was invalid, this may help fraudsters. |
+| 83 | Suspected fraud |  | ISSUER\_SUSPECT\_FRAUD |  |
+| 84 | Invalid authorization life cycle |  | DECLINED\_BY\_ISSUER |  |
+| 85 | Approved |  | SUCCESS |  |
+| 86 | Invalid PIN |  | DECLINED\_BY\_PROCESSOR |  |
+| 87 | Purchase amount only, no cash back allowed |  | CARD\_DECLINED |  |
+| 88 | Cryptographic failure |  | CARD\_DECLINED |  |
+| 89 | Ineligible to receive financial position information (GIV) |  | PROCESSOR\_ERROR |  |
+| 90 | Cutoff is in progress | Retry at a later stage | CARD\_DECLINED |  |
+| 91 | Temporary system error | Retry at a later stage | ISSUER\_UNAVAILABLE |  |
+| 92 | Temporary system error | Retry at a later stage | INACTIVE\_OR\_UNAUTHORIZED\_CARD |  |
+| 93 | Transaction cannot be completed - violation of law |  | DECLINED\_BY\_ISSUER |  |
+| 94 | Duplicated transaction | Do not retry | DECLINED\_BY\_PROCESSOR |  |
+| 96 | System error |  | ISSUER\_UNAVAILABLE |  |
+| 1A | Authentication required | Authentication needed for this transaction. Try again using authentication | AUTHENTICATION\_FAILED | Visa only |
+| 1Z | Temporary system error |  | PROCESSOR\_ERROR |  |
+| 9G | Blocked by cardholder/contact cardholder | The cardholder blocked this card. Ask the cardholder to use another payment method | CARD\_DECLINED | Visa only |
+| 5C | Transaction not supported/blocked by issuer | The transaction was refused by the card issuer. The shopper can contact their bank or try with a different payment method. | DECLINED\_BY\_ISSUER | Visa only |
+| B1 | Surcharge amount not permitted on Visa cards or EBT food stamps (U.S. acquirers only) |  | DECLINED\_BY\_PROCESSOR |  |
+| B2 | Surcharge amount not supported by debit network issuer |  | DECLINED\_BY\_PROCESSOR |  |
+| N0 | Force STIP |  | PROCESSOR\_ERROR |  |
+| N3 | Issuer not available |  | DECLINED\_BY\_ISSUER |  |
+| N4 | Limit exceeded |  | INSUFFICIENT\_BALANCE |  |
+| N5 | Ineligible for resubmission |  | PROCESSOR\_ERROR |  |
+| N7 | Invalid CVN |  | INVALID\_CVV |  |
+| N8 | Preauthorized amount exceeded |  | DECLINED\_BY\_PROCESSOR |  |
+| P6 | Denied PIN |  | CARD\_DECLINED |  |
+| Q1 | Authentication failed |  | PROCESSOR\_ERROR |  |
+| R0 | Stop payment order |  | DECLINED\_BY\_ISSUER |  |
+| R1 | Revocation of authorization order |  | TRANSACTION\_BLOCKED |  |
+| R2 | Transaction does not qualify for Visa PIN |  | DECLINED\_BY\_ISSUER |  |
+| R3 | Revocation of authorization order |  | DECLINED\_BY\_ISSUER |  |
+| Z3 | Not available for online transaction |  | DECLINED\_BY\_ISSUER |  |
+
+  
+
+## Handling 3DS Response Details: Three DS transaction status reason & Three DS challenge cancel code
+
+When a 3DS authentication completes, your integration receives a primary `three_ds_trans_status` (Transaction Status) code from the authentication webhook event. While codes like Y (Success) are simple, handling failures (N, U, or R) requires more detail.
+
+This is where `three_ds_trans_status_reason` and `three_ds_challenge_cancel_code` become essential. They provide the specific "why" behind a failed or incomplete authentication, allowing you to build a robust handler, debug issues, and provide clear feedback to your users.
+
+### Three DS trans status reason (`three_ds_trans_status_reason`)
+
+This is the primary reason code for the authentication outcome. It's sent by the issuer's bank (the ACS) and explains *why* the transaction received its final `three_ds_trans_status`.
+
+You should always check this parameter when the `three_ds_trans_status` is:
+
+- N (Not Authenticated)
+- U (Unable to Authenticate)
+- R (Rejected by Issuer)
+
+The detail of the `three_ds_trans_status_reason` can be seen in this table below
+
+| Transaction Status Reason | Transaction Status Reason Descriptor | Actionable Insight for Merchant | Xendit Failure Reason |
+| --- | --- | --- | --- |
+| 1 | Card authentication failed | This is a general failure. The issuer's risk assessment resulted in a negative outcome. This could be based on a combination of factors in the AReq data that the merchant sent. | AUTHENTICATION\_FAILED |
+| 2 | Unknown Device | The device used for the transaction is not recognized by the issuer. This highlights the importance of comprehensive device data collection. Merchants with mobile apps using our 3DS SDK are better positioned to avoid this | AUTHENTICATION\_FAILED |
+| 3 | Unsupported Device | The device does not support the 3DS authentication methods requested by the issuer. | AUTHENTICATION\_FAILED |
+| 4 | Exceeds authentication frequency limit | The cardholder has been authenticated too many times recently. This is a velocity check by the issuer to prevent potential fraudulent activity. | AUTHENTICATION\_FAILED |
+| 5 | Expired card | The card used in the transaction has expired. This is a basic data validation that should ideally be caught by the merchant's systems even before initiating 3DS. | AUTHENTICATION\_FAILED |
+| 6 | Invalid card number | The card number failed a basic Luhn check or is otherwise invalid. Again, this points to a need for front-end validation | AUTHENTICATION\_FAILED |
+| 7 | Invalid transaction | The issuer deemed the transaction type or context invalid. This could be due to scheme rules or issuer-specific policies. | AUTHENTICATION\_FAILED |
+| 8 | No Card record | The issuer has no record of this account number. This could indicate a mistyped card number or a card from an issuer not participating in 3DS. | AUTHENTICATION\_FAILED |
+| 9 | Security failure | A security issue was detected during the authentication process. This is a serious flag indicating a potential threat. | AUTHENTICATION\_FAILED |
+| 10 | Stolen card | The card has been reported as stolen. | AUTHENTICATION\_FAILED |
+| 11 | Suspected fraud | The issuer's risk scoring engine has flagged the transaction as highly suspicious based on the data provided. This is a strong signal for the merchant to decline the transaction. | AUTHENTICATION\_FAILED |
+| 12 | Transaction not permitted to cardholder | The issuer has placed a restriction on the account that prevents this type of transaction (e.g., international purchases blocked). | AUTHENTICATION\_FAILED |
+| 13 | Cardholder not enrolled in service | The cardholder has not yet registered for the issuer's authentication service (e.g., has not set up their banking app for approvals). | AUTHENTICATION\_FAILED |
+| 14 | Transaction timed out at the ACS | The issuer's system was too slow to respond. Please retry the request after one minute. | AUTHENTICATION\_FAILED |
+| 15 | Low Confidence | This code indicates the issuer's confidence level in their authentication assessment, even if it results in a failure. | AUTHENTICATION\_FAILED |
+| 16 | Medium Confidence | This code indicates the issuer's confidence level in their authentication assessment, even if it results in a failure. | AUTHENTICATION\_FAILED |
+| 17 | High Confidence | This code indicates the issuer's confidence level in their authentication assessment, even if it results in a failure | AUTHENTICATION\_FAILED |
+| 18 | Very High Confidence | This code indicates the issuer's confidence level in their authentication assessment, even if it results in a failure. | AUTHENTICATION\_FAILED |
+| 20 | Non-payment transaction not supported | You attempted a non-payment 3DS check, but the issuer does not support it for this card. Do not re-attempt non-payment 3DS for this card | AUTHENTICATION\_FAILED |
+| 21 | 3RI transaction not supported | You attempted a merchant-initiated (3RI) 3DS check, but the issuer does not support it for this card. Do not re-attempt 3RI 3DS for this card; make a risk decision to authorize without it | AUTHENTICATION\_FAILED |
+| 22 | ACS technical issue | The issuer's system experienced a technical problem that prevented authentication. Please retry with another request. | AUTHENTICATION\_FAILED |
+| 23 | Decoupled authentication required by ACS but not requested by 3DS requestor | The issuer wanted to use an out-of-band/decoupled authentication (like a banking app push notification) but the merchant did not signal support for it. | AUTHENTICATION\_FAILED |
+| 24 | 3DS requestor decoupled max expiry time exceeded | The decoupled challenge was in progress, but got timed out. | AUTHENTICATION\_FAILED |
+| 25 | Low-latency Decoupled Authentication was provided insufficient time to authenticate the Cardholder. The ACS will not make an attempt to authenticate the Cardholder. | The ACS refused to even start the decoupled challenge | AUTHENTICATION\_FAILED |
+| 26 | Authentication attempted but not performed by the cardholder | An attempt was made, but for some reason (often cardholder inaction), it wasn't completed. Please retry with another request | AUTHENTICATION\_FAILED |
+| 27-79 | Reserved for EMVCo future use |  | AUTHENTICATION\_FAILED |
+| 80-99 | Reserved for DS use |  | AUTHENTICATION\_FAILED |
+
+### Challenge Cancel Code (`three_ds_challenge_cancel_code`)
+
+This parameter is more specific. It only applies if a challenge was presented and then cancelled. It tells you *why* the challenge window was dismissed.
+
+You should check this parameter if `three_ds_trans_status` is N and `three_ds_trans_status_reason` is 26 (Authentication Not Performed). This combination gives you the full story.
+
+  
+
+#### Implementing Your Response Handler (Putting It Together)
+
+Use this logic as a starting point for your server-side handler.
+
+#### Example Scenario
+
+A shopper is presented with a 3DS challenge. They get confused and click the "Cancel" button.
+
+Here is the data your server will likely receive:
+
+- three\_ds\_trans\_status: N (Not Authenticated)
+- three\_ds\_trans\_status\_reason: 26 (Authentication Not Performed)
+- three\_ds\_challenge\_cancel\_code: 01 (Cardholder Selected "Cancel")
+
+This structure allows you to properly handle failures, provide clear feedback, and maintain excellent logs for debugging.
+
+#### The detail of the three\_ds\_challenge\_cancel\_code can be seen in this table below
+
+| Challenge Cancel Code | Challenge Cancel Code Descriptor | Xendit Failure Reason |
+| --- | --- | --- |
+| 1 | Cardholder selected Cancel. | AUTHENTICATION\_FAILED |
+| 2 | Reserved for future EMVCo use (values invalid until defined by EMVCo). | AUTHENTICATION\_FAILED |
+| 3 | Transaction timed out—Decoupled Authentication. | TIMEOUT\_ERROR |
+| 4 | Transaction timed out at ACS—other timeouts. | TIMEOUT\_ERROR |
+| 5 | Transaction timed out at ACS—First CReq not received by ACS. | TIMEOUT\_ERROR |
+| 6 | Transaction Error. | PROCESSOR\_ERROR |
+| 7 | Unknown. | PROCESSOR\_ERROR |
+| 8 | Transaction timed out at SDK. | TIMEOUT\_ERROR |

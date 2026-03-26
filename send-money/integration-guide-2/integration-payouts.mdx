@@ -1,0 +1,310 @@
+---
+title: "Payouts"
+---
+
+Learn how to programmatically send payouts with our Payout APIs through the following sections.
+
+## Before you start
+
+- [Create an API Key](/bill-payments/integration-setup-1/create-an-api-key-1) in your Xendit Dashboard. You will need the API Key to make API calls.
+- Set up your webhook URL. Configure this to receive real-time notifications on payout status changes.
+- Check Payout Coverage for channel-specific information. You need to know what information needs to be collected to start sending payouts.
+
+## Create a Payout
+
+Call `Create Payout API` with the required recipient and transaction information to create a payout.
+
+#### Example Request
+
+```javascript
+curl https://api.xendit.co/v2/payouts -X POST \
+-u xnd_development_O46JfOtygef9kMNsK+ZPGT+ZZ9b3ooF4w3Dn+R1k+2fT/7GlCAN3jg==: \
+--header 'Idempotency-key: some-unique-ref-for-request'
+--data-raw '{
+  "reference_id": "sample-successful-create-php-payout",
+  "channel_code": "PH_GCASH",
+  "channel_properties": {
+    "account_number": "0000000000",
+    "account_holder_name": "Test"
+  },
+  "amount": 1.11,
+  "description": "Sample Successful Create PHP Payout",
+  "currency": "PHP",
+  "receipt_notification": {
+    "email_to": [
+      "somebody@xendit.co",
+      "somebody@example.co"
+    ],
+    "email_cc": [
+      "somebody@example.co",
+      "somebody@example.co"
+    ],
+    "email_bcc": [
+      "somebody@example.co",
+      "somebody@example.co"
+    ]
+  },
+  "metadata": {
+     "outlet_no": 24
+  }
+}'
+
+```
+
+#### Example Response
+
+If successfully created, we will always return a return a payout object with `ACCEPTED` status.
+
+```json
+{
+    "id": "disb-1475459775872",
+    "amount": 1.11,
+    "channel_code": "PH_GCASH",
+    "currency": "PHP",
+    "description": "Sample Successful Create PHP Payout",
+    "reference_id": "sample-successful-create-php-payout",
+    "status": "ACCEPTED",
+    "created": "2022-01-05T05:37:48.108Z",
+    "updated": "2022-01-05T05:37:48.108Z",
+    "estimated_arrival_time": "2022-01-05T05:52:48.106Z",
+    "business_id": "6018306aa16ad90cb3c43ba7",
+    "channel_properties": {
+        "account_number": "0000000000",
+        "account_holder_name": "Test"
+    },
+    "receipt_notification": {
+        "email_to": [
+            "somebody@example.co",
+            "somebody@example.co"
+        ],
+        "email_cc": [
+            "somebody@example.co",
+            "somebody@example.co"
+        ],
+        "email_bcc": [
+            "somebody@example.co",
+            "somebody@example.co"
+        ]
+    },
+    "metadata": {
+     "outlet_no": 24
+    }
+}
+```
+
+## Avoiding creating duplicate Payouts
+
+We use `idempotency-key` to achieve idempotency and avoid creating duplicate payout transactions. If your first request fails due to error or timeout, you can retry safely by using the same `idempotency-key` value in the request header of your next retry. This will help us identify subsequent retry requests as retry attempts and will not create a duplicate payout transaction.
+
+## Send proof of Payout
+
+We provide an automatic email receipt which you can send to you and your recipient as a notification on proof of payout. To do this, ensure to fill in the `email_to`, `email_cc`, and `email_bcc` fields (with maximum of 3 recipients per field) under the `receipt_notification` parameter.
+
+We display your logo and business details in each receipt. Be sure to test out the receipts by including your email address in the payout request. You can then see what the email receipt looks like in your inbox.
+
+## Ensure your recipient identify your payouts
+
+We payout funds on your behalf from our bank accounts. To help your recipient identify funds from you, include your business name or any identifier in the `description` parameter - if the recipient's channel supports this field, the recipient will see this in their statement. In most cases, only a limited number of character is supported, so keep your identifier short and concise.
+
+Read [Payout Coverage](/send-money/payout-channels/overview-payouts-coverage) for more channel-specific details.
+
+## Retrieve a Payout
+
+Call `Get Payout by ID API` or `Get Payout by Reference ID API` to retrieve a payout’s details. This is usually useful to get your payout’s status. In addition to this, we recommend you to subscribe to our webhook events for any updates to your payout’s statuses.
+
+For more information, see [Set up webhooks](/send-money/integration-setup-2/payouts-set-up-webhooks).
+
+## Retrieve a Payout by its ID
+
+Call `Get Payout by ID API` to retrieve payouts by its ID. Always return a single payout.
+
+#### Example Request
+
+```javascript
+curl https://api.xendit.co/v2/payouts/disb-b57fff2d-9699-470b-9978-ac509c5b266c -X GET \
+  -u xnd_development_O46JfOtygef9kMNsK+ZPGT+ZZ9b3ooF4w3Dn+R1k+2fT/7GlCAN3jg==:
+```
+
+#### Example Response
+
+```json
+{
+    "id": "disb-1475459775872",
+    "amount": 100,
+    "channel_code": "ID_BCA",
+    "currency": "IDR",
+    "description": "Sample Failed Create Payout",
+    "estimated_arrival_time": "2022-01-05T06:09:23.667Z",
+    "failure_code": "TEMPORARY_TRANSFER_ERROR",
+    "reference_id": "sample-failed-create-payout",
+    "status": "FAILED",
+    "created": "2022-01-05T05:54:23.670Z",
+    "updated": "2022-01-05T05:54:35.680Z",
+    "business_id": "5785e6334d7b410667d355c4",
+    "channel_properties": {
+        "account_number": "123456",
+        "account_holder_name": "Test"
+    }
+}
+```
+
+## Retrieve a Payout by its Reference ID
+
+Call `Get Payout by Reference ID API` to retrieve payouts by its reference ID. Can return multiple payouts in an array.
+
+Calling this API will retrieve all payouts with matching reference ID. Returns an array of matching Payout Objects if a valid `reference_id` was provided. Returns an empty array if there is no payout corresponding to the `reference_id`.
+
+#### Example request
+
+```javascript
+curl https://api.xendit.co/v2/payouts?reference_id=lotto-1482928194&limit=10&after_id=disb-cc7cd9c0-1971-4414-9b54-be545948a33d&before_id=disb-69d8e2ba-20f9-41af-bd04-e299237fd7ec -X GET \
+  -u xnd_development_O46JfOtygef9kMNsK+ZPGT+ZZ9b3ooF4w3Dn+R1k+2fT/7GlCAN3jg==:
+```
+
+#### Example response
+
+If more than one payout has the same reference\_id that was provided, returns an array of payouts.
+
+```json
+[  
+  {
+    "id": "disb-1475459775872",
+    "amount": 100,
+    "channel_code": "ID_BCA",
+    "currency": "IDR",
+    "description": "Sample Failed Create Payout",
+    "estimated_arrival_time": "2022-01-05T06:09:23.667Z",
+    "failure_code": "TEMPORARY_TRANSFER_ERROR",
+    "reference_id": "sample-failed-create-payout",
+    "status": "FAILED",
+    "created": "2022-01-05T05:54:23.670Z",
+    "updated": "2022-01-05T05:54:35.680Z",
+    "business_id": "5785e6334d7b410667d355c4",
+    "channel_properties": {
+        "account_number": "123456",
+        "account_holder_name": "Test"
+    }
+},
+  {
+    "id": "disb-567845975142",
+    "amount": 200,
+    "channel_code": "ID_BCA",
+    "currency": "IDR",
+    "description": "Sample Failed Create Payout2",
+    "estimated_arrival_time": "2022-01-05T06:14:23.667Z",
+    "failure_code": "TEMPORARY_TRANSFER_ERROR",
+    "reference_id": "sample-failed-create-payout2",
+    "status": "FAILED",
+    "created": "2022-01-05T05:58:23.670Z",
+    "updated": "2022-01-05T05:58:35.680Z",
+    "business_id": "5785e6334d7b410667d355c4",
+    "channel_properties": {
+        "account_number": "123456",
+        "account_holder_name": "Test"
+    }
+}
+
+]
+```
+
+## Cancel a Payout
+
+Call `Cancel Payout API` to cancel transactions that have not been processed by Xendit’s partners.
+
+Payouts can only be cancelled if the status is `ACCEPTED`. It is recommended to refer to the `Get Payout API` to know if a payout is still cancellable or not. Upon request of cancellation, we will return a response with a `CANCELLED` status. Your funds should be expected to be returned back to your available balance within 5 minutes.
+
+If the cancellation fails, we will be sending back the corresponding reason for failure where funds and fees will remain in your pending balance until it reaches its final status from the partner (`SUCCEEDED` or `FAILED`). The common reasons may be due to invalid requests of a payout that does not exist, or the payout is already being processed by the partner.
+
+#### Example request
+
+```javascript
+curl https://api.xendit.co/v2/payouts/disb-b57fff2d-9699-470b-9978-ac509c5b266c/cancel -X POST \
+  -u xnd_development_O46JfOtygef9kMNsK+ZPGT+ZZ9b3ooF4w3Dn+R1k+2fT/7GlCAN3jg==:
+```
+
+#### Example response
+
+```json
+{
+    "id": "disb-1475459775872",
+    "amount": 250000,
+    "channel_code": "PH_CITI",
+    "currency": "PHP",
+    "description": "rewards",
+    "reference_id": "test-rewards-001",
+    "status": "CANCELLED",
+    "created": "2022-01-16T12:11:22.233Z",
+    "updated": "2022-01-16T12:21:31.373Z",
+    "estimated_arrival_time": "2022-01-16T12:26:22.155Z",
+    "business_id": "5785e6334d7b410667d355c4",
+    "channel_properties": {
+        "payout_code": "002912362381009082189137",
+        "recipient_given_names": "Michael",
+        "recipient_surname": "Chen",
+        "expires_at": "2022-01-23T12:11:22.156Z"
+    }
+}
+```
+
+## Error Handling
+
+### Common Errors in Payouts
+
+Below is a list of common errors you may encounter while using Payouts API. For simple understanding, we’ve split them into 2 categories:
+
+- Errors in creating the payout
+- Errors in executing the payout
+
+### Errors In Creating the Payout
+
+All the possible errors while creating payouts via our API endpoints are listed in this page.
+
+For errors generally, the response you receive will contain:
+
+- `error_code`: A semantic code specifying the error encountered;
+- `message`: A brief statement that explains the code.
+
+Example:
+
+```json
+{
+    "error_code": "DUPLICATE_ERROR",
+    "message": "A payout with this idempotency key already exists. If you meant to execute a different request, please use another idempotency key."
+}
+```
+
+If you receive an error in our API response, this means that there were issues creating the payout due to invalid inputs or issues with the server. For detailed handling instructions of each error, please see the table below:
+
+| Error Code | Explanation |
+| --- | --- |
+| `API_VALIDATION_ERROR`  `CHANNEL_CODE_NOT_SUPPORTED`  `RECIPIENT_ACCOUNT_NUMBER_ERROR` | Certain inputs do not meet our API validation requirements. |
+| `DUPLICATE_ERROR` | Idempotency key has been used before. Use a unique idempotency key and try again. |
+| `MINIMUM_TRANSFER_LIMIT_ERROR`  `MAXIMUM_TRANSFER_LIMIT_ERROR` | Every channel has a minimum and maximum transaction amount. We will return an error response if the transfer amount requested does not conform to the prescribed limits. See Payout Coverage. |
+| `AMOUNT_INCREMENT_NOT_SUPPORTED` | Every channel has a different increment support. We will return an error response if the transfer amount requested does not conform to the prescribed increment support. |
+
+### Errors In Executing the Payout
+
+After a payout status is `REQUESTED`, it may fail our payout partner’s processing or be rejected by the recipient bank, at which point its status will transition to `FAILED`. Subscribe to `payout.failed` webhook events to receive real-time notifications of each transfer's failure and its reason.
+
+It is important that you understand each failure code in detail in order to decide on the appropriate action to take. Below is a comprehensive list of the possible failure codes that you may receive, what they mean and what our corresponding suggested action is:
+
+| Error Message | Description | Should you retry? |
+| --- | --- | --- |
+| `INSUFFICIENT_BALANCE` | Client has insufficient balance for the payout amount | Yes, retry the payout after ensuring that you have sufficient balance in your account |
+| `INVALID_DESTINATION` | The recipient account does not exist/is invalid | You are unlikely to succeed if you retry the payout request. Please confirm with the recipient whether their account is correct |
+| `DESTINATION_MAXIMUM_LIMIT` | The recipient is unable to receive the funds due to the payout amount exceeding the recipient’s ability to receive | You are unlikely to succeed if you retry the payout request. Please confirm with the recipient whether their account can receive the payout |
+| `REJECTED_BY_CHANNEL` | Payout failed due to an error from the destination channel. This is usually because of network issues associated with the destination bank or issues crediting funds into the destination bank account | Yes, retry the payout after validating that the destination bank account number is active and can receive funds in your chosen currency |
+| `TEMPORARY_TRANSFER_ERROR` | The channel networks are experiencing a temporary error | Yes, retry the payout in 1-3 hours |
+| `TRANSFER_ERROR` | We’ve encountered a fatal error while processing this payout. Normally, this means that certain API fields in your request are invalid | It is unlikely that the same disbursement request will succeed if you retry |
+
+Note: We could add new failure codes to the list above and your system should be able to handle the events even if the failure code is not recognized.
+
+## Payout Events
+
+Learn more below for the different webhook events that you can subscribe to. For more information of different payout statuses, see [Payout Status Lifecycle](/send-money/payout-status-lifecycle).
+
+| Webhook Event | Payout Status |
+| --- | --- |
+| `payout.succeeded` | `SUCCEEDED` |
+| `payout.failed` | `FAILED` |
+| `payout.reversed` | `REVERSED` |

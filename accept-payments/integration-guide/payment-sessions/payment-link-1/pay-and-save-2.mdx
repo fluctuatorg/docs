@@ -1,0 +1,171 @@
+---
+title: "Pay and Save"
+---
+
+Payment Sessions allow you to securely collect payment followed by storing the payment method for future transactions simultaneously. The stored payment channel can be used for subsequent transaction initiated by either your system or directly by the end-user within your application.
+
+Example usage:
+
+- Subscription Service (SaaS/Media): First-time subscription activation: A user signs up for a monthly plan that requires immediate first-month payment.
+- eCommerce: Purchasing products for the first time and saving the payment method for easier subsequent purchase
+
+There are two main options for enabling the Pay and Save feature on Payment Sessions:
+
+1. Forced: The checkout page will always save the payment detailsafter payment and will only display payment methods that support save method.
+2. Optional: Allows the end user to explicitly opt-in to save the payment details for future use. When the checkbox is opted-in, the flow becomes Pay & Save; otherwise, it defaults to a standard One Time Payment.
+
+## How to integrate
+
+![](/images/doc360/Untitled_diagram-2025-11-04-151034.png)
+
+1. During checkout or whenever your customer is ready to make a payment, your system should Create a Payment Session with Xendit using the example payload provided below.
+
+   1. For Cards, it's recommended to specify `channel_properties.cards.card_on_file_type` during Payment Session creation. This field indicates the intended use of the payment token for subsequent transactions—whether RECURRING, MERCHANT\_UNSCHEDULED, or CUSTOMER\_UNSCHEDULED. Properly setting this value can significantly improve transaction success rates.
+   2. There are two options on `allow_save_payment_method`:
+
+      1. Forced: Always save the payment details
+
+         Request - POST /sessions
+
+         ```json
+         {
+             "reference_id": "{{$YOUR_REFERENCE_ID}}",
+             "session_type": "PAY",
+             "mode": "PAYMENT_LINK",
+             "amount": 150000,
+             "currency": "IDR",
+             "country": "ID",
+             "customer": {
+                 "reference_id": "{{$randomUUID}}",
+                 "type": "INDIVIDUAL",
+                 "email": "customer@yourdomain.com",
+                 "mobile_number": "+628123456789",
+                 "individual_detail": {
+                     "given_names": "John",
+                     "surname": "Doe"
+                 }
+             },
+             "channel_properties": {
+                 "cards":{
+                     "card_on_file_type": "CUSTOMER_UNSCHEDULED"
+                 }
+             },
+             "success_return_url": "https://yourcompany.com/order/complete",
+             "cancel_return_url": "https://yourcompany.com/order/cancel",
+             "allow_save_payment_method": "FORCED"
+         }
+         ```
+
+         Response - POST /sessions
+
+         ```json
+         {
+             "payment_session_id": "ps-690a1efdb6b78faccd6295b3",
+             "created": "2025-11-04T15:42:53.811Z",
+             "updated": "2025-11-04T15:42:53.811Z",
+             "status": "ACTIVE",
+             "reference_id": "5daba2e1-b488-4096-b400-2f234d1d45eb+3",
+             "currency": "IDR",
+             "amount": 150000,
+             "country": "ID",
+             "expires_at": "2025-11-04T16:12:53.509Z",
+             "session_type": "PAY",
+             "mode": "PAYMENT_LINK",
+             "locale": "en",
+             "business_id": "610d01ea382dd240ac8f913d",
+             "customer_id": "cust-b8af2920-b9e2-4ebd-bdea-ef52af1fe8bf",
+             "capture_method": "AUTOMATIC",
+             "channel_properties": {
+                 "cards": {
+                     "card_on_file_type": "CUSTOMER_UNSCHEDULED"
+                 }
+             },
+             "success_return_url": "https://yourcompany.com/order/complete",
+             "cancel_return_url": "https://yourcompany.com/order/cancel",
+             "payment_link_url": "https://dev.xen.to/k75cVqXj",
+             "allow_save_payment_method": "FORCED"
+         }
+         ```
+
+         ![](/images/doc360/image_154_.png)
+
+         The checkout page will always save the payment details after payment and always shows the available channels that support save method.
+      2. Optional: Allows the end user to opt-in to save the payment details  
+           
+         Request - POST /sessions
+
+         ```json
+         {
+             "reference_id": "{{$YOUR_REFERENCE_ID}}",
+             "session_type": "PAY",
+             "mode": "PAYMENT_LINK",
+             "amount": 150000,
+             "currency": "IDR",
+             "country": "ID",
+             "customer": {
+                 "reference_id": "{{$randomUUID}}",
+                 "type": "INDIVIDUAL",
+                 "email": "customer@yourdomain.com",
+                 "mobile_number": "+628123456789",
+                 "individual_detail": {
+                     "given_names": "John",
+                     "surname": "Doe"
+                 }
+             },
+             "channel_properties": {
+                 "cards":{
+                     "card_on_file_type": "CUSTOMER_UNSCHEDULED"
+                 }
+             },
+             "success_return_url": "https://yourcompany.com/order/complete",
+             "cancel_return_url": "https://yourcompany.com/order/cancel",
+             "allow_save_payment_method": "OPTIONAL"
+         }
+         ```
+
+         Response - POST /sessions
+
+         ```json
+         {
+             "payment_session_id": "ps-690a1efdb6b78faccd6295b3",
+             "created": "2025-11-04T15:42:53.811Z",
+             "updated": "2025-11-04T15:42:53.811Z",
+             "status": "ACTIVE",
+             "reference_id": "5daba2e1-b488-4096-b400-2f234d1d45eb+3",
+             "currency": "IDR",
+             "amount": 150000,
+             "country": "ID",
+             "expires_at": "2025-11-04T16:12:53.509Z",
+             "session_type": "PAY",
+             "mode": "PAYMENT_LINK",
+             "locale": "en",
+             "business_id": "610d01ea382dd240ac8f913d",
+             "customer_id": "cust-b8af2920-b9e2-4ebd-bdea-ef52af1fe8bf",
+             "capture_method": "AUTOMATIC",
+             "channel_properties": {
+                 "cards": {
+                     "card_on_file_type": "CUSTOMER_UNSCHEDULED"
+                 }
+             },
+             "success_return_url": "https://yourcompany.com/order/complete",
+             "cancel_return_url": "https://yourcompany.com/order/cancel",
+             "payment_link_url": "https://dev.xen.to/k75cVqXj",
+             "allow_save_payment_method": "OPTIONAL"
+         }
+         ```
+
+         ![](/images/doc360/image_158_.png)
+
+         The interface will show all available payment channels, and only those channels that support the Save functionality will present a visible checkbox for the end-user to opt-in to the Pay & Save flow.
+
+2. Once the Payment Session is created, redirect your end user to the Xendit-hosted checkout page using the `payment_link_url` from the response.
+3. Your customer will complete the payment on the Xendit-hosted page using their preferred payment channel (e.g., cards, eWallets, etc.).
+
+   1. For the optional value, it will follow the pay and save if the customer toggles the checkbox, otherwise, it will be treated as one-time payment
+4. Your end user will complete their payment process and linking process on Xendit-hosted page
+5. Upon successful payment, Xendit will send a `payment_session.completed,` wehbook contains`payment_token_id` which you should securely store for future use. Optionally, you can handle `payment.capture` and `payment_token.activated` webhook to your system to see the payment or token details.
+
+   1. You should use these webhooks to update the order status in your system and use the `payment_token_id` for:
+
+      1. Future one-off payments: Refer to the [Pay with Tokens](https://docs.xendit.co/docs/pay-with-tokens) guide
+      2. Subscription transactions: Refer to the guides on [Fixed Amount Subscriptions](https://docs.xendit.co/docs/fixed-amount-subscriptions) or [Usage-Based Subscriptions](https://docs.xendit.co/docs/usage-based-subscriptions).

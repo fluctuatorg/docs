@@ -1,0 +1,4 @@
+business_id,masked_card_number,card_expiry_month,card_expiry_year,reference_id,card_token_id,payments_api_token_id,status
+67beab5ef61edee99b5f26b4,51234578XXXX3456,02,2028,0032t000005v2LSAAY,67beadec55848e3af6d81d87,pt-185537fc-a581-489e-97d6-bcc08a00f7d8,SUCCESS
+67beab5ef61edee99b5f26b4,51234578XXXX3456,02,2028,0032t000005v2LSAAY,67beadfc7ec285cc9ada5f67,pt-b7e5c5f8-0e28-4dc0-afdc-fde47c825800,SUCCESS
+67beab5ef61edee99b5f26b4,51234578XXXX3456,02,2024,0032t000005v2LSAAY,,,FAILED

@@ -1,0 +1,124 @@
+---
+title: "Refund a card payment"
+description: "Learn how to create refunds via API, manage partial refunds, and understand the differences between refunds and chargebacks for efficient transaction handling."
+---
+
+Refunds are typically created via an [API call](https://xendit-docs.document360.io/apidocs/refund-payment-request) to a dedicated endpoint, distinct from the one used for creating payments. This request requires specific details such as the original payment request ID, the refund amount, and the reason for the refund. Alternatively, for a quick and straightforward process, you can use the Refund button available on your dashboard.
+
+### Creating a Refund Request via API
+
+To initiate a refund, send a POST request to the `/refunds` endpoint.
+
+Request - to /refunds
+
+```json
+{
+  "reference_id": "YOUR_REFERENCE_ID",
+  "payment_request_id": "pr-YOUR_PAYMENT_REQUEST_ID",
+  "currency": "IDR",
+  "amount": 25000,
+  "reason": "REQUESTED_BY_CUSTOMER"
+}
+```
+
+Request - from /refunds/&#123;payment\_request\_id&#125;
+
+```json
+{
+    "id": "rfd-50d758bc-e352-46fc-aa5d-82b69d2fe35a",
+    "payment_id": "pr-UNIQUE_PAYMENT_ID",
+    "payment_request_id": "pr-YOUR_PAYMENT_REQUEST_ID",
+    "invoice_id": "",
+    "amount": 25000,
+    "payment_method_type": "CARD",
+    "channel_code": "",
+    "currency": "IDR",
+    "status": "SUCCEEDED",
+    "reason": "REQUESTED_BY_CUSTOMER",
+    "reference_id": "YOUR_REFERENCE_ID",
+    "failure_code": null,
+    "refund_fee_amount": null,
+    "created": "2025-04-10T07:37:29.651482099Z",
+    "updated": "2025-04-10T07:37:29.651482291Z",
+    "metadata": null,
+    "refund_method": "DIRECT",
+    "payout_link_properties": null,
+    "actions": null
+}
+```
+
+#### Refund validation and processing
+
+Before a refund is processed, the system performs a series of validations:
+
+- Amount Check: The refund amount (or the total of multiple partial refunds) must not exceed the original transaction amount.
+- Eligibility: The refund request must typically be made within 1 year of the original transaction.
+
+Once approved, the refund is processed:
+
+1. Balance adjustment: Your account balance is adjusted to reflect the refunded amount.
+2. Network communication: The refund request is communicated to the relevant card network.
+3. Settlement: The refunded amount is credited back to the cardholder's account. This typically takes several business days, varying based on the card network and the cardholder's issuing bank.
+
+### Important considerations:
+
+- Fees: While your customer receives the full refunded amount, be aware that original transaction fees are generally not returned to you.
+- Timeframes: Refund processing times can vary significantly, ranging from instant to several business days, depending on the issuing bank.
+
+## Partial refunds
+
+A partial refund allows you to refund a portion of the original transaction amount instead of the full amount. This is useful in cases such as partial order cancellations, product exchanges, or adjustments for service issues.
+
+You can issue multiple partial refunds for the same transaction, as long as the total refunded amount does not exceed the original transaction value. Each partial refund is processed separately, ensuring flexibility in addressing customer needs while maintaining accurate transaction records.
+
+#### Create a partial refund request
+
+To create a partial refund, follow the same steps as a full refund request. The only difference is you can specify an amount lower than the original transaction value.
+
+Create a `POST` request to `/refunds`
+
+Request - to /refunds
+
+```json
+{
+  "reference_id": "YOUR_REFERENCE_ID",
+  "payment_request_id": "YOUR_PAYMENT_REQUEST_ID",
+  "currency": "IDR",
+  "amount": 15000,
+  "reason": "REQUESTED_BY_CUSTOMER"
+}
+```
+
+Response - from /refunds/&#123;payment\_request\_id&#125;
+
+```json
+{
+    "id": "rfd-d0728898-c6bf-423b-b59c-a2892d8ea4ac",
+    "payment_id": "pr-UNIQUE_PAYMENT_ID",
+    "payment_request_id": "YOUR_PAYMENT_REQUEST_ID",
+    "invoice_id": "",
+    "amount": 15000,
+    "payment_method_type": "CARD",
+    "channel_code": "",
+    "currency": "IDR",
+    "status": "SUCCEEDED",
+    "reason": "REQUESTED_BY_CUSTOMER",
+    "reference_id": "YOUR_REFERENCE_ID_FOR_PARTIAL_REFUND",
+    "failure_code": null,
+    "refund_fee_amount": null,
+    "created": "2025-04-10T07:45:06.811060184Z",
+    "updated": "2025-04-10T07:45:06.811060244Z",
+    "refund_method": "DIRECT",
+    "payout_link_properties": null,
+}
+```
+
+This is how a partial refund request might appear on your Xendit dashboard:
+
+![Event history showing total received, refund requested, and charged amounts with dates.](/images/doc360/Screenshot_2025-04-10_at_15.52.28.png)
+
+Partial refund request
+
+## Refunds vs. Chargebacks
+
+It's crucial to understand the distinction between refunds and chargebacks. Refunds are initiated by you (the merchant) to return funds to a customer. Chargebacks, on the other hand, are disputes initiated by the cardholder directly through their bank, typically due to unauthorized transactions or service issues.

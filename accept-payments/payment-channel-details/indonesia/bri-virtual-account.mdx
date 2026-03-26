@@ -1,0 +1,374 @@
+---
+title: "BRI Virtual Account"
+---
+
+![](/images/doc360/image_68_.png)
+
+BRI Virtual Account is a payment channel provided by Bank Rakyat Indonesia (BRI), allowing customers to pay seamlessly using a unique virtual account number generated for each transaction. As one of the largest and most established banks in Indonesia, BRI is a trusted brand with a vast network, making this payment option accessible and popular.
+
+When customers opt for BRI VA during checkout, they receive a dedicated virtual account number. Payments can be made using mobile banking, internet banking, or ATMs. Once the payment is completed, you receive instant confirmation, ensuring a fast and reliable payment experience for your customers.
+
+---
+
+## Features
+
+|  |  |
+| --- | --- |
+| Channel Code | BRI\_VIRTUAL\_ACCOUNT |
+| Display Name | BRI Virtual Account |
+| Currency | IDR |
+| Country | ID |
+| Type | BANK TRANSFER |
+| Min Amount | 1 |
+| Max Amount | 50,000,000,000.00 |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Reusable Payment Code | ✓ |
+| Save | - |
+| Merchant Initiated Transaction | - |
+| Auth & Capture | - |
+| Partial Capture | - |
+| Multiple Partial Capture | - |
+| Desktop Support | - |
+| Mobile Support | - |
+| Custom Payment Code | ✓ |
+| Display Merchant Name | XENDIT, MERCHANT |
+| Display User Name | ✓ |
+| Set Expiry | ✓ |
+| Payment Request Expiry (hours) | - |
+| Payment Token Validity (years) | - |
+| Payment Processing Time (hours) | INSTANT |
+| Settlement Time | INSTANT |
+| Installments | - |
+| Refund | - |
+| Partial Refund | - |
+| Multiple Partial Refund | - |
+| Refund Validity (days) | - |
+| Payment Link | ✓ |
+| Fund Flow | AGGREGATOR, SWITCHER |
+
+## Payment flow
+
+Mobile banking
+
+1. Log in to BRI Mobile Banking
+2. Select Payment > Briva
+3. Enter virtual account number (e.g. 1328216932121)
+4. Enter payment amount
+5. Enter PIN
+6. Tap Send
+
+ATM
+
+1. Insert ATM Card
+2. Select preferred language
+3. Enter ATM PIN
+4. Select Other Menu > Payment > Other Payment > BRIVA
+5. Enter virtual account number (e.g. 1328216932121)
+6. Enter payment amount
+7. Confirm payment details and press YES
+
+[null](https://cdn.document360.io/217abc43-8677-41fb-a81d-fceeb1fa0358/Images/Documentation/BRI%20Virtual%20Account(1).MP4)
+
+## Crypto Merchant Integration: Payer Verification
+
+Recent regulations in Indonesia require additional verification steps for payments made through BRI virtual accounts on crypto platforms. This guide will help you implement the necessary changes to comply with these requirements while maintaining a smooth payment experience for your end users.
+
+> Pilot Feature Notice
+>
+> Payer verification is currently in pilot phase. You may encounter incomplete features, unexpected behavior, or changes to the API during development. We recommend thorough testing in sandbox environment and staying updated with our documentation for the latest changes.
+
+> Crypto Platform Exclusive
+>
+> This feature is only available for crypto platforms. If you operate a crypto platform and need access to this feature, please contact us at [help@xendit.co](mailto:help@xendit.co).
+
+What's Changed
+
+Starting in August 2025 (pending bank approval), all payments made to `BRI_VIRTUAL_ACCOUNT` must include payer verification data. This means you'll need to collect and verify the identity of end users making payments to ensure they match the registered account holder.
+
+This requirement only affects BRI virtual accounts and other channels that mention payer verification for crypto merchant. Other payment channels continue to work as before.
+
+New Prefixes/MID and Amount Limit
+
+As part of this change, new prefixes will be introduced along with its amount limit:
+
+- BRI VA:
+
+  - Prefix: Will be assigned differently to each crypto’s merchant
+  - Max Amount Limit: IDR 150,000,000
+
+Existing virtual accounts cannot be used with the new verification system and must be recreated using the new flow.
+
+### A. Integration Flow
+
+The verification process works by comparing the payer's bank account details with the information you provide when creating the virtual account. Here's how it flows:
+
+1. Create Virtual Account: Include customer verification data when setting up the virtual account
+2. End User Makes Payment: When an end user pays, their bank details are automatically checked
+3. Verification Result: You receive the verification status in the payment webhook
+4. Handle Result: Take appropriate action based on whether verification passed or failed
+
+### B. How to Integrate
+
+1. Virtual Account Creation
+
+When creating virtual accounts for BRI, you'll now need to include verification data in the `channel_properties`. This data helps verify that payments come from the correct source.
+
+All existing BRI virtual accounts must be recreated using this new flow. Previously created virtual accounts will not work with the verification system.
+
+Request - POST /v3/payment\_requests
+
+```json
+{
+  "reference_id": "crypto-user-12345",
+  "type": "REUSABLE_PAYMENT_CODE",
+  "country": "ID",
+  "currency": "IDR",
+  "channel_code": "BRI_VIRTUAL_ACCOUNT",
+  "channel_properties": {
+    "expires_at": "2024-12-31T23:59:59Z",
+    "display_name": "John Doe",
+    "verification_data": {
+      "customer_name": "John Doe",
+      "accepted_name_variations": ["Jogn Doe", "John D", "J. Doe"],
+      "allowed_bank_accounts": [
+        {
+          "bank_name": "BCA",
+          "account_number": "2876783233",
+          "account_name": "John Doe"
+        },
+        {
+          "bank_name": "MANDIRI",
+          "account_number": "1234567890",
+          "account_name": "John Doe"
+        }
+      ]
+    }
+  }
+}
+```
+
+Response
+
+```json
+{
+  "payment_request_id": "pr-90392f42-d98a-49ef-a7f3-abcezas123",
+  "status": "ACCEPTING_PAYMENTS",
+  "channel_code": "BRI_VIRTUAL_ACCOUNT",
+  "actions": [
+    {
+      "type": "PRESENT_TO_CUSTOMER",
+      "descriptor": "VIRTUAL_ACCOUNT_NUMBER",
+      "value": "87909123456789"
+    }
+  ]
+}
+```
+
+Understanding Verification Fields
+
+- `customer_name`: The exact name registered for this crypto account.
+- `accepted_name_variations`: Common variations of the customer's name (typos, abbreviations, etc.).
+- `allowed_bank_accounts`: List of bank accounts that are permitted to send payments to this virtual account. You can refer to [Indonesia bank channel names](/send-money/payout-channels/payout-coverage-indonesia#channel-codes) for `bank_name` , however we won’t do any validation for that parameter.
+
+2. Handle Verification Results
+
+When an end user makes a payment, you'll receive a webhook with verification results. The webhook includes information about whether the payer's details match your verification criteria.
+
+Note: The `verification_result` object will only be present for `BRI_VIRTUAL_ACCOUNT` payments using the new verification system.
+
+For comprehensive guidance on implementing webhooks, refer to our [webhook handling documentation](https://docs.xendit.co/docs/handling-webhooks). If you experience webhook delivery issues, check our [delayed webhooks guide](https://docs.xendit.co/docs/delayed-webhooks).
+
+Webhook Example
+
+```json
+{
+  "event": "payment.capture",
+  "business_id": "5f27a14a9bf05c73dd040bc8",
+  "created": "2025-07-03T07:00:27.200Z",
+  "data": {
+    "type": "REUSABLE_PAYMENT_CODE",
+    "status": "SUCCEEDED",
+    "country": "ID",
+    "created": "2025-07-03T07:00:30.200Z",
+    "updated": "2025-07-03T07:00:30.200Z",
+    "captures": [
+      {
+        "capture_id": "cptr-3ab8f72e-8811-4e34-81a9-a0f3bdbad6c1",
+        "capture_amount": 10001,
+        "capture_timestamp": "2025-07-03T07:00:30.200Z"
+      }
+    ],
+    "currency": "IDR",
+    "payment_id": "py-889cfe14-8a20-4fe6-823e-2363fc22ba9e",
+    "business_id": "5f27a14a9bf05c73dd040bc8",
+    "channel_code": "BRI_VIRTUAL_ACCOUNT",
+    "reference_id": "crypto-user-12345",
+    "capture_method": "AUTOMATIC",
+    "payment_details": {
+      "payer_name": "John Doe",
+      "payer_account_number": "2876783233",
+      "issuer_name": "MANDIRI",
+      "verification_result": {
+        "is_eligible": true,
+        "sender_verification": {
+          "result": "SENDER_MATCHED",
+          "reason": "Name matched"
+        },
+        "risk_assessment": {
+          "result": "NONE",
+          "reason": "No alert"
+        }
+      }
+    },
+    "payment_request_id": "pr-90392f42-d98a-49ef-a7f3-abcezas123"
+  },
+  "api_version": "v3"
+}
+```
+
+Verification Status Types
+
+| Status | Description | Action Required |
+| --- | --- | --- |
+| `SENDER_MATCHED` | Payer details match your verification data | Process payment normally |
+| `UNKNOWN` | Verification couldn't determine if details match due to network timeout or other technical issues | Do not treat as successful payment, instead do:   1. Verify the payment manually by matching the payment receipt from user with the KYC data. If it matches, you can process it as successful payment, or 2. If it doesn’t matches, refund the payment to the registered withdrawal account from user. |
+
+> Important Note on UNKNOWN Status
+>
+> The `UNKNOWN` verification result is unlikely to occur under normal circumstances, as ineligible payments should typically be rejected outright. However, network timeouts during the verification process may occasionally result in this status. When you receive an `UNKNOWN` result, the payment should not be considered successful and you should either verify it manually or process a refund to the registered withdrawal account.
+
+3. Updating Virtual Account Details
+
+If you need to update the verification data for an existing virtual account (for example, when an end user adds a new bank account or changes their registered name), follow these steps:
+
+Step 1: Cancel the Current Payment Request
+
+```json
+POST /v3/payment_requests/{payment_request_id}/cancel
+```
+
+Step 2: Create a New Payment Request
+
+Create a new payment request using the same virtual account number but with updated verification data:
+
+```json
+{
+  "reference_id": "crypto-user-12345-updated",
+  "type": "REUSABLE_PAYMENT_CODE",
+  "country": "ID",
+  "currency": "IDR",
+  "channel_code": "BRI_VIRTUAL_ACCOUNT",
+  "channel_properties": {
+    "expires_at": "2024-12-31T23:59:59Z",
+    "display_name": "John Doe",
+    "virtual_account_number": "87910123456789",
+    "verification_data": {
+      "customer_name": "John Doe",
+      "accepted_name_variations": ["Jogn Doe", "John D", "J. Doe"],
+      "allowed_bank_accounts": [
+        {
+          "bank_name": "BCA",
+          "account_number": "2876783233",
+          "account_name": "John Doe"
+        },
+        {
+          "bank_name": "MANDIRI",
+          "account_number": "1234567890",
+          "account_name": "John Doe"
+        },
+        {
+          "bank_name": "BNI",
+          "account_number": "9876543210",
+          "account_name": "John Doe"
+        }
+      ]
+    }
+  }
+}
+```
+
+This approach allows you to maintain the same virtual account number while updating the verification criteria.
+
+4. Testing Your IntegrationSimulate Successful Payments
+
+You can test successful payments in sandbox using the simulation endpoint:
+
+Request - POST /v3/payment\_requests/&#123;payment\_request\_id&#125;/simulate
+
+```json
+{
+  "amount": 100000
+}
+```
+
+Response
+
+```json
+{
+    "status": "PENDING",
+    "message": "A simulated payment for the specified payment request id is being processed. You will be informed of the result via a webhook."
+}
+```
+
+Test Verification Scenarios
+
+To test different verification outcomes, you can create virtual accounts with specific customer names:
+
+- Successful Verification: Use the exact name you specify in `customer_name`
+- Unknown Verification: Create a virtual account with customer name "Josua Doe" - this will return `verification_result.sender_verification.result: "UNKNOWN"`
+
+Example for Unknown Verification
+
+```json
+{
+  "channel_properties": {
+    "verification_data": {
+      "customer_name": "Josua Doe",
+      "accepted_name_variations": ["J. Doe"],
+      "allowed_bank_accounts": [...]
+    }
+  }
+}
+```
+
+This will generate a webhook with `"result": "UNKNOWN"` for testing purposes.
+
+### C. Additional Notes
+
+Recommended Rollout Plan
+
+To minimize risk during implementation, we recommend a phased rollout approach, start with a small percentage of your user base and scale up as confidence grows. This approach allows you to catch and fix issues before they affect your entire user base.
+
+Availability
+
+- Sandbox Environment: Available now for testing and development
+- Production Environment: Live activation for `BRI_VIRTUAL_ACCOUNT` is scheduled for the second week of August 2025, pending bank approval.
+
+### Frequently Asked Questions
+
+Q: What happens if I don't include verification data?  
+A: Payments to BRI virtual accounts will fail if verification data is missing after the feature goes live.
+
+Q: Can end users use any bank account to pay?  
+A: Only bank accounts listed in the `allowed_bank_accounts` field will be accepted. Payments from other accounts will be rejected.
+
+Q: What if an end user's name doesn't exactly match?  
+A: Use the `accepted_name_variations` field to include common variations of the end user's name.
+
+Q: Can I still use my existing virtual accounts?  
+A: No, existing virtual accounts cannot be used with the new verification system. You must recreate them using the new flow with verification data.
+
+Q: Do I need to implement this for all payment channels?  
+A: No, this requirement only applies to `BRI_VIRTUAL_ACCOUNT` channels or any channel that required payer verification process.
+
+Q: What should I do with "UNKNOWN" verification results?  
+A: Do not treat these as successful payments. Either process a refund automatically or conduct manual review before accepting the payment, as UNKNOWN results typically indicate network timeouts during verification.
+
+Q: Will the API change during the pilot phase?  
+A: Yes, since this is a pilot feature, there may be changes to the API structure, new fields, or modified behavior. Monitor our documentation for updates.
+
+Q: Can I keep the same virtual account number when updating verification details?  
+A: Yes, you can specify the same `virtual_account_number` in the new payment request after canceling the previous one.
+
+Q: How often do UNKNOWN verification results occur?  
+A: UNKNOWN results are rare and typically only occur due to network timeouts during the verification process. Under normal circumstances, ineligible payments should be rejected outright.

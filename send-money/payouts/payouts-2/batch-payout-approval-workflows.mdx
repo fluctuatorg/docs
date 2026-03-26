@@ -1,0 +1,77 @@
+---
+title: "Batch Payout approval workflows"
+---
+
+Multi-Level-Approval (MLA) is a feature available for Batch Payouts via Dashboard. It allows you to set up multiple levels of approval for batch payouts, enhancing security and control over your funds.
+
+## Key Features
+
+- Admin Control: Only users with `Admin` permissions can set up MLA.
+- Flexible Approver Assignment: A user can be an approver at multiple levels and across different categories.
+- Sequential Approval: Approvals must be done sequentially, starting from the lowest level to the highest.
+- Multiple Levels and Categories: You can add up to 8 approval levels per category and set up to 10 categories with different MLA settings.
+- Deactivation: To deactivate MLA for a category, simply delete the category.
+- Approver Visibility: The list of eligible approvers is visible on the Batch Payout’s transaction detail.
+- Initial Approval: Only users with `Approve` permission listed as the first-level approver in the relevant category can initiate the approval process.
+- Skip Level Approval:
+
+  - If the batch amount is less than the threshold for a level, and "Skip Level Approval" is not checked, approval is only needed up to that level.
+  - If the batch amount exceeds the threshold for a level, and "Skip Level Approval" is not checked, approval is needed at that level and higher levels.
+  - If the batch amount exceeds the threshold for a level, and "Skip Level Approval" is checked, approval from the next level is required, skipping the current level.
+
+## How to Enable MLA
+
+The MLA feature is automatically available if your business is eligible for Batch Payouts. To use MLA, at least one valid category must exist in the Disbursement Category & Approval section (admin-only action).
+
+1. Go to Settings > Disbursement Category & Approval
+2. Click + New Category
+3. Enter your category name and select your approvers
+4. Click Save
+
+This category will now appear in the Batch Payout creation process, allowing you to assign specific approvals.
+
+## Thresholds
+
+To refine your approval process, you can define thresholds that trigger specific approval levels:
+
+- Batch Threshold (Mandatory): This is the total monetary value of the entire Batch Payout. It dictates which approvers are required based on the overall payout amount.
+- Transaction Threshold (Optional): This sets a limit on the maximum value of any individual transaction within the Batch Payout.
+
+Approval logic:
+
+- When a Batch Payout is created, the system first checks the total batch amount against the defined batch thresholds. If the amount is below the first-level threshold, only the first-level approver is notified.
+- If both batch and transaction thresholds are configured, the system prioritizes the batch threshold check.
+
+## Understanding Categories
+
+Categories help organize batch payouts based on their purpose, making it easier to view and manage them. Each category can have unique approval settings, including different approvers, approval levels, and thresholds.
+
+- Creating Payouts Without a Category: If your business has active categories, assigning a category to a batch payout is mandatory. If no categories exist or all are inactive (0 approval levels), you can create a payout without assigning it to a category.
+- Deactivating Categories: Categories cannot be deactivated. However, an inactive "default" category may appear if MLA was previously enabled and then turned off. This category functions as if it's inactive. You can safely delete it.
+- Default Category:
+
+  - The default category is pre-selected when creating a new batch payout.
+  - New team members with `Approve` permission are automatically added as first-level approvers in the default category.
+  - Only one default category is allowed at a time. Changing the default category will automatically "un-default" the previous one.
+  - If a default category is deleted, the system assigns the oldest existing category as the new default.
+- Deleting Categories: To stop using a category, delete it, assign payouts to a different category, or select a different default category (admin-only actions).
+
+### Approvers
+
+- "Anyone" as Approver: This means any user with `Approve` permission can approve the batch payout.
+- "Level 1" (or higher) as Approver: Only users with `Approve` permission AND listed as an approver at that specific level can approve the batch payout. Click on `Level x` to see the list of eligible approvers for that level.
+- Missing Approvers: If no approvers are available at a certain level, it could be due to:
+
+  1. The batch payout being created before the MLA v2 update (October 25, 2022, GMT+7), and the assigned category has missing approvers or has been deleted.
+  2. Approvers being removed from the team member settings after the batch payout was created.
+- Solution for Missing Approvers:
+
+  1. For scenario 1: Add approvers to the missing level(s) in the default category or create a new category.
+  2. For scenario 2: Re-add the removed team members as approvers or modify the category to add new approvers. Then, delete and recreate the batch payout.
+- Categories with One Approval Level: These categories do not require threshold or skip-level settings. Batch payouts assigned to such categories only need one level of approval.
+- Deleting Approvers: Deleting an approver from a level does not remove them from the team or revoke their `Approve` role and permission.
+
+### Editing Batch Payout Settings
+
+- You cannot change the approval settings of an existing batch payout. Any changes to the category after batch creation will not affect that batch.
+- To alter the settings, delete the batch and create a new one after modifying the category.

@@ -1,0 +1,93 @@
+---
+title: "Request payment channel capabilities"
+---
+
+Once your account has passed verification and the Account Holder verification status is `PASSED`, you can start requesting capabilities for your Accounts. You will be [notified via webhook](/xenplatform/set-up-sub-accounts/api-verification/account-holder/account-holder-webhooks) when the verification for your sub-account is successful.
+
+To do this, you will need to use the `Update Account Holder` endpoint and input the capability’s `type` and `channel_code`.
+
+| Country | Type | Channel Codes |
+| --- | --- | --- |
+| Philippines | MONEY\_IN | PH\_CARDS, GCASH |
+| Thailand | MONEY\_IN | TH\_CARDS |
+
+```plaintext
+PATCH https://api.xendit.co/account_holders/{{account-holder-id}}
+```
+
+```json
+{
+    "capabilities": [
+        {
+            "type": "MONEY_IN",
+            "channel_code": "GCASH"
+        },
+        {
+            "type": "MONEY_IN",
+            "channel_code": "PH_CARDS"
+        }
+    ]
+}
+```
+
+If all requirements for the payment channels are already present in your Account Holder object, the verification process will begin. We will send you a [webhook](/xenplatform/set-up-sub-accounts/api-verification/account-holder/account-holder-webhooks) once there is a status update on the capabilities request.
+
+## Requirements for PH cards
+
+There are additional requirements for `PH_CARDS` in the example below, regardless of what is chosen for `can_accept_usd` or `can_accept_recurring`:
+
+- Tax identification number of each individual is required
+- A minimum of 1 Incorporator and 1 PIC is required for `individual_details` (`type` and `role` parameters)
+- An address object is required for each `individual_details`
+
+Below is a sample request payload to request a `Cards` capability for a a Philippines corporation merchant
+
+```plaintext
+PATCH https://api.xendit.co/account_holders/{{account-holder-id}}
+```
+
+```json
+{
+   "business_detail": {
+       "can_accept_usd": true,
+       "can_accept_recurring": true,
+       "projected_monthly_transaction_count": 10,
+       "average_monthly_basket_size": 10,
+       "tax_identification_number": "123456789"
+   },
+   "individual_details": [
+       {
+           "given_names": "test",
+           "surname": "test",
+           "phone_number": "+639191234567",
+           "email": "mail@domain.co",
+           "nationality": "PH",
+           "place_of_birth": "PH",
+           "date_of_birth": "2000-02-02",
+           "gender": "MALE",
+           "address": {
+               "country": "PH",
+               "district": "Quezon City",
+               "sub_district": "U.P. campus",
+               "street_line1": "incorporator street line 1",
+               "street_line2": "incorporator street line 2",
+               "city": "Manila",
+               "province_state": "Metro Manila",
+               "postal_code": "12345"
+           },
+           "tax_identification_number": "12345678",
+           "type": "INCORPORATOR",
+           "role": "owner"
+       },
+       {
+           "phone_number": "+639191234567",
+           "type": "PIC",
+           "role": "contact person"
+       }
+   ],
+   "capabilities": [{
+       "type": "MONEY_IN",
+       "channel_code": "PH_CARDS"
+   }]
+}
+```

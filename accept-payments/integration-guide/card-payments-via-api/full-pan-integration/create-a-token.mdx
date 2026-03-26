@@ -1,0 +1,164 @@
+---
+title: "Pay and save (tokenizing the card)"
+---
+
+> You need to be fully PCI-DSS level 1 compliant to be allowed to do full PAN integrations
+>
+> Reach out to Xendit support in case you would like to see this flow activated, we will ask you to provide proof of PCI-DSS compliance.
+
+This guide is applicable for PCI-DSS level 1 compliant merchants who store their card details with Xendit.
+
+*These scenarios all createtokens, which can be used in follow up transactions.*
+
+This describes how to create at token for one of the following scenarios:
+
+- One click (store a card for a customer, for customer initiated transactions)
+- Using a stored card (token) for a transaction
+
+Request - POST `/v3/payment_requests`
+
+```json
+{
+  "reference_id": "YOUR_REFERENCE_ID",
+  "type": "PAY_AND_SAVE",
+  "country": "ID",
+  "currency": "IDR",
+  "request_amount": 10000,
+  "capture_method": "AUTOMATIC",
+  "channel_code": "CARDS",
+  "customer": {
+        "reference_id": "YOUR_CUSTOMER_REFERENCE_ID",
+        "type": "INDIVIDUAL",
+        "email": "test@yourdomain.com",
+        "mobile_number": "+6212345678",
+        "individual_detail": {
+            "given_names": "Lorem",
+            "surname": "Ipsum"
+        }
+    },
+  "channel_properties": {
+    "card_details": {
+            "card_number": "4000000000001091",
+            "cvn": "123",
+            "cardholder_first_name": "cardHolderFirstName",
+            "cardholder_last_name": "cardHolderLastName",
+            "cardholder_email": "edrich@xendit.co",
+            "expiry_month": "12",
+            "expiry_year": "2029"
+        },
+    "failure_return_url": "https://xendit.co/failure",
+    "success_return_url": "https://xendit.co/success",
+    "statement_descriptor": "Goods"
+  },
+  "description": "Description example",
+  "metadata": {
+    "metametadata": "Your meta data"
+  }
+}
+```
+
+Response - POST `/v3/payment_requests`
+
+```json
+{
+    "payment_request_id": "pr-UNIQUE_PAYMENT_REQUEST_ID",
+    "country": "ID",
+    ....
+    "type": "PAY_AND_SAVE",
+    "actions": [
+        {
+            "type": "REDIRECT_CUSTOMER",
+            "descriptor": "WEB_URL",
+            "value": "https://redirect.xendit.co/authentications/68c3b6cef51176d7246173ea/render?api_key=xnd_public_development_kSJeNzbAo6DEkX1poFWVLBsmR0nJ8WnjpdQpf4dfIPXgDBltJmH7CZGVUfWWI"
+        }
+    ]
+}
+```
+
+2. Store the payment\_request\_id and redirect to the authentication page
+
+Redirect your customer to the [authentication page](/accept-payments/integration-guide/card-payments-via-api/cards-authentication-3ds2) provided by the `action_url` from the response object. This is where the cardholder completes the 3D Secure authentication.
+
+3. Customer completes authentication
+
+After successfully authenticating, your customer will be redirected to your `success_return_url`. If authentication fails, they will be redirected to your `failure_return_url`.
+
+4. Receive the webhook
+
+Xendit will send a payment webhook to your configured webhook endpoint, indicating the final status of the transaction. You can match this webhook with the `payment_request_id` you stored earlier.
+
+When successful, this response will contain a `payment_token_id` which you can use for [follow up transactions](/accept-payments/integration-guide/card-payments-via-api/full-pan-integration/create-a-token#follow-up-transaction-using-a-token).
+
+## Retrieving the card token
+
+If the payment is successful the card token will be retrievable by listening to the webhook and is called `payment_token_id`.
+
+It can also be retrieved by making a GET request with the `payment_request_id` to `/v3/payment_requests`.
+
+Request - GET `/v3/payment_requests/YOUR_PAYMENT_REQUEST_ID`
+
+Response
+
+```json
+{
+    "payment_request_id": "pr-YOUR_PAYMENT_REQUEST_ID",
+    "country": "ID",
+    "currency": "IDR",
+    "business_id": "YOUR_BUSINESS_ID",
+    "reference_id": "YOUR_REFERENCE_ID",
+    "description": "Description examples",
+    "created": "2025-09-10T05:59:42.148Z",
+    "updated": "2025-09-10T06:00:05.032Z",
+    "status": "SUCCEEDED",
+    "capture_method": "AUTOMATIC",
+    "latest_payment_id": "py-YOUR_PAYMENT_ID",
+    //....
+    //This is the field needed for follow up transactions:
+    "payment_token_id": "pt-YOUR_PAYMENT_TOKEN_ID", 
+    "type": "PAY_AND_SAVE",
+    "actions": []
+}
+```
+
+## Follow up transaction using a token:
+
+Request - POST `/v3/payment_requests` (this sample request, skips authentication (3DS)).
+
+```json
+{
+    "country": "ID",
+    "currency": "IDR",
+    "request_amount": 300000,
+    "reference_id": "YOUR_REFERENCE_ID",
+    "type": "PAY",
+    "payment_token_id":"pt-YOUR_PAYMENT_TOKEN_ID",
+    "channel_properties": {
+        "skip_three_ds": true,
+        "success_return_url": "https://xendit.co/success",
+        "failure_return_url": "https://xendit.co/failure"
+    }
+}
+```
+
+This will lead to an authentication or, in this case of `skip_three_ds: true` a transaction.
+
+Response - POST `/v3/payment_requests`
+
+```json
+{
+    "payment_request_id": "pr-UNIQUE_PAYMENT_REQUEST_ID",
+    "country": "ID",
+    "currency": "IDR",
+    "business_id": "YOUR_BUSINESS_ID",
+    "reference_id": "YOUR_REFERENCE_ID",
+    ....
+    "channel_properties": {
+        ....
+        "card_on_file_type": "CUSTOMER_UNSCHEDULED",
+        "transaction_sequence": "SUBSEQUENT"
+    },
+    "payment_token_id": "pt-YOUR_PAYMENT_TOKEN_ID", // The payment token ID used in the payment request
+    "type": "PAY",
+    "actions": []
+}
+```

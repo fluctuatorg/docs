@@ -1,0 +1,77 @@
+---
+title: "Detailed transactions report"
+---
+
+The Detailed Transactions Report beta feature enhances transaction reporting with improved search capabilities and additional data fields.
+
+## Download Detailed Transactions Reports
+
+- On-Demand export: Download the Detailed Transactions Report directly from your dashboard [Transactions](https://dashboard.xendit.co/transactions-new) page on the Transaction tab.
+- Scheduled Delivery: Not available
+- Via API: Automate report generation and export via the [report endpoint](https://developers.xendit.co/api-reference/#report-object).
+
+### Available Columns
+
+| Field | Description |
+| --- | --- |
+| Status | The status of the transaction.   - FAILED: The transaction has failed. - PARTIALLY\_REFUNDED: The transaction has been partially refunded. - PENDING: The transaction is still pending processing. This refers to money-out transactions when the amount is still on hold. - REFUND\_PENDING: A refund is being processed. - REFUNDED: The transaction was fully refunded. - REVERSED: The transaction was reversed by Xendit. - SUCCESSFUL: The transaction was successfully completed. - VOIDED: The transaction was voided by the merchant. |
+| Type | The type of the transaction.  Available types:   - BATCH\_DISBURSEMENT: disbursement transaction that involves sending multiple payments to different recipients at once. - DISBURSEMENT: The disbursement of a money-out transaction. - IN\_PERSON\_PAYMENT: Transactions that occur through direct interactions between the customer using a payment terminal. - PAYMENT: The payment that includes all variations of money-in transactions. - PLATFORM\_FEE: Fees deducted from transactions for the use of XenPlatform services. - REFUND: A refund transaction created to refund an amount from a money-in transaction. - REMITTANCE\_PAYOUT: The remittance payout transaction. - TRANSFER: The transfer transaction between Xendit accounts. This can be a transfer in or out. - WITHDRAWAL: Transactions from your Xendit account to your own bank account. - OTHER: This category is used for transactions that do not neatly fit into the other specified types, covering a variety of transactional scenarios that are less common. |
+| Payment Method | The payment method of the transaction.  Available payment methods:   - DISBURSEMENT and REMITTANCE\_PAYOUT: BANK and CASH - PAYMENT: CARDS, CARDLESS\_CREDIT, DIRECT\_DEBIT, EWALLET, PAYLATER, QR\_CODE, RETAIL\_OUTLET, VIRTUAL\_ACCOUNT - TRANSFER: XENPLATFORM |
+| Payment Channel | The channel used to identify the source of the transaction. |
+| Account Number | Account number field is only valid for the following products:   - Receiver's Bank Account Number: Disbursement, Batch Disbursement, Remittance Payout, Remittance, Remittance Collection - Sender's Bank Account Number: Virtual Account Payment, Direct Bank Transfer - Sender's E-Wallet Account Number: eWallet Payment (only for tokenization) |
+| Currency | The currency of the transaction. |
+| Amount | The nominal amount for the transaction.  The number of decimal places varies for each currency according to ISO 4217 standards. |
+| Total Fee Amount | The amount of the Xendit fee for this transaction. |
+| Total VAT Amount | The amount of Value Added Tax (VAT) for this transaction. |
+| Net Amount | The net amount of the transaction after fees and VAT are deducted. |
+| Reference | The reference of the transaction. In some products, this is the same as external\_id. This is the ID that you generate and can be used for reconciliation. |
+| Transaction ID | The unique transaction ID in Xendit systems |
+| Invoice ID | The invoice ID, if applicable. |
+| Request Time | The timestamp when the transaction is created.  Timestamps are in ISO 8601 format. |
+| Payment Time | The timestamp when the end-user completed the payment.  Timestamps are in ISO 8601 format. |
+| Timezone | The timezone used in the timestamps. It will always be +0000 UTC when the report is generated via API. When exported from the dashboard, the report will use the user's configured timezone.  Timestamps are in ISO 8601 format. |
+| Description | The description of the transaction. |
+| Settlement Status | Settlement status of a transaction:   - Pending: Transaction amount has not been settled to the merchant's balance. - Settled: Transaction has been settled to the merchant's balance. - Early settled: Transaction has been settled to the merchant's balance via early settlement. - Empty (Failed Disbursements & Chargeback Deduction) |
+| Actual Settlement Time | The actual time when the settlement was completed. |
+| Estimated Settlement Time | The estimated time for when the settlement is expected to be completed before the settlement occurs. |
+| Product ID | Xendit generated ID sent to you via API callback/response:   - Credit Card: id - Virtual Account: id - eWallet: data.id (remove ewc\_ from callback value if present) - QR Code: data.id (remove qrpy\_ from callback value if present) - Direct Debit: id - Retail Outlets (OTC): payment\_id - PayLater: data.id (remove plc\_ from callback value if present) - Disbursements: data.id |
+| Failure Reason | The reason for failure, if applicable. |
+| VA Number | The Virtual Account Number, if applicable. |
+| VA Name | The name associated with the Virtual Account, if applicable. |
+| Transfer remark | A remark or a note that is inputted by the payer when they are about to make a payment. Applies to VA payments |
+| Channel Category | The channel category for Virtual Account (VA) payments, if applicable. |
+| Payment Code | The payment code for over-the-counter (OTC) payments, if applicable. |
+| Payment Code Name | The payment code name for over-the-counter (OTC) payments, if applicable. |
+| Payer Phone Number | The payer's phone number for eWallet payments, if applicable. |
+| Partner Receipt ID | The partner receipt ID for Direct Debit, eWallet, OTC, or QR Code transactions, if applicable. |
+| Connector Reference | The connector reference for eWallet transactions, if applicable. |
+| User Receipt ID | The user receipt ID for QR Code transactions, if applicable. |
+| QR ID | The QR ID of the transaction, if applicable. |
+| QR Acquirer | The QR acquirer of the transaction, if applicable. |
+| Channel Reference ID | The channel reference ID for Direct Debit transactions, if applicable. |
+| Payment Metadata | Additional metadata related to the payment. |
+| Payment Request ID | The payment request ID of the payment. |
+| Account Identifier | The account number for DISBURSEMENT, REMITTANCE\_PAYOUT, and WITHDRAWAL transactions. |
+| Account Name | The recipient's account holder name entered in the Disbursement or Payout request. |
+| Account Holder Name | The account holder name for DISBURSEMENT, REMITTANCE\_PAYOUT, and WITHDRAWAL transactions. |
+| Partner | Indicates which partner processed the transaction. |
+| Payment Refund ID | The reference ID of the refund. |
+| Invoice Description | The description defined in the invoice. |
+| Customer Object ID | The unique identifier of the customer object, if referenced in the transaction. |
+| Customer Object Surname | The surname of the customer from the customer object, if referenced in the transaction. |
+| Customer Object Given Names | The given names of the customer from the customer object, if referenced in the transaction. |
+| Customer Object Email | The email address of the customer from the customer object, if referenced in the transaction. |
+| Customer Object Reference ID | The reference ID of the customer object, if referenced in the transaction. |
+| Customer Object Mobile Number | The mobile number of the customer from the customer object, if referenced in the transaction. |
+| Payment Acceptance Model | This field is only applicable for Virtual Account or Card transactions. |
+| Transaction Billing Label | An additional identifier of a transaction for xendit fee computation purpose . Available values include:- Shopee: E-Wallet or QR |
+| Batch Disbursement ID | The ID of the batch disbursement. This is only available for disbursements created using the Batch Disbursement feature. |
+| Batch Disbursement Reference | The reference of the batch disbursement. This is only available for disbursements created using the Batch Disbursement feature. |
+| Source | The QR payment source of funds, if applicable |
+| Sender name | The sender name for remittance VA, if applicable |
+| Remittance ID | The ID of Remittance. This is only applicable for remittance transactions. |
+| Remittance Collection VA ID | The ID of Remittance Collection VA. This is only applicable for Remittance Collection transactions. |
+| Plan ID | Xendit unique ID to identify a subscriptions plan. Returned on the create plan API response. This is only available for subscriptions payment. |
+| Cycle ID | Xendit unique ID to identify a cycle of subscriptions to refer one specific instance of subscriptions plan's action. Cycle object is generated from the subscriptions plan object where the subscriptions behavior is defined. This is only available for subscriptions payment. |
+
+Data is available in Detailed Reports starting from January 2024.

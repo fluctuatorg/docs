@@ -1,0 +1,29 @@
+---
+title: "Payouts for sub-accounts"
+---
+
+![](/images/doc360/xp-step-4.webp)
+
+As Master Account, you can request payouts from your merchant’s balance for various purposes (withdrawals, refunds, vendor payments). The payout options available vary by sub-account type.
+
+| Payout Option | Owned Sub-Accounts | Managed Sub-Accounts |
+| --- | --- | --- |
+| Payout | Master Account can create payouts on behalf of sub-accounts. Sub-accounts can execute via their own Dashboards. | Master Account can create payouts on behalf of sub-accounts. Sub-account users can execute via their own Dashboards. |
+| Withdrawal | Only Master Account can withdraw funds. Sub-account balances must be disbursed or transferred to the Platform. | Sub-account users can execute via their own Dashboards. |
+| Auto-withdrawal | Master Account can setup their own auto-withdrawal schedules | Sub-account users can setup their own auto-withdrawal schedules |
+
+## Create Payouts for your merchants
+
+As Master Account, you can use the your API key and disburse funds from sub-account balances via API:
+
+- [Create payout](/send-money/integration-guide-2/integration-payouts#before-you-start) with an additional header parameter `for-user-id`
+- Input the `id` of the sub-account that you want to make a payout for
+
+## Withdrawals for Sub-Accounts
+
+There are two configurations for sub-accounts that has access to withdrawals:
+
+1. `MANAGED` type sub-accounts
+2. Sub-accounts created with [custom](/xenplatform/set-up-sub-accounts/sub-accounts) `configurations` via API, with the `allow_withdrawals` set to `true`
+
+[This page](/balance/withdrawal) explains how users can add their bank accounts and withdraw funds to their banks.

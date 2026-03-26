@@ -1,0 +1,19 @@
+---
+title: "Testing xenPlatform features"
+---
+
+Sub-accounts can be created while your master account is still in [Test Mode](/get-started/your-dashboard). Test sub-accounts allow you to create mock transactions using your test API key and see the transactions appear on your dashboard in Test Mode. With xenPlatform activated, you can also simulate routing payments between accounts.
+
+Note that there are some functions that are not available in Test Mode:
+
+|  | Available in Test Mode | Available in Live Mode |
+| --- | --- | --- |
+| Create any sub-account | ✅ | ✅ |
+| Log in to sub-accounts | ❌ | ✅ |
+| Activate Managed sub-accounts | ❌ | ✅ |
+| “Account Updated” webhook event | ❌ | ✅ |
+| Verify sub-accounts using Dashboard | ❌ | ✅ |
+| Verify sub-accounts using `/account_verification` API | `OWNED` type only | ✅ |
+| Payments, Split and Transfers | ✅ | ✅ |
+| Account Holder API (Legacy) | ❌ | ✅ |
+| Delete sub-accounts | ✅ | ❌ |

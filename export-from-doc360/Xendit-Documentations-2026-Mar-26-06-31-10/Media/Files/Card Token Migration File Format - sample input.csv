@@ -1,0 +1,19 @@
+business_id,card_number,card_expiry_month,card_expiry_year,reference_id,network_transaction_id,card_holder_first_name,card_holder_last_name,card_holder_email,card_holder_phone_number,billing_details_first_name,billing_details_last_name,billing_details_email,billing_details_phone_number,billing_details_address_line_1,billing_details_address_line_2,billing_details_address_postal_code,billing_details_address_city,billing_details_address_state,billing_details_address_country
+"Your Xendit Business ID.
+
+Required when migrating for multiple subaccounts.","Full card number
+
+Required","Card expiry month in two-digit format, e.g. 09
+
+Required","Card expiry year in four-digit format, e.g. 2028
+
+Required","A unique identifier for the card. Must not be duplicated.
+
+Required","Transaction identifier returned by the scheme.
+
+Optional, but recommended to improve success rate of future charges.",Card holder's first name shown in card,Card holder's last name shown in card,Card holder's email,"Card holder's phone number or mobile number.
+
+Use +(country_code) as prefix, with no - and/or blank space",First name of the billing details,Last name of the billing details,Email of the billing details,"Phone number of the billing details.
+
+Use +(country_code) as prefix, with no - and/or blank space","Line 1 of street address e.g., building name and apartment number","Line 2 of street address e.g., street number and name","Postal, zip or rural delivery code, if applicable","City, village or town as appropriate","Geographic area, province, state, or region, if applicable. If the user is USA citizen, make sure to use state code (e.g put CA instead of California)",2-letter ISO 3166-2 country code for the customer's country of residence
+65fcff75f1c843334493d0e6,4000000000001091,02,2028,ref-id,0429MCC070564,John,Doe,test@xendit.co,+621234567890,John,Doe,john@xendit.co,+621234567890,"Ruko Grand Panglima Polim, Blok E",Panglima Polim IV,993448,Jakarta Selatan,DKI Jakarta,ID

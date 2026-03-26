@@ -1,0 +1,113 @@
+---
+title: "Pay with authentication (3DS2)"
+---
+
+> You need to be fully PCI-DSS level 1 compliant to be allowed to do full PAN integrations
+>
+> Reach out to Xendit support in case you would like to see this flow activated, we will ask you to provide proof of PCI-DSS level 1 compliance.
+
+Use Case:  
+Perform a card payment that triggers 3D Secure authentication with a full card number. This flow is used for customer-initiated transactions where strong customer authentication is required. (Guest checkout flow)
+
+1. Perform the payment request
+
+Request POST `v3/payment_requests`
+
+```json
+{
+  "reference_id": "UNIQUE_REFERENCE_ID",
+  "type": "PAY",
+  "country": "ID",
+  "currency": "IDR",
+  "request_amount": 10000,
+  "capture_method": "AUTOMATIC", // Indicates whether the transcaction should be captured or not
+  "channel_code": "CARDS",
+  "channel_properties": {
+    "card_details": {
+      "cvn": "123",
+      "card_number": "4000000000001091",
+      "cardholder_first_name": "cardholderFirstName",
+      "cardholder_last_name": "cardholderLastName",
+      "cardholder_email": "cardholder_email_address@gmail.co",
+      "expiry_month": "12",
+      "expiry_year": "2029"
+    },
+    "failure_return_url": "https://xendit.co/failure",
+    "success_return_url": "https://xendit.co/success",
+    "statement_descriptor": "Goods"
+  },
+  "description": "Description example",
+  "metadata": {
+    "metametadata": "metametametadata"
+  }
+}
+```
+
+Response POST `v3/payment_requests`
+
+```json
+{
+    "payment_request_id": "pr-UNIQUE_PAYMENT_REFERENCE_ID",
+    "country": "ID",
+    "currency": "IDR",
+    "business_id": "YOUR_BUSINESS_ID",
+    "reference_id": "UNIQUE_REFERENCE_ID",
+    "description": "Description examples",
+    "metadata": {
+        "metametadata": "metametametadata"
+    },
+    "created": "2025-07-31T02:29:55.570Z",
+    "updated": "2025-07-31T02:29:55.570Z",
+    "status": "REQUIRES_ACTION",
+    "capture_method": "AUTOMATIC",
+    "channel_code": "CARDS",
+    "request_amount": 10000,
+    "channel_properties": {
+        "success_return_url": "https://xendit.co/success",
+        "failure_return_url": "https://xendit.co/failure",
+        "skip_three_ds": false,
+        "statement_descriptor": "Goods",
+        "card_details": {
+            "masked_card_number": "400000XXXXXX1091",
+            "expiry_month": "12",
+            "expiry_year": "2029",
+            "fingerprint": "61a443574a7d750020465c79",
+            "type": "CREDIT",
+            "network": "VISA",
+            "country": "ID",
+            "issuer": "PT BANK RAKYAT INDONESIA TBK",
+            "cardholder_first_name": "shopperFirstName",
+            "cardholder_last_name": "shopperLastName",
+            "cardholder_email": "shopper@sample.com"
+        },
+        "billing_information": {
+            "country": "",
+            "street_line1": null,
+            "street_line2": null,
+            "city": null,
+            "province_state": null,
+            "postal_code": null
+        }
+    },
+    "type": "PAY",
+    "actions": [
+        {
+            "type": "REDIRECT_CUSTOMER",
+            "descriptor": "WEB_URL",
+            "value": "https://redirect.xendit.co/authentications/688ad524d9cfdab137d7a615/render?api_key=xnd_public_development_kSJeNzbAo6DEkX1poFWVLBsmR0nJ8WnjpdQpf4dfIPXgDBltJmH7CZGVUfWWI"
+        }
+    ]
+}
+```
+
+2. Redirect to the authentication page
+
+Redirect your customer to the [authentication page](/accept-payments/integration-guide/card-payments-via-api/cards-authentication-3ds2) provided by the `action_url` from the response object. This is where the cardholder completes the 3D Secure authentication.
+
+3. Customer completes authentication
+
+After successfully authenticating, your customer will be redirected to your `success_return_url`. If authentication fails, they will be redirected to your `failure_return_url`.
+
+4. Receive the webhook
+
+Xendit will send a payment webhook to your configured webhook endpoint, indicating the final status of the transaction. You can match this webhook with the `payment_request_id` you stored earlier.

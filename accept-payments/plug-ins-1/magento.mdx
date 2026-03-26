@@ -1,0 +1,87 @@
+---
+title: "Magento"
+---
+
+Magento is an open-source e-commerce platform that empowers businesses to establish a robust online presence. It provides tools and features for managing online stores, customizing storefronts, and scaling businesses effectively.
+
+To enhance your e-commerce experience, the Xendit Plugins, available on the Magento Marketplace, enables online payment integration for your Magento store. With a few simple configurations, you can accept a wide range of payment methods through Xendit.
+
+Follow this guideline to start integrating Xendit with your Magento store.
+
+## Requirements
+
+Before installing the Xendit Payments Extension into your Magento store, please ensure that all the requirements below are completed:
+
+1. Magento Enterprise Edition or Magento Community Edition
+2. Magento version at 2.2.5 or above
+3. PHP 7.0.33 or above
+
+## Installation
+
+Configuration on Xendit Dashboard
+
+Here are steps that you need to do in Integrating with Xendit:
+
+1. Register or sign in on Xendit
+2. Get your API Key from your Xendit Dashboard
+3. Go to Settings menu
+4. Click on API Key in Developers Section
+5. Click Generate Secret Key
+
+   1. Click write on money - in
+   2. Click none on money - out
+   3. Click Generate Key, then you will get your API Key that you can copy it later to integrate Xendit with your Magento store
+
+Installation of Xendit Extension
+
+There are two types of installations that available for you to use Xendit as your payment gateway, which are:
+
+1. Get Xendit extension from Magento Marketplace via composer
+2. Download and unzip Xendit Payments extension manually
+3. Get Xendit Extension from Magento Marketplace Via Composer
+
+Please follow these steps to use Xendit as your payment on Magento:
+
+1. Download the Xendit Payment Extension from Magento Marketplace
+2. Go to the setting page by navigating to Stores -> Configuration -> Sales -> Payment Method
+3. Copy Xendit Public Key on Xendit Dashboard to your Magento Payment Method Settings
+4. Copy Xendit Secret Key on Xendit Dashboard to your Magento Payment Method Settings
+5. Click Save
+
+Once you save the settings and enable Xendit on the setting page, you should see Xendit's payment methods on payment section during checkout flow.
+
+Download and Unzip Xendit Payments Extension Manually
+
+Please follow these steps to integrate with Xendit:
+
+1. Download and unzip extension source code
+2. Copy the inner Xendit folder into your MAGENTO\_DIR/app/code directory on your store's webserver. You may not have the code folder by default, you can proceed to create it manually.
+3. Go to your MAGENTO\_DIR, run these commands:
+
+   ```plaintext
+   php bin/magento module:status. You should see Xendit_M2Invoice on list of disabled modules.
+
+   php bin/magento module:enable Xendit_M2Invoice
+
+   php bin/magento setup:upgrade
+
+   Run php bin/magento module:status again to ensure Xendit_M2Invoice is enabled already.
+
+   You should flush Magento cache by using php bin/magento cache:flush
+
+   Compile Magento with newly added module by using php bin/magento setup:di:compile
+   ```
+
+### Optional: Firewall Whitelisting
+
+If you happen to use firewall, there's an optional step, which is to whitelist Xendit Callback URL in order to avoid unreceived callback:
+
+Magento: &lt;merchant\_site&gt;/xendit/checkout/notification
+
+You can input the URL when creating firewall rules. Example below is the display if you're using Cloudflare:
+
+![](/images/doc360/image_100_.png)
+
+## Payment Flow
+
+![](/images/doc360/image_99_.png)

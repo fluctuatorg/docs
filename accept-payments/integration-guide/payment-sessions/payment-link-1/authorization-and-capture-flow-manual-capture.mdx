@@ -1,0 +1,98 @@
+---
+title: "Authorization and Capture Flow (Manual Capture)"
+---
+
+In addition to one-time automatic payments, Payment Link also support an authorization and capture flow (manual capture). This allows you to:
+
+- Authorize a customer’s payment method during checkout.
+- Capture the funds later (e.g., after confirming stock, shipping, or service fulfillment).
+
+This flow is commonly used by eCommerce, marketplaces, travel, and on-demand services.
+
+## How it works
+
+1. Create a Payment Session with `capture_method: MANUAL`
+2. Redirect the end user to Xendit-hosted page
+3. End user completes payment in Xendit-hosted page
+4. Payment is AUTHORIZED (funds held, not yet captured)
+5. You receive `payment_session.completed`
+6. Capture the payment via Payment API when ready
+7. Xendit sends `payment.capture` webhook
+
+## How to integrate
+
+1. When your customer is ready to proceed with a payment, your system should create a Payment Session with `capture_method: MANUAL` using the example payload below. This will authorize the payment first (placing a hold on the funds) and allow you to capture the payment at a later time.
+
+Request - POST /sessions
+
+```json
+{
+    "reference_id": "{{$YOUR_REFERENCE_ID}}",
+    "session_type": "PAY",
+    "mode": "PAYMENT_LINK",
+    "capture_method": "MANUAL",
+    "amount": 150000,
+    "currency": "IDR",
+    "country": "ID",
+    "customer": {
+        "reference_id": "{{$randomUUID}}",
+        "type": "INDIVIDUAL",
+        "email": "customer@yourdomain.com",
+        "mobile_number": "+628123456789",
+        "individual_detail": {
+            "given_names": "John",
+            "surname": "Doe"
+        }
+    },
+    "success_return_url": "https://yourcompany.com/order/complete",
+    "cancel_return_url": "https://yourcompany.com/order/cancel"
+}
+```
+
+Response - POST /sessions
+
+```json
+{
+    "payment_session_id": "ps-67527107dda8b2513acdaef0",
+    "created": "2024-12-06T03:35:36.032Z",
+    "updated": "2024-12-06T03:35:36.032Z",
+    "status": "ACTIVE",
+    "reference_id": "b767f88f-b5bc-4836-9c47-c14261909dec",
+    "currency": "IDR",
+    "amount": 150000,
+    "country": "ID",
+    "customer_id": "cust-fe8743c3-f554-4d25-a0e9-9980226c4b1b",
+    "expires_at": "2024-12-06T04:05:35.049Z",
+    "session_type": "PAY",
+    "capture_method": "MANUAL",
+    "mode": "PAYMENT_LINK",
+    "locale": "en",
+    "business_id": "62440e322008e87fb29c1fd0",
+    "success_return_url": "https://yourcompany.com/order/complete",
+    "cancel_return_url": "https://yourcompany.com/order/cancel",
+    "payment_link_url": "https://dev.xen.to/qZx5RD_7"
+}
+
+```
+
+2. Once the Payment Session is created, redirect your end user to the Xendit-hosted checkout page using the `payment_link_url` from the response.
+3. Your customer will complete the authorization flow on the Xendit-hosted page
+4. Upon successful authorization, Xendit will send a `payment_session.completed` webhook. The webhook contains the `payment_id` with status `AUTHORIZED`. You should store the `payment_id,`mark the order as authorized, andcapture the payment once the order or service is confirmed.
+
+## How to capture an authorized payment
+
+To capture an authorized payment, use the [Payment API v3 capture endpoint](https://docs.xendit.co/apidocs/capture-payment) with the `payment_id` obtained from the authorization step.
+
+Request - `POST /payments/{payment_id}/capture`
+
+```json
+{   
+   "capture_amount": 10000 
+} 
+```
+
+If successful, you will received the `payment.capture` webhook the payment status will change to `CAPTURED`.
+
+Uncaptured authorizations are valid for 7 days. If the payment is not captured within this period, the authorization will automatically expire and the funds will be released to the customer.
+
+If you intend to cancel the authorization before capturing it, you can call the [Cancel Payment endpoint](https://docs.xendit.co/apidocs/cancel-payment) using the same `payment_id`. This will void the authorization and release the held funds.

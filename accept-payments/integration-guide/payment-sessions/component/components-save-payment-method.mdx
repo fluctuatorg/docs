@@ -1,0 +1,72 @@
+---
+title: "Save Payment Method"
+---
+
+Payment Sessions allow you to securely collect and store a customer’s payment method without charging them immediately. This flow is commonly used during account registration or inside a “My Account” page, enabling faster and frictionless future payments. No funds are captured in this flow. Instead, Xendit returns a `payment_token_id` that can be used for future merchant-initiated or customer-initiated payments.
+
+Example usage
+
+- Account registration: Save a card or bank account during sign-up for future billing.
+- Subscription setup: Collect and verify a payment method before starting recurring charges.
+- Postpaid services: Verify a customer’s ability to pay before service usage.
+
+## How to integrate
+
+Refer to the [Xendit Components integration guide](https://docs.xendit.co/docs/components-overview) for the implementation.
+
+Below is the guideline for the Payment Session request for a save payment method flow. When your customer chooses to add a payment method, create a Payment Session with `session_type=SAVE` and `mode=COMPONENTS`.
+
+Request - `POST /sessions`
+
+```json
+{
+    "reference_id": "{{$YOUR_REFERENCE_ID}}",
+    "session_type": "SAVE",
+    "mode": "COMPONENTS",
+    "amount": 0,
+    "currency": "IDR",
+    "country": "ID",
+    "customer": {
+        "reference_id": "{{$randomUUID}}",
+        "type": "INDIVIDUAL",
+        "email": "customer@yourdomain.com",
+        "mobile_number": "+628123456789",
+        "individual_detail": {
+            "given_names": "John",
+            "surname": "Doe"
+        }
+    },
+    "components_configuration": {
+        "origins": ["https://example.com"]
+    }
+}
+```
+
+Response - `POST /sessions`
+
+```json
+{
+    "payment_session_id": "ps-6964956f12d7fb663095c442",
+    "created": "2026-01-12T06:32:15.783Z",
+    "updated": "2026-01-12T06:32:15.783Z",
+    "status": "ACTIVE",
+    "reference_id": "{{$YOUR_REFERENCE_ID}}",
+    "currency": "IDR",
+    "amount": 0,
+    "country": "ID",
+    "expires_at": "2026-01-12T07:02:15.387Z",
+    "session_type": "SAVE",
+    "mode": "COMPONENTS",
+    "locale": "en",
+    "business_id": "62440e322008e87fb29c1fd0",
+    "customer_id": "cust-c272a280-a096-4f12-8360-b3e63af10e45",
+    "components_sdk_key": "session-381a8d7c072f601389188fdee03ab70f-pd-MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEhzY63iL0LghWfzVYXyKjLGM266d5E9yXqWRP1vlcXsBo8c15outPOYBSzMTcs1hUxjIUfer+XFATz7RbRWogcSMW2d29Jdf45zSnUqcuXXSfo68xrm86SIapfuIAY8lW-gJyZMM1LjBmbEXg1afQlUObjmilgR/LuBp7/ZNIJoMqP0WfW6aOtebEbWiS4nlrR++OiTO4Hh7lgy4ApkMd6NMAzMIk/SCnZpaI6gcMnXtSvtji+IUQAT2RFqI0xgh6O",
+    "components_configuration": {
+        "origins": ["https://example.com"]
+    }
+}
+```
+
+You can refer to the [Xendit Components client-side documentation](https://docs.xendit.co/docs/components-overview#clientside-responsibilities) for client-app integration using the returned `components_sdk_key`.
+
+Once the payment method is successfully saved Xendit sends a `payment_session.completed` webhook. Use these webhooks to store the returned `payment_token_id` in your system. Optionally, you may also handle `payment_token.activation` webhook to retrieve detailed customer’s account information

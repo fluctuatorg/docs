@@ -1,0 +1,47 @@
+---
+title: "Thailand"
+---
+
+| Payout Rail | Local Rails |
+| --- | --- |
+| Supported Currencies | THB |
+| Estimated Time of Arrival | 15 minutes |
+| Cut-off Time | N/A |
+| Transaction Limit | 2,000,000 |
+| Description Support | No |
+| Supported Use Case | Payout, Cross Border Payout, Payout Link |
+
+## Channel Codes
+
+Learn the different payout destinations that we support along with its destination-specific information in the table below:
+
+<iframe src="https://airtable.com/embed/appYc7UnQq5CmKe0G/shrkNtnAxAUQdXcVB?viewControls=on" title="" className="w-full rounded-xl" height="533"></iframe>
+
+## Required Values for Cross-Border Payouts
+
+As a prerequisite to creating a Cross-Border Payout, you are required to send us the ultimate sender and recipient’s information. Learn the required information for the region to start sending payouts:
+
+### Sender
+
+| Field Parameter | Type | Description |
+| --- | --- | --- |
+| `individual_detail.given_names` | `INDIVIDUAL` | First name of sender |
+| `individual_detail.surname` | `INDIVIDUAL` | Last name of sender |
+| `business_detail.business_name` | `BUSINESS` | Full registered name of sender |
+| `individual_detail.nationality` | `INDIVIDUAL` | Nationality of sender |
+| `addresses.country` | Any | Country address of sender |
+| `addresses.city` | Any | City address of sender |
+| `addresses.street_line1` | Any | Full address of sender |
+
+### Recipient
+
+| Field Parameter | Type | Description |
+| --- | --- | --- |
+| `first_name` | `INDIVIDUAL` | First name of recipient |
+| `last_name` | `INDIVIDUAL` | Last name of recipient |
+| `business_name` | `BUSINESS` | Full registered name of recipient |
+| `identity_accounts.type` | Any | Account type of the recipient’s account |
+| `identity_accounts.company` | Any | Channel code of the recipient’s account |
+| `identity_accounts.properties.account_number` | Any | Account number of the recipient’s account |
+| `identity_accounts.properties.account_holder_name` | Any | Account holder name of the recipient’s account |
+| `addresses.country` | Any | Country address of recipient |

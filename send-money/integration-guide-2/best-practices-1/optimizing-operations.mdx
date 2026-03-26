@@ -1,0 +1,65 @@
+---
+title: "Optimizing operations"
+---
+
+Learn how to reduce your customer complaints and help your customer inquiries. This page will guide you through some best practices that would allow you to achieve operational excellence.
+
+## Common operation issues
+
+### Funds not received
+
+Due to messaging issues, your recipient might get back to you saying that the funds have not been received. To help with this process, we recommend that you:
+
+- Subscribe to payout webhooks for latest status updates and auto recovery
+- Send Payout receipt to your recipient for them to track and log an issue with their bank
+- Utilize `description` to send identifiers to your recipient’s app or statement
+
+### Funds bounced back
+
+Sometimes we cannot pay the funds out or the funds are returned to us due to processing limitations (e.g. the recipient’s details were incorrect or their account is closed). We recommend that you:
+
+- Subscribe to reversed/failed webhooks for latest status updates
+
+## Tool for reducing operations issues
+
+### Payout receipts
+
+Payout receipts is a simple yet powerful tool to assure your recipient that the funds has been processed, and if not yet received, is on its way to their account. If utilized, we will send this on behalf of you directly to your recipient on successful payout processing.
+
+#### Brand your payout receipt to build more trust
+
+Personalize receipts with your business logo. By default, the business logo on your profile will be displayed.
+
+1. Log in to your dashboard
+2. Go to Settings > [Edit Profile](https://dashboard.xendit.co/settings/business-profile#business)
+3. Click Upload Business Logo
+
+#### Provide a helpline for your users
+
+1. Log in to your dashboard
+2. Go to [Disbursement Notifications Settings](https://dashboard.xendit.co/settings/sending-money#disbursement-notifications)
+3. In the Disbursement Email Template or Batch Disbursement Email Template section, you can enter the information displayed to the end user in the email footer
+
+![](https://archive.docs.xendit.co/_next/image?url=https%3A%2F%2Fres.cloudinary.com%2Fdpvzoteik%2Fimage%2Fupload%2Fc_fill%2Ch_330%2Cw_1598%2FScreenshot_2023-12-06_at_15.15.00_ws6m3c%3F_a%3DBATCr5fi0&w=3840&q=75)
+
+### Resend payout receipts
+
+Easily resend payout receipts from your dashboard to share with recipients as proof of transfer.
+
+#### Payouts API
+
+1. Go to [Transactions](https://dashboard.xendit.co/transactions-new) on your dashboard
+2. Click on the completed transaction
+3. Scroll down to Payout Receipt and click Send Receipt
+4. Enter your recipient's email
+
+#### Batch Payouts
+
+1. Go to [Batch Payouts > Approved](https://dashboard.xendit.co/dashboard/batch_disbursements)
+2. Click on a batch payout
+3. Export all or selected receipts
+
+   1. For all: Click Export Receipt > All Completed
+   2. For selected: Select transactions, then click Export Receipt > Selected
+4. A download link (valid for 7 days) will be emailed to you
+5. Open the email and click to download your receipt(s)

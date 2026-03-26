@@ -1,0 +1,70 @@
+---
+title: "Billing report"
+---
+
+The Billing report shows the full list of individual transactions and associated fees that were charged and reflected in the monthly Invoice.
+
+## Downloading Billing report
+
+You can download your Xendit Billing Report using either of the following methods:
+
+1. Via your dashboard
+
+   1. Navigate to Settings > [Billing Statements](https://dashboard.xendit.co/settings/billings).
+   2. Click the three dots on the right side of your bill.
+   3. Select Download Billing Report.
+2. Via email
+
+   1. Set up email recipients for billing-related emails:
+
+      1. Go to Settings > Email Recipients.
+      2. Click + Add Recipient to open a pop-up window.
+      3. Enter your email address in the Email Recipient field.
+      4. Tick the Billing Statements checkbox under the "Receive the following reports:" section.
+   2. Once set up, you will receive an email with a link to download your billing report by the 7th of each month.
+
+## Transaction Fees Reflected in the Billing Report
+
+Xendit applies fees based on the following transaction events:
+
+- Payments: Fee is charged when the transaction is settled.
+- Switcher Payments: Fee is charged when the transaction is created.
+- Payouts: Fee is charged when the transaction is completed.
+
+Example:
+
+If a transaction is created on 30 October but settled on 2 November, the fee will be charged on 2 November. Consequently, this transaction will appear in the November Xendit Invoice and Billing Report.
+
+## Billing Report format
+
+| Field | Description |
+| --- | --- |
+| transaction\_id | The transaction\_id used in balance history and transactions tab reports |
+| reference | The unique identifier you input for the transaction. Usually the external\_id or reference\_id in your transaction request |
+| transaction\_type | The type of the transaction.  Available types:   - BATCH\_DISBURSEMENT: disbursement transaction that involves sending multiple payments to different recipients at once. - DISBURSEMENT: The disbursement of a money-out transaction. - IN\_PERSON\_PAYMENT: Transactions that occur through direct interactions between the customer using a payment terminal. - PAYMENT: The payment that includes all variations of money-in transactions. - PLATFORM\_FEE: Fees deducted from transactions for the use of xenPlatform services. - REFUND: A refund transaction created to refund an amount from a money-in transaction. - REMITTANCE\_PAYOUT: The remittance payout transaction. - TRANSFER: The transfer transaction between Xendit accounts. This can be a transfer in or out. - WITHDRAWAL: Transactions from your Xendit account to your own bank account. - OTHER: This category is used for transactions that do not neatly fit into the other specified types, covering a variety of transactional scenarios that are less common |
+| transaction\_channel | The channel used to identify the source of the transaction. |
+| transaction\_label | Additional information about the transaction.  Examples:   - ShopeePay Indonesia: E-Wallet or QR - Cards: Foreign or Local |
+| is\_switcher | Whether a transaction\_type was a switcher transaction. Only relevant for Virtual Account and Cards transactions |
+| calculation\_method | The identifier of refund fee calculation of refund transactions.   - DEFAULT = Full refund. - VARIABLE\_FEE\_REFUND = Refund of percentage fee only. - NO\_FEE\_REFUND = Refund transaction with no fee refunded |
+| business\_id | The unique identifier used to identify a Xendit merchant |
+| billed\_at | The timestamp of a transaction being billed based on your registered country timezone. For example, Indonesian merchants will have GMT+7 while Philippines merchants will have GMT+8 as the timestamp timezone |
+| flat\_fee | The flat fee billing rate used for the transaction to calculate the transaction fee |
+| fee\_percentage | The percentage billing rate used for the transaction to calculate the transaction fee |
+| transaction\_amount | Amount of the transaction |
+| fees\_paid\_amount | Fees paid for the transaction. Applicable to direct deduction transactions only |
+| vat\_paid\_amount | The amount of VAT charged to the transaction. Applicable to direct deduction transactions only |
+
+The most critical columns for reconciliation include:
+
+- transaction\_type
+- transaction\_channel
+- transaction\_label
+- is\_switcher
+- transaction\_amount
+- fees\_paid\_amount
+- vat\_paid\_amount
+
+Note for Indirect Deductions:
+
+- The fees\_paid\_amount and vat\_paid\_amount columns are not populated for [indirect deductions](/billing/transaction-fees).
+- Fees must be calculated using fee\_percentage and flat\_fee for indirect deductions.

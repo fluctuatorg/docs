@@ -1,0 +1,398 @@
+---
+title: "Create verification requests"
+---
+
+To create verification requests, you will need to first identify the entity type of your merchants. The required parameters are available below for each country and entity type (e.g. Philippines Corporation).
+
+You may also need to get a your merchants to sign a Service Agreement with Xendit. Please consult your account manager and we will provide this template as necessary.
+
+## Upload files for verification
+
+Next, you will also need to use the [Upload File API](https://xendit-docs.document360.io/apidocs/upload-file) in order to upload the documents you collected from your merchants to Xendit, and save the IDs to include in the `Create Account Holder` request.
+
+```plaintext
+POST https://api.xendit.co/files
+```
+
+```json
+{
+  "purpose": "KYC_DOCUMENT",
+  "file": "@/Users/MyName/Documents/identity-card.pdf"
+}
+```
+
+## Create an Account Holder object
+
+Ensure that your Platform account’s API key is granted the permissions below:
+
+- xenPlatform Accounts `write`
+- xenPlatform Account Holder `write`
+
+You will need to fill in the required parameters according to your entity type. Refer to the [list of requirements below](/xenplatform/set-up-sub-accounts/api-verification/account-holder/create-verification-requests#requirements-by-country-and-entity-type) to build your request body structure. Upon successful creation, we will return `account_holder_id` .
+
+Include the File IDs returned in the previous step in the `kyc_documents` parameter.
+
+### Sample - PH Corporation
+
+Below is a sample request payload for a Philippines `corporation` entity type
+
+Copy
+```plaintext
+POST https://api.xendit.co/account_holders 
+```
+
+Copy
+```json
+{
+  "business_detail": {
+    "type": "CORPORATION",
+    "legal_name": "test17",
+    "trading_name": "test",
+    "description": "testing",
+    "industry_category": "ACCOMMODATION",
+    "date_of_registration": "2023-02-02",
+    "country_of_operation":"PH"
+  },
+  "individual_details": {
+      "role": "owner",
+      "type": "PIC",
+      "given_names": "test",
+      "surname": "test",
+      "phone_number": "+63021234567",
+      "email": "test@xendit.co",
+      "nationality": "PH",
+      "place_of_birth": "PH",
+      "date_of_birth": "2000-02-02",
+      "gender": "MALE"
+   },
+   "address": {
+      "city": "test1",
+      "country": "PH",
+      "district": "test",
+      "postal_code": "1111",
+      "street_line1": "test",
+      "street_line2": "test",
+      "sub_district": "test",
+      "province_state": "test"
+  },
+  "kyc_documents": [
+        {
+            "type": "SEC_CERTIFICATE_REGISTRATION_DOCUMENT",
+            "country": "PH",
+            "file_id": "63f8719642f5856dcb142bd2",
+        },
+        {
+            "type": "SELFIE_WITH_PRIMARY_ID_DOCUMENT",
+            "country": "PH",
+            "file_id": "63f8719642f5856dcb142bd2",
+        },
+        {
+            "type": "ARTICLES_OF_INCORPORATION_DOCUMENT",
+            "country": "PH",
+            "file_id": "63f8719642f5856dcb142bd2"
+        },
+        {
+            "type": "NOTARIZED_SECRETARY_CERTIFICATE_DOCUMENT",
+            "country": "PH",
+            "file_id": "63f8719642f5856dcb142bd2"
+        },
+        {
+            "type": "LATEST_GIS_DOCUMENT",
+            "country": "PH",
+            "file_id": "63f8719642f5856dcb142bd2"
+        },
+        {
+            "type": "SERVICE_AGREEMENT_DOCUMENT",
+            "country": "PH",
+            "file_id": "63f8719642f5856dcb142bd2"
+        }
+  ],
+  "website_url": "https://xendit.co",
+  "phone_number": "+63281234567",
+  "email": "test@xendit.co",
+}
+```
+
+## Link the Account Holder to a sub-account
+
+Once you’ve created your Account Holder, you will need to link the Account Holder to your Partner’s Account using the Platform account’s API key with a `write` permission for `Accounts`.
+
+Using the `update account` endpoint, you will need to link the `account_holder_id` to a valid `business_id` that represents your merchant’s sub-account. You can do this by specifying the account\_holder\_id on the request body.
+
+```plaintext
+PATCH https://api.xendit.co/v2/accounts/{sub-account-id}
+```
+
+```json
+{
+    "account_holder_id": "3bd4dcdd-e6c0-4057-89bf-58d1564b517b"
+}
+```
+
+Note that this linking process will also start the verification process of this Account Holder. This will change the Know Your Customer (KYC) verification status from `not_started` to `verification_in_progress`.
+
+## Requirements by Country and Entity Type
+
+Required Parameters for the Philippines
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| business\_detail | object | An object containing the details of your partner’s business   - type: `CORPORATION`, `INDIVIDUAL`, `SOLE_PROPRIETORSHIP`, `PARTNERSHIP`, `FOREIGN_SEC`, `FOREIGN_NONSEC` - legal\_name - trading\_name - description - industry\_category - date\_of\_registration - country\_of\_operation: ISO 3166-2 format |
+| individual\_details | array (object) | An array of objects containing the details of your partner’s business personnel   - role: The role of the individual in your business - type: PIC or INCORPORATOR (requires one PIC) - given\_names - surname - phone\_number - email - nationality: ISO 3166-2 format - place\_of\_birth - date\_of\_birth - gender: `male`, `female`, `other` - tax\_identification\_number - address: An object similar to the address object below for the individual. This is only required when they need to activate Cards with USD or recurring capabilities. |
+| address | object | Your business' address containing:   - city - country: ISO 3166-2 format - district - postal\_code - street\_line1 - street\_line2 (optional) - sub\_district - province\_state |
+| kyc\_documents | array (object) | An array of objects containing required KYC documents uploaded via File Upload.   - type: One of the KYC Document Types required below, matching the country and entity type - country: The country code matching the business' country - file\_id: The file ID returned from the File Upload API - expires\_at (optional): The expiry date of the document if relevant. Format `YYYY-MM-DD` |
+| website\_url | string | The website associated with the business |
+| phone\_number | string | The phone number associated with the business |
+| email | string | The email address associated with the business |
+
+Required Parameters for Thailand
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| business\_detail | object | An object containing the details of your partner’s business   - type: `CORPORATION`, `INDIVIDUAL`, `SOLE_PROPRIETORSHIP`, `PARTNERSHIP`, `FOREIGN` - legal\_name - trading\_name - description - industry\_category - date\_of\_registration - country\_of\_operation - tax\_identification\_number |
+| individual\_details | array (object) | An array of objects containing the details of your partner’s business personnel   - role - type: PIC or INCORPORATOR (requires one PIC) - given\_names - surname - phone\_number - email - nationality: TH |
+| address | object | Your business' address   - city - country: ISO 3166-2 format - district - postal\_code - street\_line1 - street\_line2 (optional) - sub\_district - province\_state |
+| kyc\_documents | array (object) | An array of objects containing required KYC documents uploaded via File Upload.   - type: One of the KYC Document Types required below, matching the country and entity type - country: The country code matching the business' country - file\_id: The file ID returned from the File Upload API - expires\_at (optional): The expiry date of the document if relevant. Format `YYYY-MM-DD` |
+| website\_url | string | The website associated with the business |
+| phone\_number | string | The phone number associated with the business |
+| email | string | The email address associated with the business |
+
+Refer to the [section below](/xenplatform/set-up-sub-accounts/api-verification/account-holder/create-verification-requests#list-of-accepted-industry-categories) for the Industry Category codes we support.
+
+### Document requirements by country and entity type
+
+| Country | Entity Type | Verification documents |
+| --- | --- | --- |
+| Philippines | All entities require the following. | - `SELFIE_WITH_PRIMARY_ID_DOCUMENT` or `SELFIE_WITH_SECONDARY_ID_2_DOCUMENT` - `SERVICE_AGREEMENT_DOCUMENT` - One Primary ID: `AUTHORIZED_PERSON_PASSPORT_DOCUMENT`, `DRIVER_LICENCE_DOCUMENT`, `PHILSYS_DOCUMENT`, `ACR_OR_IMMIGRANT_COR_DOCUMENT`, `UMID_DOCUMENT`, `SSS_OR_GSIS_DOCUMENT`, `PRC_LICENSE_DOCUMENT`, `POSTAL_ID_DOCUMENT`, `VOTER_ID_DOCUMENT` - Two secondary IDs: `AFP_ID_DOCUMENT`, `PNP_ID_DOCUMENT`, `BRF_ID_DOCUMENT`, `PWD_ID_DOCUMENT`, `DSWD_CERTIFICATION_DOCUMENT`, `GSIS_ECARD_DOCUMENT`, `OFW_ID_DOCUMENT`, `POLICE_CLEARANCE_DOCUMENT`, `SEAMAN_BOOK_DOCUMENT` |
+| INDIVIDUAL | *No additional requirements* |
+| SOLE\_PROPRIETORSHIP | - `DTI_REGISTRATION_DOCUMENT` - `BIR_2303_DOCUMENT` |
+| PARTNERSHIP | - `SEC_CERTIFICATE_REGISTRATION_DOCUMENT` - `ARTICLES_OF_PARTNERSHIP_DOCUMENT` - `NOTARIZED_PARTNER_CERTIFICATE_DOCUMENT` - `BIR_2303_DOCUMENT` |
+| CORPORATION | - `SEC_CERTIFICATE_REGISTRATION_DOCUMENT` - `ARTICLES_OF_INCORPORATION_DOCUMENT` - `NOTARIZED_SECRETARY_CERTIFICATE_DOCUMENT` - `LATEST_GIS_DOCUMENT` - `BIR_2303_DOCUMENT` |
+| FOREIGN\_NONSEC | - `AUTHORIZED_PERSON_PASSPORT_DOCUMENT` as the Primary ID, no selfie required - `PROOF_OF_COMPANY_REGISTRATION_DOCUMENT` - `COUNTRY_ISSUED_BUSINESS_LICENSE_DOCUMENT` - `ARTICLES_OF_INCORPORATION_DOCUMENT` - `BANK_BOOK_SCAN_DOCUMENT` |
+| Thailand | PARTNERSHIP, LIMITED\_COMPANY, NON\_PROFIT, FOREIGN\_ENTITY | - `ID_CARD_DOCUMENT`    - or `HOUSE_REGISTRATION_DOCUMENT`   - or `PASSPORT_OR_WORK_PERMIT_DOCUMENT` if foreign - `COMPANY_CERTIFICATE_DOCUMENT` - `BANK_ACCOUNT_DETAILS_DOCUMENT` - `SHARE_HOLDER_INFORMATION_DOCUMENT` - (optional) `BUSINESS_LICENSE_DOCUMENT` - (optional) `VAT_REGISTRATION_CERTIFICATE_DOCUMENT` - (optional) `COMMMERCIAL_REGISTRATION_CERTIFICATE_DOCUMENT` - (optional) `SERVICE_AGREEMENT_DOCUMENT` |
+
+## List of Accepted Industry Categories
+
+Use one of the accepted industry code enumeration values below for `business_detail.industry_category`.
+
+```plaintext
+ACCOUNTING_AUDITING_AND_BOOKKEEPING_SERVICES
+ADVERTISING_SERVICES
+AGRICULTURAL_COOPERATIVES
+ALCOHOLIC_BEVERAGE_WHOLESALERS
+AMUSEMENT_PARKS_CIRCUSES_CARNIVALS_AND_FORTUNE_TELLERS
+ANTIQUE_REPRODUCTION_SHOPS
+ARCHITECTURAL_ENGINEERING_AND_SURVEYING_SERVICES
+ART_AND_CRAFTS_NEW
+ASSET_MANAGEMENT_COMPANY_NEW
+AUCTION
+AUTOMATED_FUEL_DISPENSERS
+AUTOMOBILE_RENTALS
+AUTOMOTIVE_BODY_REPAIR_SHOPS
+AUTOMOTIVE_CAR_MOTORCYCLE_BOATS_AND_MISCELLANEOUS_AUTOMOTIVE_EQUIPMENT_DEALER
+AUTOMOTIVE_PARTS_AND_ACCESSORIES_OUTLETS
+AUTOMOTIVE_REPAIR_WASHES_AND_TOWING_SERVICE
+BAKERIES
+BANKS
+BEAUTY_AND_BARBER_SHOPS
+BILLIARD_AND_POOL_ESTABLISHMENTS
+BOAT_RENTAL_MARINAS_AND_MARINE_SERVICE_INC_SUPPLIES
+BOOKS_AND_STATIONARY
+BUSINESS_AND_SECRETARIAL_SCHOOLS
+BUYING_AND_SHOPPING_SERVICES_AND_CLUBS
+CABLE_AND_OTHER_PAY_TELEVISION_SERVICES
+CAMERA_AND_PHOTOGRAPHIC_SUPPLY_SHOPS
+CAR_AND_TRUCK_DEALERS_SALES_SERVICES_REPAIRS_PARTS_AND_LEASING
+CARPET_AND_UPHOLSTERY_CLEANING
+CATERERS
+CHARITABLE_AND_SOCIAL_SERVICE_ORGANIZATIONS
+CHILD_CARE_SERVICES
+CHIROPRACTORS
+CIGAR_SHOPS_AND_STANDS
+CIVIC_SOCIAL_AND_FRATERNAL_ASSOCIATIONS
+CLEANING_MAINTENANCE_AND_JANITORIAL_SERVICES
+CLOTHING_RENTALS_COSTUMES_UNIFORMS_AND_FORMAL_WEAR
+CLOTHING_STORES
+COMMERCIAL_PHOTOGRAPHY_ART_AND_GRAPHICS
+COMPUTER_NETWORKINFORMATION_SERVICES
+COMPUTER_SOFTWARE_OUTLETS
+CONSUMER_CREDIT_REPORTING_AGENCIES
+CONTRACTORS_STONEWORK_INSULATION_CAPENTRY_ROOFING_CONCRETE_OTHER
+CORRESPONDENCE_SCHOOLS
+COSMETIC_SHOPS_EXISTING_BRAND
+COSMETIC_SHOPS_OWN_BRAND
+COUNSELLING_SERVICES_DEBT_MARRIAGE_AND_PERSONAL
+CRYPTOCURRENCY
+DANCE_HALLS_STUDIOS_AND_SCHOOLS
+DATING_AND_ESCORT_SERVICES
+DEALSITES_NON_DIGITAL_VOUCHER
+DEALSITES_SELLING_EVOUCHER
+DENTAL_LABORATORY_MEDICAL_OPHTHALMIC_HOSPITAL_EQUIPMENT_AND_SUPPLIES
+DENTISTS
+DEPARTMENT_STORES
+DETECTIVE_AGENCIES_PROTECTIVE_AGENCIES_AND_SECURITY_SERVICES_INCLUDING_ARMOURED_CARS_AND_GUARD_DOGS
+DIGITAL_GOODS
+DIRECT_MARKETING_CATALOGUE_MERCHANTS
+DIRECT_MARKETING_COMBINATION_CATALOGUE_AND_RETAIL_MERCHANTS
+DIRECT_MARKETING_CONTINUITYSUBSCRIPTION_MERCHANTS
+DIRECT_MARKETING_INBOUND_TELEMARKETING_MERCHANTS
+DIRECT_MARKETING_INSURANCE_SERVICES
+DIRECT_MARKETING_OUTBOUND_TELEMARKETING_MERCHANTS
+DISCOUNT_SHOPS
+DOORTODOOR_SALES
+DRAPERY_WINDOW_COVERING_UPHOLSTERY_FIREPLACES_FIREPLACE_SCREENS_AND_ACCESSORIES_SHOPS
+DRINKING_PLACES_ALCOHOLIC_BEVERAGES_BARS_TAVERNS_NIGHTCLUBS_COCKTAIL_LOUNGES_AND_DISCOTHQUES
+DRUG_STORES_AND_PHARMACIES
+DRUGS_DRUG_PROPRIETORS
+DUTYFREE_SHOPS
+EATING_PLACES_AND_RESTAURANTS
+ECOMMERCE
+ELECTRIC_RAZOR_SHOPS_SALES_AND_SERVICE
+ELECTRIC_VEHICLE_CHARGING
+ELECTRONICS_AND_ACCESSORIES_NEW
+ELECTRONICS_REPAIR_SHOPS
+EMPLOYMENT_AGENCIES_AND_TEMPORARY_HELP_SERVICES
+EQUIPMENT_TOOL_FURNITURE_AND_APPLIANCE_RENTALS_AND_LEASING
+EWALLETS
+EXTERMINATING_AND_DISINFECTING_SERVICES
+FAST_FOOD_RESTAURANTS
+FINANCIAL_INSTITUTIONS_AUTOMATED_CASH_DISBURSEMENTS
+FINANCIAL_INSTITUTIONS_MANUAL_CASH_DISBURSEMENTS
+FINANCIAL_INSTITUTIONS_MERCHANDISE_AND_SERVICES
+FIREPLACES_FIREPLACE_SCREENS_AND_ACCESSORIES_SHOPS
+FLOOR_COVERING_SERVICES
+FLORISTS
+FLORISTS_SUPPLIES_NURSERY_STOCK_AND_FLOWERS
+FUEL_DEALERS_FUEL_OIL_WOOD_COAL_AND_LIQUEFIED_PETROLEUM
+FUNERAL_SERVICES_AND_CREMATORIUMS
+FURNITURE_HOME_FURNISHINGS_AND_EQUIPMENT_SHOPS_AND_MANUFACTURERS_EXCEPT_APPLIANCES
+GENERAL_CONTRACTORS_RESIDENTIAL_AND_COMMERCIAL
+GIFT_CARD_NOVELTY_AND_SOUVENIR_SHOPS
+GLASSWARE_AND_CRYSTAL_SHOPS
+HAJ_AND_UMRAH_PROVIDER_NEW
+HEALTH_AND_BEAUTY_SPAS
+HEALTH_SUPPLEMENT_SELLING_OWN_BRAND
+HEARING_AIDS_ORTHOPAEDIC_GOODS_AND_PROSTHETIC_DEVICES_SALES_SERVICE_AND_SUPPLIES
+HEATING_PLUMBING_AND_AIRCONDITIONING_CONTRACTORS
+HOBBY_TOY_AND_GAME_SHOPS
+HOME_SUPPLY_HARDWARE_AND_OTHER_BUILDING_MATERIALS
+HOSPITALS
+HOUSEHOLD_APPLICANCES_HOME_FURNISHING_AND_ELECTRONICS_SHOPS
+INSURANCE_SALES_UNDERWRITING_AND_PREMIUMS
+INSURTECH
+INTERNET_SERVICE_PROVIDER_NEW
+INVESTMENT_SERVICES_NEW
+IT_SERVICES_NEW
+JEWELLERY_WATCH_CLOCK_AND_SILVERWARE_SHOPS
+LANDSCAPING_AND_HORTICULTURAL_SERVICES
+LAUNDRY_CLEANING_AND_GARMENT_SERVICES
+LAWN_AND_GARDEN_SUPPLIES_OUTLETS_INCLUDING_NURSERIES
+LEGAL_SERVICES_AND_ATTORNEYS
+LENDING
+LOCAL_AND_SUBURBAN_COMMUTER_PASSENGER_TRANSPORTATION_INCLUDING_FERRIES
+LODGING_HOTELS_MOTELS_AND_RESORTS
+LUGGAGE_AND_LEATHER_GOODS_SHOPS
+MANAGEMENT_CONSULTING_AND_PUBLIC_RELATIONS_SERVICES
+MARKETPLACE_NEW
+MASSAGE_PARLOURS
+MEDICAL_AND_DENTAL_LABORATORIES
+MEMBERSHIP_CLUBS_SPORTS_RECREATION_ATHLETIC_COUNTRY_CLUBS_AND_PRIVATE_GOLF_COURSES
+METAL_SERVICE_CENTRES_AND_OFFICES
+MISCELLANEOUS_AND_SPECIALITY_RETAIL_OUTLETS
+MISCELLANEOUS_APPAREL_AND_ACCESSORY_SHOPS
+MISCELLANEOUS_FOOD_SHOPS_CONVENIENCE_AND_SPECIALITY_RETAIL_OUTLETS
+MISCELLANEOUS_GENERAL_MERCHANDISE
+MISCELLANEOUS_REPAIR_SHOPS_AND_RELATED_SERVICES
+MOBILE_HOME_DEALERS
+MONTHLY_SUMMARY_TELEPHONE_CHARGES
+MOTION_PICTURE_THEATRES
+MOTOR_FREIGHT_CARRIERS_AND_TRUCKING_LOCAL_AND_LONG_DISTANCE_MOVING_AND_STORAGE_COMPANIES_AND_LOCAL_DELIVERY
+MOTOR_VEHICLE_SUPPLIES_AND_NEW_PARTS
+MULTI_FINANCE_COMPANY
+MULTI_LEVEL_MARKETING_NEW
+MUSIC_SHOPS_MUSICAL_INSTRUMENTS_PIANOS_AND_SHEET_MUSIC
+NEWSAGENTS_AND_NEWSSTANDS
+NON_FINANCIAL_INSTITUTIONS_FOREIGN_CURRENCY_MONEY_ORDERS_NOT_WIRE_TRANSFER_SCRIP_AND_TRAVELLERS_CHECKS
+NURSING_AND_PERSONAL_CARE_FACILITIES
+OFFICE_AND_COMMERCIAL_FURNITURE
+OFFICE_PHOTOGRAPHIC_COMMERCIAL_EQUIPMENT_AND_OTHER_INDUSTRIAL_SUPPLIES
+OPTICIANS_OPTICAL_GOODS_AND_EYEGLASSES
+OPTOMETRISTS_AND_OPHTHALMOLOGISTS
+OSTEOPATHS
+OTHER_BUSINESS_SERVICES
+OTHER_CHEMICALS_AND_ALLIED_PRODUCTS
+OTHER_CONSTRUCTION_MATERIALS
+OTHER_DIRECT_MARKETINGDIRECT_MARKETERS
+OTHER_DOCTORS_AND_PHYSICIANS
+OTHER_DURABLE_GOODS
+OTHER_GOVERNMENT_SERVICES
+OTHER_MEDICAL_SERVICES_AND_HEALTH_PRACTITIONERS
+OTHER_MEMBERSHIP_ORGANIZATIONS
+OTHER_MISCELLANEOUS_PERSONAL_SERVICES
+OTHER_NONDURABLE_GOODS
+OTHER_PROFESSIONAL_SERVICES
+OTHER_RECREATION_SERVICES
+OTHER_TRANSPORTATION_SERVICES
+PACKAGE_SHOPS_BEER_WINE_AND_LIQUOR
+PARKING_LOTS_AND_GARAGES
+PAWN_SHOPS
+PAYMENT_GATEWAY_NEW
+PEERTOPEER_LENDING
+PET_SHOPS_PET_FOOD_AND_SUPPLIES
+PETROLEUM_AND_PETROLEUM_PRODUCTS
+PHOTOFINISHING_LABORATORIES_AND_PHOTO_DEVELOPING
+PHOTOGRAPHIC_STUDIOS
+PIECE_GOODS_NOTIONS_AND_OTHER_DRY_GOODS
+PLUMBING_AND_HEATING_EQUIPMENT_AND_SUPPLIES
+PODIATRISTS_AND_CHIROPODISTS
+POLITICAL_ORGANIZATIONS
+PRECIOUS_STONES_AND_METALS_WATCHES_AND_JEWELLERY
+PUBLIC_WAREHOUSING_AND_STORAGE_FARM_PRODUCTS_REFRIGERATED_GOODS_AND_HOUSEHOLD_GOODS
+REAL_ESTATE_AGENTS_AND_MANAGERS
+RECORD_SHOPS
+RELIGIOUS_GOODS_AND_SHOPS
+RELIGIOUS_ORGANIZATIONS
+REMITTANCE_NEW
+RIDE_SHARING_NEW
+SCHOOLS_UNIVERSITY_AND_EDUCATIONAL_SERVICE_INC_TRADE_AND_VOCATIONAL_SCHOOL
+SECURITIES_BROKERS_AND_DEALERS
+SERVICE_STATIONS_WITH_OR_WITHOUT_ANCILLARY_SERVICES
+SEWING_NEEDLEWORK_FABRIC_AND_PIECE_GOODS_SHOPS
+SHOE_REPAIR_SHOPS_SHOE_SHINE_PARLOURS_AND_HAT_CLEANING_SHOPS
+SHOE_SHOPS
+SPECIALITY_CLEANING_POLISHING_AND_SANITATION_PREPARATIONS
+SPORTING_AND_RECREATIONAL_CAMPS
+SPORTING_GOODS_NEW
+SPORTS_AND_RIDING_APPAREL_SHOPS
+SUPERMARKET_CONVENIENCE_STORES_CONFECTIONERY_SHOPS_AND_BUTCHERY
+SWIMMING_POOLS_SALES_SUPPLIES_AND_SERVICES
+TAILORS_SEAMSTRESSES_MENDING_AND_ALTERATIONS
+TAX_PAYMENTS
+TAX_PREPARATION_SERVICES
+TAXICABS_AND_LIMOUSINES
+TELECOMMUNICATION_EQUIPMENT_AND_TELEPHONE_SALES
+TELECOMMUNICATION_SERVICES_INCLUDING_LOCAL_AND_LONG_DISTANCE_CALLS_CREDIT_CARD_CALLS_CALLS_THROUGH_USE_OF_MAGNETIC_STRIPE_READING_TELEPHONES_AND_FAXES
+TELEGRAPH_SERVICES
+TELEMARKETING_TRAVEL_RELATED_ARRANGEMENT_SERVICES
+TENT_AND_AWNING_SHOPS
+TESTING_LABORATORIES_NONMEDICAL
+THEATRICAL_PRODUCERS_EXCEPT_MOTION_PICTURES_AND_TICKET_AGENCIES
+TIMESHARES
+TOLLS_AND_BRIDGE_FEES
+TOURIST_ATTRACTIONS_AND_EXHIBITS
+TRAILER_PARKS_AND_CAMPSITES
+TRAINING_ONLINE_INCLASS_SHORT_COURSES
+TRAVEL_AGENCIES_AND_TOUR_OPERATORS
+TRUCK_AND_UTILITY_TRAILER_RENTALS
+TYPEWRITER_OUTLETS_SALES_SERVICE_AND_RENTALS
+UNIFORM_AND_COMMERCIAL_CLOTHING
+UTILITIES_ELECTRIC_GAS_WATER_AND_SANITARY
+VETERINARY_SERVICES
+VIDEO_AMUSEMENT_GAME_SUPPLIES
+VIDEO_GAME_ARCADES_AND_ESTABLISHMENTS
+VIDEO_TAPE_RENTALS
+WELDING_SERVICES
+WIRE_TRANSFERS_AND_MONEY_ORDERS
+WRECKING_AND_SALVAGE_YARDS
+ZAKAT_COLLECTION_NEW
+```

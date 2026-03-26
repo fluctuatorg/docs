@@ -1,0 +1,50 @@
+---
+title: "Payout Links"
+---
+
+Before taking your integration live, we recommend you to test your integration thoroughly in development mode. Use our Test Mode simulation to simulate various positive and negative scenarios and ensure the flows in your integration are handled correctly.
+
+*Note: We recommend using Postman collections for testing. Please see our postman integrations page for more details on how to set up your collections.*
+
+## Before you start
+
+> Important Note
+>
+> Simulation is only available in Test Mode. Ensure you are using a Development API Key to test.
+
+- Ensure that you have the right API Key for the currency you want to test
+
+  - One currency = One dashboard account = One API key
+  - If you want to payout to currency: PHP, then you must create a dashboard where country of operation: Philippines and create an API Key with Money Out Read and Write permission from that dashboard
+  - If you would also like to payout to currency: IDR, then you must create another dashboard account where country of operation: Indonesia and similarly create an API Key using that dashboard account
+
+## Test Guideline
+
+- Test calling all Payouts endpoints that you are implementing
+- Test as much simulation scenarios as possible according to your use case
+- Ensure your subscribed webhook events are received and handled in your integration
+
+## Simulation Scenarios
+
+Call `Create Payout Links API` using any of the following test details to simulate the scenario you’re testing.
+
+### Simulating Payout Link APIs
+
+#### Positive Scenarios
+
+| Scenario | Criteria | Expected Result |
+| --- | --- | --- |
+| Successful Payout Link | Send valid Create Payout Link request, with any `account_holder_name` and `account_number` | Payout Link status will be `ACTIVE` |
+| Successful Cancel Payout | Send valid Cancel Payout Link request | Payout Link status will be `CANCELED` |
+
+#### Negative Scenarios
+
+| Scenario | Criteria | Expected Result |
+| --- | --- | --- |
+| Failed Payout Link creation due to request containing duplicate idempotency key but same payload | Create a payout link with a duplicate idempotency key and the exact same payload. | Will return the same payout link object as the original request. |
+| Failed Payout Link creation due to request containing duplicate idempotency key but different payload | Create a payout link with an active duplicate idempotency key and a different payload. | `DUPLICATE_ERROR` |
+| Expired Payout Link | Create a payout link with expires\_at = T+n minutes | Payout link will be `EXPIRED` after n minutes |
+
+### Simulating Claiming a Payout Link
+
+If you want to simulate all the different scenarios that can happen when your recipient claims a Payout Link, you can claim the Payout Link using the corresponding criteria that you can find in the [Payouts Test Scenarios](/send-money/test-scenarios-1/test-scenarios-payouts).

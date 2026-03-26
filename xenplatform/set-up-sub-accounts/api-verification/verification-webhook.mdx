@@ -1,0 +1,115 @@
+---
+title: "Verification Webhook"
+---
+
+Set the URL for the “Account Verification” webhook under the Developer Settings in your Dashboard. When there are updates on your sub-accounts’ verification status, we will send the data to the URL you have set.
+
+Copy
+```plaintext
+POST https://yourcompany.com/account_verification_webhook_url
+```
+
+### Response Schema
+
+#### Headers
+
+| Field Name | Data Type | Description |
+| --- | --- | --- |
+| x-callback-token | string | Your Xendit unique webhook token to verify the origin of the webhook |
+| webhook-id | string | A unique identifier of every webhook to help you to handle double webhooks by implementing idempotency. When you receive the same webhook-id twice, treat the subsequent request as duplicate and reject the webhook accordingly to prevent double webhooks |
+
+#### Body
+
+| Field Name | Data Type | Description |
+| --- | --- | --- |
+| status | string | Status of the KYC verification. Available values: `PASSED`, `AWAITING_RESUBMISSION`, `FAILED` |
+| kyc\_passed\_at | string | The timestamp of when the KYC status changed to `PASSED` in ISO format |
+| verified\_at | string | Timestamp of the verification in ISO format |
+| requested\_at | string | Timestamp of the KYC verification requested date in ISO format |
+| failure\_reasons | array | An array of objects containing one or more failure reasons:   - field (string, optional) - reason (string) - message (string) |
+
+### Sample Webhook Response
+
+#### Verification Passed
+
+```json
+{
+   "event": "account.verification",
+   "created": "2021-01-01T10:00:00Z",
+   "business_id": "5fe2b0137b7d62542fe6d7de",
+   "data": {
+       "id": "57fb4e076fa3fa296b7f5a97",
+       "created": "2021-01-01T10:00:00Z",
+       "updated": "2021-01-01T10:00:00Z",
+       "kyc": {
+           "status": "PASSED",
+           "verified_at": "2021-01-01T10:00:00Z",
+           "requested_at": "2021-01-01T10:00:00Z",
+           "kyc_passed_at": "2021-01-01T10:00:00Z",
+       }
+   }
+}
+```
+
+#### Resubmission Requested
+
+```json
+{
+   "event": "account.verification",
+   "created": "2021-01-01T10:00:00Z",
+   "business_id": "5fe2b0137b7d62542fe6d7de",
+   "data": {
+       "id": "57fb4e076fa3fa296b7f5a97",
+       "created": "2021-01-01T10:00:00Z",
+       "updated": "2021-01-01T10:00:00Z",
+       "kyc": {
+           "status": "AWAITING_RESUBMISSION",
+           "requested_at": "2021-01-01T10:00:00Z",
+           "failure_reasons": [
+               {
+                   "field": "authorized_person_selfie_document",
+                   "reason": "BLURRY_IMAGE",
+                   "message": "The selfie is too blurry"
+               },
+               {
+                   "field": "business_registration_documents[0]",
+                   "reason": "WRONG_DOCUMENT",
+                   "message": "Invalid registration document"
+               },
+               {
+                   "field": "stakeholders[0].identification[1]",
+                   "reason": "EXPIRED_DOCUMENT",
+                   "message": "The passport has expired"
+               }
+
+           ]
+       }
+   }
+}
+```
+
+#### Verification Failed
+
+```json
+{
+   "event": "account.verification",
+   "created": "2021-01-01T10:00:00Z",
+   "business_id": "5fe2b0137b7d62542fe6d7de",
+   "data": {
+       "id": "57fb4e076fa3fa296b7f5a97",
+       "created": "2021-01-01T10:00:00Z",
+       "updated": "2021-01-01T10:00:00Z",
+       "kyc": {
+           "status": "FAILED",
+           "verified_at": "2021-01-01T10:00:00Z",
+           "requested_at": "2021-01-01T10:00:00Z",
+           "failure_reasons": [
+               {
+                   "reason": "FAILED_LDD",
+                   "message": "Some documents are invalid or do not meet our requirements"
+       	       }
+           ]
+       }
+   }
+}
+```

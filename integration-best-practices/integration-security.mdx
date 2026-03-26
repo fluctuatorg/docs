@@ -1,0 +1,73 @@
+---
+title: "Integration security"
+---
+
+Xendit recommends that you employ secure integration practices to prevent any abuse or fraud that might happen on your integration. This article will suggest several practices that you can adopt to prevent abuse. In general, we recommend our merchants to follow established public frameworks like [OWASP](https://owasp.org/), [NIST](https://www.nist.gov/), [SANS](https://www.sans.org/emea/) when setting up their integration. It is also recommended for security assessments to be done continuously to maintain your security.
+
+Additionally, below are also some key areas to keep in mind when securing your integration:
+
+## Always authenticate the webhook sender
+
+Xendit can sign each webhook event that is sent to your endpoints. We do so by including a token in each event's `x-callback-token` header. This allows you to verify that the events were sent by Xendit, not by a third party. It is strongly recommended that you perform this verification and keep the token a secret. Doing so lowers the risk of man in the middle attacks, preventing money loss incidents.
+
+Retrieve your webhook token from Dashboard's [Webhook settings](https://dashboard.xendit.co/settings/developers#callbacks) to start this verification.
+
+## Protect your endpoint that receives webhooks
+
+The webhook endpoint that is registered on Xendit will be a key touchpoint for money processing in your system. To prevent abuse, it is recommended that the endpoint is not exposed unnecessarily. This could be done by securing the knowledge to trusted personnel, not storing the endpoint in your repository or not exposing the endpoint on your frontend client.
+
+If you want to perform IP whitelisting for webhooks delivered by Xendit, contact our CS to get the list of IP addresses.
+
+## Always verify the details in the webhook notification
+
+In event that your webhook endpoint was compromised, you can add another layer of protection by performing proper verifications on the webhook message. This can be done by validating that the transaction IDs and amount corresponds to your inputs to Xendit during request creation. If the webhook message doesn’t match up with what was requested or is in a misaligned status, do not proceed with product or service provisioning.
+
+Some important fields to validate:
+
+1. Request amount and webhook amount
+2. Status of request
+3. Request IDs and webhook IDs
+
+## Always use server side handling for webhooks
+
+Do not handle webhooks on the your client application. When webhook data and webhook endpoints are exposed, the risk of data manipulation and man in the middle attacks will increase drastically. It is always recommended for your server to securely receive the webhooks before informing the outcome to your client side securely.
+
+## Do not confirm orders based on frontend client redirections
+
+In certain payment flows, Xendit or the partner would redirect your end user to a success or failed return url. These redirections should not be used as an indication that payment has been successful processed as it is not accurate or secure. If the logic and inputs are exposed, attackers can forge urls paths to mimic a successful payment.
+
+You should only confirm payments based on our webhook notifications or our synchronous HTTP response (in limited use cases).
+
+## Do not put API keys on your frontend client
+
+API keys need to be protected and secured in proper environments. Exposed API keys with unintended permissions may allow attackers to exploit the account.
+
+## Always use IP whitelisting
+
+Xendit provides the capability for you to whitelist your own IP when making transactions. This adds a layer of protection against unknown sources making transactions on your behalf. In particular, payout flows benefit a lot from this layer of protection.
+
+## Do not store card details unless you are PCI certified
+
+Your system should not be storing any card details unless it has been properly audited and PCI certified. An unsecured system storing card details is very vulnerable to attacks which may lead to card details leaking out. A leakage may potentially lead to regulatory scrutiny, fines and reputation loss.
+
+## Always sanitize transaction information before using it in communications
+
+Unfiltered messaging is a very common security loophole that might lead to exploitation. When communicating information about your payment system or payment transactions, do ensure that sensitive information are taken out.
+
+Some examples of sensitive information include:
+
+- API keys
+- Webhook token
+- Webhook endpoint
+- Card information
+- Personally identifiable information
+- Passwords
+
+Common places where leakage happens:
+
+- Sharing of raw system logs
+- Screenshots
+- Video recordings
+- Screen sharing sessions
+
+##

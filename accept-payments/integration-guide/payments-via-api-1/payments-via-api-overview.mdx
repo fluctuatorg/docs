@@ -1,0 +1,62 @@
+---
+title: "Overview"
+---
+
+In Payments API, you’ll have to host your own checkout page, collect payer’s information and submit the information to Xendit via our API endpoint. Depending on the payment channel or payment flow, you may need to take additional actions for your customer to complete their payment.
+
+To begin integration with our Payments API, you can start by understanding the integration flows, possible payment flows and data objects involved. As you go through our documentation, you can test the actual API calls using our Payments Postman Collection to further your understanding.
+
+Payments API v3.postman\_collection27.94 KB
+
+## Available request types
+
+| Endpoints | Request type | Description |
+| --- | --- | --- |
+| `/payment_requests` | `PAY` | Used by merchants who want to collect a single payment. You will receive one payment object for one created payment request object.  This is used in payment channels like e-wallets where a defined payment amount is requested for payment. |
+| `/payment_requests` | `REUSABLE_PAYMENT_CODES` | Used by merchants who want to collect multiple payments. You will receive multiple payment objects for one created payment request object.  This is used in payment channels like QR where you can have a static QR that is actively waiting for payments. |
+| `/payment_requests` | `PAY_AND_SAVE` | Used by merchants who want to collect a single payment while saving the end user’s payment information. You will receive one payment object for one created payment request object. In addition, a payment token will be sent in the webhook.  This is used in payment channels like cards where a defined payment amount is requested for payment. |
+| `/payment_tokens` | `SAVE` | Used by merchants who want to save the end user’s payment information. You will create and receive one payment token object.  This is used in scenarios where merchants allow end users to save payment informations to their profiles. |
+| `/payment_requests` | `PAY` with tokens | Used by merchants who want to collect a single payment using a previously saved payment token. You will receive one payment object for one created payment request object.  This is used in scenarios where the end user returns for subsequent transactions using saved payment information. |
+
+## High level data objects
+
+| Data object name | Description |
+| --- | --- |
+| Payment request | Represents the merchant’s intent to collect payments. This object is generated when merchant creates a payment request via our `/payment_requests` endpoint. |
+| Payment | Represents a detected end user payment attempt. This object is generated when Xendit receives a payment notification from the payment channel. This is usually delivered to your webhook endpoint. |
+| Payment token | Represents the end user’s payment information. This object is generated when merchant creates a payment token via our `/payment_tokens` endpoint. This token can be used with `/payment_requests` for subsequent transactions. |
+
+## Integration flows
+
+Payments API has 2 core endpoints to help you orchestrate your payment flows. `/payment_requests` helps you collect payments while `/payment_tokens` helps you to save the end user’s payment information as a secure token for subsequent use.
+
+Standardized behavior across `/payment_requests` and `/payment_tokens` APIs -
+
+1. [Choose the desired payment channel and collect the required channel properties fields](/v1/docs/routing-payment-channels)
+2. Initiate a transaction with our endpoints
+3. Receive a API response with a unique ID that can be used to track the status of the transaction
+4. Depending on whether end user actions are required to complete the payment, you will get different sets of responses that your system needs to handle
+
+   | If end user action is required | If end user action is not required |
+   | --- | --- |
+   | 1. A synchronous response to the API call with the required next step 2. A webhook informing you about the outcome of the payment after the end user completes their required payment actions | 1. A synchronous response to the API call with the outcome of the payment 2. A webhook informing you about the outcome of the payment |
+5. Receive a payment event notification via webhook. This event notification will provide you with updates on whether the payment method provider responded to your payment request
+6. You will also be able to perform additional operations on the data objects ([see API reference for more information](https://docs.xendit.co/apidocs/get-payment))
+
+## Possible types of actions
+
+Different payment channels requires their own specific type of end user authentication to complete a payment transaction. Our Payments API standardized them into 3 categories for your system to handle.
+
+### 1. Redirect customers
+
+There are payment channels which require end users to authenticate a transaction on their hosted page or their mobile application. In such cases, our payments API will respond with an indicator of `REDIRECT_CUSTOMER` in the `actions` parameter. This happens frequently in payment flows of e-wallets or for 3DS transactions in cards.
+
+Do ensure that device compatibility is handled for the urls provided by the desired payment channel. In particular, deep link redirection urls often causes errors.
+
+### 2. Present to customers
+
+There are payment channels which require end users to take action based on certain payment information presented. In such cases, our payments API will respond with an indicator of `PRESENT_TO_CUSTOMER` in the `actions` parameter. This happens frequently in payment flows of QR codes or bank transfers.
+
+### 3. No actions required
+
+There are payment channels which require end users to take action based on certain payment information presented. In such cases, our payments API will respond synchronously with the final payment status and a webhook with the payment status. This happens in payment flows like subscriptions where payments are Merchant Initiated Transactions (MIT).

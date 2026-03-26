@@ -1,0 +1,104 @@
+---
+title: "Authorization and Capture Flow (Manual Capture)"
+---
+
+> Currently authorization and capture flow is only available for Cards payment.
+
+In addition to one-time automatic payments, Xendit Components also support an authorization and capture flow (manual capture). This allows you to:
+
+- Authorize a customer’s payment method during checkout.
+- Capture the funds later (e.g., after confirming stock, shipping, or service fulfillment).
+
+This flow is commonly used by eCommerce, marketplaces, travel, and on-demand services.
+
+## How it works
+
+1. Create a Payment Session with `capture_method: MANUAL` in your server
+2. Mount Xendit Components in your client app with this [guideline](https://docs.xendit.co/docs/components-overview)
+3. End user complete the payment on your hosted page
+4. Payment is AUTHORIZED (funds held, not yet captured)
+5. You receive `payment_session.completed`
+6. Capture the payment via Payment API v3 when ready
+7. Xendit sends `payment.capture` webhook
+
+## How to integrate
+
+Refer to the [Xendit Components integration guide](https://docs.xendit.co/docs/components-overview) for the implementation.
+
+When your customer is ready to proceed with a payment, your system should create a Payment Session with `capture_method: MANUAL` using the example payload below. This will authorize the payment first (placing a hold on the funds) and allow you to capture the payment at a later time.
+
+Request - `POST /sessions`
+
+```json
+{
+    "reference_id": "{{$YOUR_REFERENCE_ID}}",
+    "session_type": "PAY",
+    "mode": "COMPONENTS",
+    "capture_method": "MANUAL",
+    "amount": 10000,
+    "currency": "IDR",
+    "country": "ID",
+    "customer": {
+        "reference_id": "{{$randomUUID}}",
+        "type": "INDIVIDUAL",
+        "email": "customer@yourdomain.com",
+        "mobile_number": "+628123456789",
+        "individual_detail": {
+            "given_names": "John",
+            "surname": "Doe"
+        }
+    },
+    "components_configuration": {
+        "origins": ["https://example.com"]
+    }
+}
+```
+
+Response - `POST /sessions`
+
+```json
+{
+    "payment_session_id": "ps-69649592c951f34f173f803a",
+    "created": "2026-01-12T06:32:50.550Z",
+    "updated": "2026-01-12T06:32:50.550Z",
+    "status": "ACTIVE",
+    "reference_id": "{{$YOUR_REFERENCE_ID}}",
+    "currency": "IDR",
+    "amount": 10000,
+    "country": "ID",
+    "expires_at": "2026-01-12T07:02:50.059Z",
+    "session_type": "PAY",
+    "capture_method": "MANUAL",
+    "mode": "COMPONENTS",
+    "locale": "en",
+    "business_id": "62440e322008e87fb29c1fd0",
+    "customer_id": "cust-138123c0-50de-49bb-b804-ead0e1e35914",
+    "capture_method": "AUTOMATIC",
+    "components_sdk_key": "session-907388bd5ccd790edb241bed00c80000-pl-MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAE8zNjokzwdcj/11UkV77757+zQCQAc/Hsez5Ue2+UVEVXCKmQlVhpKGBHY1G5TPWIVUs4JdK8xLA9OihdACCRv7Z66B/caBfhU6V+pTXjiZ/OBcCYUP/cm4mkn5qHZ6N8-UQiUzNWiQad32u5F+pHrumyTsAPwCbojrBaEj+kNpsstysk7G6B4i+r7pgTMye860bMB1KVsLbBSMLYRB9gsb7x/5RJV0Y04yQ+sHBzHOLq3ab9g3g+IQ6C2YElXdvWf",
+    "components_configuration": {
+        "origins": ["https://example.com"]
+    }
+}
+```
+
+You can refer to the [Xendit Components client-side documentation](https://docs.xendit.co/docs/components-overview#clientside-responsibilities) for client-app integration using the returned `components_sdk_key`.
+
+Upon successful authorization, Xendit will send a `payment_session.completed` webhook. The webhook contains the `payment_id` with status `AUTHORIZED`. You should store the `payment_id,`mark the order as authorized, andcapture the payment once the order or service is confirmed.
+
+## How to capture an authorized payment
+
+To capture an authorized payment, use the [Payment API v3 capture endpoint](https://docs.xendit.co/apidocs/capture-payment) with the `payment_id` obtained from the authorization step.
+
+Request - `POST /payments/{payment_id}/capture`
+
+```json
+{   
+   "capture_amount": 10000 
+} 
+```
+
+If successful, you will received the `payment.capture` webhook the payment status will change to `CAPTURED`.
+
+Uncaptured authorizations are valid for 7 days. If the payment is not captured within this period, the authorization will automatically expire and the funds will be released to the customer.
+
+If you intend to cancel the authorization before capturing it, you can call the [Cancel Payment endpoint](https://docs.xendit.co/apidocs/cancel-payment) using the same `payment_id`. This will void the authorization and release the held funds.

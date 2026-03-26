@@ -1,0 +1,109 @@
+---
+title: "Kredivo UAT"
+---
+
+Kredivo requires all merchants to complete their UAT process within three months of the activation request. Xendit will be your dedicated point of contact throughout this process, providing full support.
+
+Should you need additional assistance, please schedule an integration support meeting with our Product Specialists via [this link](https://form.typeform.com/to/Q30FPKVZ).
+
+## How to complete Kredivo UAT
+
+### 0. Sandbox testing (optional)
+
+You can test Kredivo transactions using your development key in Test Mode. After successfully creating a Kredivo checkout URL in Test Mode, simply click "Proceed to pay" to simulate a successful payment. This helps you understand the flow without impacting your live environment.
+
+### 1. Initiate activation
+
+Once your application is approved, you'll receive a notification from Xendit Merchant Ops (merchantops@xendit.co) prompting you to perform a Production/Live Test transaction (UAT). To begin, click "Activate (Kredivo)" on your Xendit Dashboard's Payment Methods page.
+
+### 2. Perform your test transaction (UAT)
+
+#### 2.1. Preparing for Kredivo UAT
+
+Kredivo's test transactions are conducted in production/live mode as part of a "soft activation." This ensures the product details you provide are relevant and accurate.
+
+- You have a maximum of three test transactions. Any payments made will be automatically refunded to the Kredivo account's credit limit, with no settlement occurring.
+- If you need more test transaction attempts, contact the Xendit Customer Success team via email (help@xendit.co) or live chat to reset your quota.
+- We recommend completing the UAT first. You can perform more transactions once Kredivo fully activates your account.
+
+Key Requirements for Your UAT Transaction:
+
+- Use a Kredivo User Account: If you don't have one, download the Kredivo app and sign up. The application takes about 5 minutes, and you'll receive an instant credit limit. You'll use this account to pay for your test transaction.
+- Automatic Refunds: All UAT mode transactions are automatically refunded.
+- Accurate Product Details: Kredivo requires product details to be as accurate as possible to pass UAT. Below are the mandatory product details (parameters) and how to fill them in:
+
+| No. | Product Detail | Notes | ✅ Correct Example | ❌ Wrong Example |
+| --- | --- | --- | --- | --- |
+| 1. | Product name | Use a specific name; avoid generic terms. | - iPhone 13 128 GB - Coffee table 90 x 70 cm - 1 hour guitar lesson with Sungha Jung | - Smartphone - Table - Virtual class |
+| 2. | Product category | Provide a specific and relevant category. Do not use the product name as the category. | - Smartphone - Electronics - Virtual music class | - iPhone 13 128 GB - Items - Products |
+| 3. | Product URL | Use the specific product's URL, not your store's general URL. | www.yourstore.com/shop/iphone-13 | www.store.com |
+
+Important Note on Exemptions:  
+Kredivo may exempt some mandatory details under specific circumstances. For example:
+
+1. You may not have a Product URL for offline stores or when using Xendit Payment Links.
+2. Product Category input might not be required if you are using Shopify.
+3. You sell digital products/services (e.g., tickets, tokens).
+
+If you believe you should be exempt from providing certain mandatory product details, please contact us at merchantops@xendit.co so we can assist in raising this to Kredivo.
+
+#### 2.2. Choose your integration method
+
+Select one of the following methods to execute your Kredivo UAT and handle future payments:
+
+A. Via Xendit's PayLater API
+
+1. Ensure you have a Kredivo user account ready.
+2. Create a checkout URL, including all mandatory product details as outlined in the table above.
+3. Pay the checkout URL using your Kredivo user account.
+4. Your transaction will be automatically recorded and refunded.
+
+We will reach out if more information is needed. Once everything is complete, we'll notify you when Kredivo approves your test transactions and application.  
+For detailed steps, refer [here](#).
+
+B. Via Payment Link
+
+1. Ensure you have a Kredivo user account ready.
+2. Create a payment link/invoice, including all mandatory product details as outlined in the table above.
+3. Pay the invoice using your Kredivo user account.
+4. Your transaction will be automatically recorded and refunded.
+
+We will reach out if more information is needed. Once everything is complete, we'll notify you when Kredivo approves your test transactions and application.  
+For detailed steps, refer [here](#).
+
+C. Via Third-Party Integration Platforms (WooCommerce, Shopify, Magento, Wix)
+
+1. Ensure you have a Kredivo user account ready.
+2. Create a payment link/invoice through your chosen third-party platform, ensuring all mandatory product details are included as outlined in the table above.
+3. Pay the invoice using your Kredivo account.
+4. Your transaction will be automatically recorded and refunded.
+
+We will reach out if more information is needed. Once everything is complete, we'll notify you when Kredivo approves your test transactions and application.  
+For detailed steps, refer [here](#).
+
+#### 2.3. Create your Kredivo UAT transaction on production/live mode
+
+After selecting your preferred integration method, follow the steps to create your Kredivo UAT transaction in Production/Live Mode. Remember, you have a quota of three transactions to gain Kredivo's approval. If you need more attempts, contact the Xendit Customer Success team via email (help@xendit.co) or live chat for a reset.
+
+### 3. Validation
+
+Once your UAT transaction is complete, reply to the previous email from Xendit Merchant Ops (merchantops@xendit.co) with the following template and your expected go-live date:
+
+```plaintext
+Dear Xendit team,
+
+Please see the UAT transaction details below from the live environment:
+
+Transaction Date: [Insert Date]
+Amount: [Insert Amount]
+
+My expected go-live date is on [Insert Date]. Please kindly help to proceed with the next steps.
+```
+
+### 4. Full activation (upon Kredivo UAT approval)
+
+If your transaction meets Kredivo's criteria (paying close attention to product and customer details, as these are common UAT mistakes), Kredivo will approve your test. Xendit will then inform you that full activation is pending completion.
+
+Until full activation, your Kredivo status will remain "Pending" with limitations. To prevent customers from making real Kredivo transactions during this period, we recommend temporarily removing Kredivo as a payment method from your checkout page. You can re-enable Kredivo once Xendit and Kredivo confirm its full activation.
+
+If your transaction does not meet the criteria, Xendit will inform you which parts need correction. You'll then need to create another UAT transaction by repeating steps #1 and #2.

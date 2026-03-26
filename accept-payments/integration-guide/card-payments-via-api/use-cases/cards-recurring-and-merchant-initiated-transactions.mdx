@@ -1,0 +1,93 @@
+---
+title: "Recurring and merchant-initiated transactions"
+description: "Cards recurring and merchant initiated transactions"
+---
+
+Xendit offers two types of recurring integration models:
+
+- The [subscription product](/accept-payments/payment-products/subscriptions/how-subscriptions-work) (we take care of charging payments at a set interval, for a certain amount).
+- Or, supporting you to manage your own subscriptions using our Payments API, which is explained below.
+
+## Store a card for a subscription
+
+Scenario: Your customer signs up for a monthly subscription service, you control charging the subscription to the shoppers card.
+
+### Flow
+
+1. Allow customers to sign up and select a subscription plan.
+2. [Tokenize and securely store the customer's card details](/accept-payments/integration-guide/payment-sessions/payment-link-1/pay-and-save-2).
+3. Charge the customer automatically based on the billing cycle. Follow this [integration guide](/accept-payments/integration-guide/payments-via-api-1/pay-with-tokens) to request payment with existing payment token.
+4. Provide options for customers to update their card or cancel the subscription.
+
+## Benefits of tokenization
+
+- Enhanced Security: Sensitive card data is not stored on the merchant's servers, reducing the risk of data breaches.
+- Improved Customer Experience: Customers don't need to re-enter their card details for each payment.
+- Reduced Payment Failures: Tokenization helps minimize payment failures due to expired or updated card information.
+
+Tokenization is a critical component of subscription-based businesses, enabling seamless and secure recurring payments.
+
+To charge and store a card for subscription transactions set the `card_on_file_type` to `RECURRING`. Additionally, add the `recurring_configuration` object inside the [payment request payload to charge using the existing payment token](/accept-payments/integration-guide/payments-via-api-1/pay-with-tokens).  
+This object contains two fields:
+
+- `recurring_frequency:` Recurring frequency indicates the days between charges to the shopper. For example; when charging the shopper every 4 weeks, set this value to `28`
+- `recurring_expiry:` Recurring expiry indicates when the subscription is going to end. For example; when the subscription ends at the end of 2028, set this to `2028`.
+
+```json
+{
+    "reference_id": "video-streaming-subscriptions",
+    "type": "PAY",
+    "payment_token_id":"pt-263fe30e-88f3-4d78-b8d5-22743e7392d4",
+    "country": "ID",
+    "currency": "IDR",
+    "request_amount": 5000,
+    "channel_properties": {
+       "card_on_file_type":"RECURRING",
+       "recurring_configuration": {
+          "recurring_expiry": "2026-12-12",
+          "recurring_frequency": 1
+       }  
+    }
+}
+```
+
+## Merchant-Initiated Transactions (Unscheduled Card on File)
+
+Scenario: Your customer authorizes a merchant to store their card details for future purchases, but without a predetermined schedule.
+
+#### Flow
+
+1. The customer consents to store their card information securely.
+2. [Tokenize the card data for future use.](/v1/docs/cards-save-a-card)
+3. You can charge the customer's card on an as-needed basis (e.g., for replenishing a prepaid account or fulfilling an order). Follow this [integration guide](/accept-payments/integration-guide/payments-via-api-1/pay-with-tokens) to request payment with existing payment token.
+4. It is important for you to clearly communicate any charges to the customer.
+
+#### Use Cases
+
+- On-Demand Services: Customers who use services sporadically (e.g., taxi rides, food delivery).
+- Account Top-Ups: Customers who add funds to their accounts as needed (e.g., gaming accounts, e-wallets).
+- Recurring Expenses with Variable Amounts: Utility bills or subscriptions with usage-based pricing.
+
+Unscheduled card-on-file transactions provide flexibility for both you and customers while maintaining the convenience and security of tokenization.
+
+### Store a card for merchant-initiated transactions
+
+To charge and store a card for subscription transactions set the `card_on_file_type` to `MERCHANT_UNSCHEDULED` inside the [payment request payload to charge using the existing payment token](/accept-payments/integration-guide/payments-via-api-1/pay-with-tokens). Example payload:
+
+```json
+{
+    "reference_id": "video-streaming-subscriptions",
+    "type": "PAY",
+    "payment_token_id":"pt-263fe30e-88f3-4d78-b8d5-22743e7392d4",
+    "country": "ID",
+    "currency": "IDR",
+    "request_amount": 5000,
+    "channel_properties": {
+       "card_on_file_type":"MERCHANT_UNSCHEDULED",
+       "recurring_configuration": {
+          "recurring_expiry": "2026-12-12",
+          "recurring_frequency": 1
+       }  
+    }
+}
+```

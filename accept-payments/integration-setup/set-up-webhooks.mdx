@@ -1,0 +1,26 @@
+---
+title: "Set up webhooks"
+---
+
+In our Payments API flows, all payments events will have notifications that you can subscribe to. Your system should be set up to receive our webhooks even if you only use flows where we update the payment statuses synchronously.
+
+In particular, being subscribed to our `Payment Status` webhooks can help your system know whether a payment has happened in real time for payments where end users have to perform an authentication. Additionally, our `Payment Status` webhooks also include reconciliation events where a previously undetected payment was found during settlement.
+
+## Saving your webhook endpoints with Xendit
+
+1. Click Settings on your sidebar
+2. Click Webhooks on the sub menu
+3. Update the webhook url fields shown in the screenshot below and click Test and save
+4. Validate that you’ve received the exact test notification in your system
+
+![](/images/doc360/image_101_.png)
+
+## Available webhook endpoints
+
+| Topic | Description |
+| --- | --- |
+| Unified refunds - refund request succeeded | Notification event when refund is successful |
+| Unified refunds - refund request failed | Notification event when refund has failed |
+| Payment requests v3 - payment status | Notification event when for changes to payment data object status |
+| Payment requests v3 - payment request status | Notification event when for changes to payment request data object status |
+| Payment tokens v3- payment token status | Notification event when for changes to payment token data object status |

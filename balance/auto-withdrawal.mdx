@@ -1,0 +1,108 @@
+---
+title: "Auto-Withdrawal"
+---
+
+Auto-Withdrawal is a feature that lets you schedule automatic withdrawals from your Xendit balance to your bank account at your preferred frequency. This eliminates the need to perform manual transfers and, depending on your region, allows you to configure options such as Balance Maturity Period and minimum balance thresholds.
+
+## Available configurations
+
+The availability and behavior of Auto-Withdrawal configurations vary by country. Here’s a quick overview:
+
+| Configuration | Indonesia | Other countries |
+| --- | --- | --- |
+| Pause/Delete | Cannot pause or delete (editing allowed) | Can pause or delete.   Users must delete the existing configuration to create a new one. |
+| Frequency | - Daily (Mon-Fri), Weekly (choose weekdays) - Monthly withdrawals not available | Daily, Weekly, Monthly |
+| Balance maturity period | 3 or 7 days (or no maturity period) | Not available |
+| Partial Withdrawal | Unavailable | Optional |
+
+## Understanding Auto-Withdrawal configurations
+
+1. Withdrawal Frequency
+
+   - Daily: Withdraws once per business day (usually at 9:00 AM local time).
+   - Weekly: Withdraws on your chosen day(s) each week (e.g., every Wednesday at 9 am.
+   - Monthly (not available in Indonesia): Runs every first day of the month at 9 am.
+2. Balance Maturity Period (Indonesia only)
+
+   - This optional setting introduces a delay of 3 or 7 days before funds are included in your automatic withdrawals.
+   - This delay helps ensure you have sufficient funds for potential refunds or other payouts before the automatic transfer occurs.
+   - You can also choose not to select this feature.
+   - See examples
+3. Partial withdrawal
+
+   - If you specify a fixed amount in balance, the system will only withdraw amounts above this threshold.
+   - Example: if you set a fixed amount in balance of IDR 1,000,000, no withdrawal will happen unless your balance is greater than IDR 1,000,000.
+
+## How it works
+
+To help you understand how Auto-Withdrawal works in different scenarios, here are some detailed examples:
+
+Example 1: Daily Auto-Withdrawal (no Maturity Period, no partial withdrawal configuration)
+
+This example demonstrates a daily auto-withdrawal without any delay or minimum balance requirement. The withdrawal happens every calendar day at 9:00 AM and is based on the previous day's closing balance.
+
+| Day | Reference EOD (D−1 @ 11:59 PM) | Withdrawn at 9:00 AM | Balance After 9:00 AM | Settled transactions | Net Change | EOD Balance |
+| --- | --- | --- | --- | --- | --- | --- |
+| Day 1 (Mon) | Day 0 EOD = 0 | 0 (nothing to withdraw) | 0 | +5,000 (10:00), +2,000 (15:00) | +7,000 | 7,000 |
+| Day 2 (Tue) | Day 1 EOD = 7,000 | 7,000 | +3,000 | +3,000 (6:00) | +3,000 | 3,000 |
+| Day 3 (Wed) | Day 2 EOD = 3,000 | 3,000 | 0 | +10,000 (11:00) | +10,000 | 10,000 |
+| Day 4 (Thu) | Day 3 EOD = 10,000 | 10,000 | 0 | +2,000 (10:00), −1,000 (14:00) | +1,000 | 1,000 |
+| Day 5 (Fri) | Day 4 EOD = 1,000 | 1,000 | +5,000 | +5,000 (1:00) | +5,000 | 5,000 |
+| Day 6 (Sat) | Day 5 EOD = 5,000 | 5,000 | 0 | +1,000 (13:00), +3,000 (16:00) | +4,000 | 4,000 |
+| Day 7 (Sun) | Day 6 EOD = 4,000 | 4,000 | 0 | +6,000 (11:00) | +6,000 | 6,000 |
+| Day 8 (Mon) | Day 7 EOD = 6,000 | 6,000 | 0 | +2,000 (10:00), −2,000 (16:00) | 0 | 0 |
+| Day 9 (Tue) | Day 8 EOD = 0 | 0 | 0 | +10,000 (12:00) | +10,000 | 10,000 |
+
+---
+
+Example 2: Daily Auto-Withdrawal with Maturity Period of 1 day
+
+This example shows a Daily Auto-Withdrawal (Monday to Friday) with a 1-day maturity period. The withdrawal on day D at 9:00 AM is calculated based on the end-of-day balance from day D-2, minus any outgoing transactions from day D-1.  
+  
+Note: A 1 day maturity period is used to keep this example succinct. The available options are 0, 3, and 7 days.
+
+| Day | Reference EOD (D−2 @ 11:59) | Money Out on (D−1) | Withdrawn at 9:00 AM | Balance After 9:00 AM | Settled transactions | Net Change | EOD Balance (11:59 PM) |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Day 1 (Mon) | N/A (no Day −1) | N/A (no prior day) | 0 | 0 | +20,000 (11:00), −3,000 (14:00) | +17,000 | 0 + 17,000 = 17,000 |
+| Day 2 (Tue) | Day 0 EOD = 0 | 3,000 (Payout) | 0 − 3,000 < 0 ⇒ 0 withdrawn | 17,000 | +10,000 (10:00), −2,000 (16:00) | +8,000 | 17,000 + 8,000 = 25,000 |
+| Day 3 (Wed) | Day 1 EOD = 17,000 | 2,000 (Payout) | 17,000 − 2,000 = 15,000 | 25,000 − 15,000 = 10,000 | +5,000 (13:00), −1,000 (17:00) | +4,000 | 10,000 + 4,000 = 14,000 |
+| Day 4 (Thu) | Day 2 EOD = 25,000 | 16,000 (1,000 Payout + 15,000 Auto-Withdrawal) | 25,000 − 16,000 = 9,000 | 14,000 − 9,000 = 5,000 | +3,000 (10:00), −2,000 (18:00) | +1,000 | 5,000 + 1,000 = 6,000 |
+| Day 5 (Fri) | Day 3 EOD = 14,000 | 11,000 (2,000 Payout + 9,000 Auto-Withdrawal) | 14,000 − 11,000 = 3,000 | 6,000 − 3,000 = 3,000 | +6,000 (11:00), −1,000 (15:00) | +5,000 | 3,000 + 5,000 = 8,000 |
+| Day 6 (Sat) | N/A (weekend, no Auto-Withdrawal) | N/A | 0 | 8,000 | +4,000 (13:00), −2,000 (17:00) | +2,000 | 8,000 + 2,000 = 10,000 |
+| Day 7 (Sun) | N/A (weekend, no Auto-Withdrawal) | N/A | 0 | 10,000 | +5,000 (10:00), −1,000 (18:00) | +4,000 | 10,000 + 4,000 = 14,000 |
+| Day 8 (Mon) | Day 6 EOD = 10,000 | 1,000 (Payout) | 10,000 − 1,000 = 9,000 | 14,000 − 9,000 = 5,000 | +10,000 (11:00), −4,000 (16:00) | +6,000 | 5,000 + 6,000 = 11,000 |
+| Day 9 (Tue) | Day 7 EOD = 14,000 | 13,000 (4,000 Payout + 9,000 Auto-Withdrawal) | 14,000 − 13,000 = 1,000 | 11,000 − 1,000 = 10,000 | +5,000 (12:00), −2,000 (17:00) | +3,000 | 10,000 + 3,000 = 13,000 |
+
+---
+
+Example 3: Daily Auto-Withdrawal with a fixed amount balance
+
+This example illustrates a daily auto-withdrawal with a fixed balance amount of 2,000. The system will only withdraw the amount exceeding this threshold.
+
+| Day | 9:00 AM Reference EOD (D−1 @ 11:59 PM) | Withdrawn at 9:00 AM | Balance After 9:00 AM | Settled transactions | Net Change | End of Day (11:59 PM) |
+| --- | --- | --- | --- | --- | --- | --- |
+| Day 1 (Mon) | Day 0 EOD = 0 | 0 (since 0 ≤ 2,000) | 0 | +8,000 (10:00), −2,000 (15:00) Net: +6,000 | +6,000 | 6,000 |
+| Day 2 (Tue) | Day 1 EOD = 6,000 | 6,000 − 2,000 = 4,000 | 2,000 | +4,000 (14:00) Net: +4,000 | +4,000 | 6,000 |
+| Day 3 (Wed) | Day 2 EOD = 6,000 | 6,000 − 2,000 = 4,000 | 2,000 | +2,000 (13:00) Net: +2,000 | +2,000 | 4,000 |
+| Day 4 (Thu) | Day 3 EOD = 4,000 | 4,000 − 2,000 = 2,000 | 2,000 | +5,000 (10:00), −1,000 (18:00) Net: +4,000 | +4,000 | 6,000 |
+| Day 5 (Fri) | Day 4 EOD = 6,000 | 6,000 − 2,000 = 4,000 | 2,000 | +3,000 (12:00) Net: +3,000 | +3,000 | 5,000 |
+| Day 6 (Sat) | Day 5 EOD = 5,000 | 5,000 − 2,000 = 3,000 | 2,000 | +1,000 (11:00) Net: +1,000 | +1,000 | 3,000 |
+| Day 7 (Sun) | Day 6 EOD = 3,000 | 3,000 − 2,000 = 1,000 | 2,000 | −2,000 (14:00) Net: −2,000 | −2,000 | 0 |
+| Day 8 (Mon) | Day 7 EOD = 0 | 0 (since 0 ≤ 2,000) | 0 | +10,000 (15:00) Net: +10,000 | +10,000 | 10,000 |
+| Day 9 (Tue) | Day 8 EOD = 10,000 | 10,000 − 2,000 = 8,000 | 2,000 | −2,000 (14:00) Net: −2,000 | −2,000 | 0 |
+
+## How to set up Auto-Withdrawal
+
+Follow these simple steps to configure Auto-Withdrawal in your Xendit Dashboard:
+
+1. Navigate to Settings > Withdrawal Settings > Auto Withdrawal.
+2. Click Set Up Auto Withdrawal
+3. Select your Destination Bank Account.
+4. Choose your preferred Frequency: Daily, Weekly, or (if available) Monthly
+5. If you select Weekly, specify the desired weekday(s)
+6. Set a Maturity Period (only available in Indonesia)
+7. Enter a Minimum Balance (optional - unavailable in Indonesia)
+8. Select your Start Date
+9. Confirm your Auto-Withdrawal settings. You will see a confirmation indicating when the first automatic withdrawal is scheduled.
+
+<iframe src="https://withdrawal-sim.vercel.app/" title="" className="w-full rounded-xl" height="2200"></iframe>

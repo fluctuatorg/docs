@@ -1,0 +1,59 @@
+---
+title: "Updating Verification Information"
+---
+
+Your verification request may be rejected due to missing information, invalid documents, etc. You will receive an Account Holder webhook notification that will give you specific information to update the Account Holder accordingly. To update your merchant’s information, you must update the `Account Holder` object with the parameters that need to be revised.
+
+Sample callback payload:
+
+```json
+{
+    "created": "2021-01-01T10:00:00Z",
+    "event": "account_holder.kyc.status",
+    "business_id": "5fe2b0137b7d62542fe6d7de",
+    "data": {
+        "id": "57fb4e076fa3fa296b7f5a97",
+        "created": "2021-01-01T10:00:00Z",
+        "updated": "2021-01-01T10:00:00Z",
+        "kyc": {
+            "status": "RESUBMISSION_REQUIRED",
+            "verified_at": "2021-01-01T10:00:00Z",
+            "requested_at": "2021-01-01T10:00:00Z",
+            "failure_reasons": [
+                {
+                    "field": "website_url",
+                    "message": "Website is Invalid"
+                }
+            ]
+        }
+    }
+}
+```
+
+## Sample requests
+
+```plaintext
+PATCH https://api.xendit.co/account_holders/{id}
+```
+
+## Update website URL
+
+```json
+{
+    "website_url": "sample-marketplace.xendit.com"
+}
+```
+
+## Update KYC documents
+
+```json
+{
+    "kyc_documents": [
+        {
+            "country": "PH",
+            "type": "LATEST_GIS_DOCUMENT",
+            "file_id": "63f8719642f5856dc9feje7"
+        }
+    ]
+}
+```

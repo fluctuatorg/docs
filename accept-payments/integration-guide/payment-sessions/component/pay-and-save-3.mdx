@@ -1,0 +1,93 @@
+---
+title: "Pay and Save"
+---
+
+Payment Sessions allow you to collect a payment and save the customer’s payment method in a single checkout flow.  
+This pattern is useful when you want to charge the customer immediately and enable faster future payments without asking them to re-enter their payment details.
+
+Example usage
+
+- First-time checkout: Charge the customer and save their card for faster repeat purchases.
+- Subscription onboarding: Collect the first payment and store the payment method for recurring billing.
+- Postpaid services: Charge a deposit and retain the payment method for future usage-based charges.
+
+## How to integrate
+
+Refer to the [Xendit Components integration guide](https://docs.xendit.co/docs/components-overview) for the implementation.
+
+Below is the guideline for the Payment Session request for a pay and save flow. During checkout, or whenever your customer is ready to make a one-time purchase, your system should create a Payment Session with Xendit with:
+
+- `session_type = PAY`
+- `mode = COMPONENTS`
+- `allow_save_payment_method` set according to your UX preference. `allow_save_payment_method` options
+
+  | Value | Behavior |
+  | --- | --- |
+  | `DISABLED` | Payment method will not be saved |
+  | `OPTIONAL` | Customer can choose whether to save |
+  | `FORCED` | Payment method is saved automatically |
+
+  For Pay and Save, use `OPTIONAL` or `FORCED`.
+
+Request - `POST /sessions`
+
+```json
+{
+    "reference_id": "{{$YOUR_REFERENCE_ID}}",
+    "session_type": "PAY",
+    "mode": "COMPONENTS",
+    "amount": 150000,
+    "currency": "IDR",
+    "country": "ID",
+    "allow_save_payment_method": "FORCED",
+    "customer": {
+        "reference_id": "{{$randomUUID}}",
+        "type": "INDIVIDUAL",
+        "email": "customer@yourdomain.com",
+        "mobile_number": "+628123456789",
+        "individual_detail": {
+            "given_names": "John",
+            "surname": "Doe"
+        }
+    },
+    "components_configuration": {
+        "origins": ["https://example.com"]
+    }
+}
+```
+
+Response - `POST /sessions`
+
+```json
+{
+    "payment_session_id": "ps-6964954bc951f34f173f7f7d",
+    "created": "2026-01-12T06:31:39.574Z",
+    "updated": "2026-01-12T06:31:39.574Z",
+    "status": "ACTIVE",
+    "reference_id": "{{$YOUR_REFERENCE_ID}}",
+    "currency": "IDR",
+    "amount": 150000,
+    "country": "ID",
+    "expires_at": "2026-01-12T07:01:39.165Z",
+    "session_type": "PAY",
+    "mode": "COMPONENTS",
+    "locale": "en",
+    "business_id": "62440e322008e87fb29c1fd0",
+    "customer_id": "cust-e46eae53-b048-4490-a31b-ddf8b43c32ea",
+    "capture_method": "AUTOMATIC",
+    "allow_save_payment_method": "FORCED",
+    "components_sdk_key": "session-eb5f80aa2ba4f5c702bc7eb9bae50000-pl-MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEFtDH9rtiTAPll6tyCegd59FTL2zKAgLGqf95IcT8OCWxgfsxVV/DmukWMapKyO7vbfOu9wSGD+a9Gma+/mWFrLNAA/3xZ07pA5It5VDIYUeVHBznahLtFyEKV9RfnNsM-SOiKxnKb4uWOdQdR1X56FJ131i9CXPZKGwOqf5d4HkhliaxCNIlJHVO/TnIsne5zQiwwdRUTBx7CcYhJkDh+7Obs48zCFw1WlTIHasPxV6eVgUMhDzc9lwOfNVL44/p/",
+    "components_configuration": {
+        "origins": ["https://example.com"]
+    }
+}
+```
+
+You can refer to the [Xendit Components client-side documentation](https://docs.xendit.co/docs/components-overview#clientside-responsibilities) for client-app integration using the returned `components_sdk_key`.
+
+Upon successful payment, Xendit will send a `payment_session.completed,` wehbook contains`payment_token_id` which you should securely store for future use. Optionally, you can handle `payment.capture` and `payment_token.activated` webhook to your system to see the payment or token details.
+
+You should use these webhooks to update the order status in your system and use the `payment_token_id` for:
+
+- Future one-off payments: Refer to the [Pay with Tokens](https://docs.xendit.co/docs/pay-with-tokens) guide
+- Subscription transactions: Refer to the guides on [Fixed Amount Subscriptions](https://docs.xendit.co/docs/fixed-amount-subscriptions) or [Usage-Based Subscriptions](https://docs.xendit.co/docs/usage-based-subscriptions).

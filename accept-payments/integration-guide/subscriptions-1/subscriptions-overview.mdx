@@ -1,0 +1,59 @@
+---
+title: "Overview"
+---
+
+Subscription is a solution for managing recurring payments using Xendit's scheduler. It offers an easy and flexible integration, allowing you to configure and automate recurring payment cycles based on your setup. By using the Subscriptions product, you eliminate the need to build your own scheduling system, including handling failed payment recovery. Xendit optimizes the success rate of payments through features designed specifically for subscription management.
+
+## High level data objects
+
+![](/images/doc360/Untitled_diagram-2024-11-29-033229.png)
+
+| Data object name | Description | Created by |
+| --- | --- | --- |
+| Plan | The primary data object for managing your subscription logic. It contains details such as the customer object, the amount to be deducted for each cycle, the schedule object, and the basic subscription plan configurations, including optional features. | You |
+| Schedule | Defines when subscription actions should occur. It includes merchant-defined timing details, such as intervals (e.g., daily, monthly, yearly) and retry logic. The schedule object can be created simultaneously with the subscription plan to enable plan customization for each customer. | You |
+| Cycle | Automatically generated based on the subscription plan object. Each subscription cycle represents an individual billing instance (e.g., a monthly plan for a year generates 12 cycles). Ad hoc changes can be made to specific cycles without affecting the base subscription plan. The subscription plan has a one-to-many relationship with its cycles. | Xendit |
+| Attempt | Represents each action taken to complete a subscription cycle (e.g., payments). Multiple attempts may occur within a single cycle depending on the retry configuration (e.g., a cycle with two retries can have up to three attempts). All attempts are stored within the corresponding cycle object. Each subscription cycle has a one-to-many relationship with its attempts.  A single attempt can involve multiple `action_id` entries if multiple payment methods were configured in the subscription plan. Xendit will process each payment method sequentially, based on priority, until one succeeds or all fail. A subscription attempt has a one-to-many relationship with `action_id`. | Xendit |
+
+## Integration flow
+
+![](/images/doc360/Untitled_diagram-2024-11-29-051755.png)
+
+Example of integration flow if you are about to set up Subscriptions payment for your end user
+
+1. Once the end user selects a subscription plan in your system, create the corresponding subscription plan in Xendit.
+2. Use an existing `customer_id` if the customer is already registered in Xendit. Otherwise, create a new customer at this step.
+3. Create the subscription plan with the `customer_id` and agreed details (e.g., schedule, interval).
+4. If you already have your end user's linked payment method, provide the `payment_method_id` when creating the subscription. If you do not include it, Xendit will return a `REQUIRES_ACTION` status and generate a `action` object to be executed. This `action.url` can be shared with your customer, allowing them to link their payment method on the Xendit-hosted page.
+5. Redirect the customer to the Xendit-hosted page using the `action.url`.
+6. The customer links their payment method on the Xendit-hosted page.
+7. Once the payment method is linked, receive the `recurring.plan_activation` webhook, and the plan becomes active. See the [Plan lifecycle](/accept-payments/integration-guide/subscriptions-1/subscriptions-overview#plan-lifecycle) below.
+8. Xendit processes subscription cycles based on the `anchor_date` and `interval`.
+9. For each cycle, receive webhooks indicating status updates:
+
+   1. `recurring.cycle.created`: A new cycle is created.
+   2. `recurring.cycle.retrying`: A payment attempt failed, but a retry is scheduled on `next_retry_timestamp`.
+   3. `recurring.cycle.failed`: All retry attempts have failed.
+   4. `recurring.cycle.succeeded`: Payment for the cycle was successful.
+
+## Plan lifecycle
+
+![](/images/doc360/Untitled_diagram-2024-12-05-045031.png)
+
+| Status | Description | Webhook event |
+| --- | --- | --- |
+| Requires Action | The subscription plan is in `REQUIRES_ACTION` status if no `payment_method_id` is provided. *At least one active* `payment_method_id` *must be attached to the plan.* This will be the status if you want to use Xendit-hosted page to redirect the end user to link their payment method.  Redirect the end user to the `action.url` to link their payment method. |  |
+| Pending | If `payment_method_id` is provided during plan creation, the plan status will be `PENDING`. Wait for the `recurring.plan.activated` webhook to confirm activation. |  |
+| Active | The plan is `ACTIVE` when the scheduler runs and processes payments according to the set schedule. Remains active until all cycles are executed or manually deactivated. | `recurring.plan.activated` |
+| Inactive | The plan becomes `INACTIVE` after all cycles are completed or it is manually deactivated. Inactive plans cannot be reactivated. You will receive `recurring.plan.inactivated` for this transition. | `recurring.plan.inactivated` |
+
+## Cycle lifecycle
+
+![](/images/doc360/Untitled_diagram-2024-12-08-125117.png)
+
+| Status | Description | Webhook event |
+| --- | --- | --- |
+| Created | The cycle has been created and is ready to execute based on the `schedule_timestamp`. You will receive the `recurring.cycle.created` webhook when the next cycle is created. | `recurring.cycle.created` |
+| Retrying | If the first attempt fails and the plan has a retry configuration, you will receive the `recurring.cycle.retrying` webhook. This indicates retries are ongoing until completed. | `recurring.cycle.retrying` |
+| Succeeded | The cycle payment succeeded. You will receive the `recurring.cycle.succeeded` webhook. You will get the action\_id inside the webhook as an identifier of the payment. You can use this for refund process if needed. | `recurring.cycle.succeeded` |
+| Failed | The cycle payment failed. You will receive the `recurring.cycle.failed` webhook, indicating all retries have been executed without success. | `recurring.cycle.failed` |

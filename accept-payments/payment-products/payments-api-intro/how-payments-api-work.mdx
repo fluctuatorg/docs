@@ -1,0 +1,40 @@
+---
+title: "How Payments API work"
+---
+
+Our payments API is designed for our merchants to scale their payments with more channels or more volume while enjoying diminishing development work for every new addition. The integration concepts are designed to be simple and reusable. On average, merchants can expect a quick go to market in weeks for simple use cases while more complex use cases can take up to a month.
+
+## Endpoints
+
+There are 3 integration endpoints that helps to serve our Payments API features:
+
+1. `v3/payment_requests` - to initiate a payment and configure the payment flow
+2. `v3/payment_tokens` - to save payment information for reuse
+3. `/refunds` - to return money back to the end user
+
+You can connect to these endpoints based on your needs. For the majority of payments use cases, we recommend `v3/payment_requests` as it covers a wide coverage of payment scenarios.
+
+## Creating a payment
+
+Creating a payment is as simple as hitting our `v3/payment_requests` endpoint with a few lines of code. [You can find our detailed integration guides here](/accept-payments/integration-guide/payments-via-api-1/payments-via-api-overview).
+
+*Example of a request payload*
+
+&#123;&#123;snippet.create\_pr\_pay&#125;&#125;
+
+Our `v3/payment_requests` endpoint follows REST API standards and covers the ability to collect payments for the following scenarios:
+
+- `PAY` - [collect a regular payment from the end user.](/accept-payments/integration-guide/payments-via-api-1/pay-one-off-payment)
+- `PAY` with token - [collect a regular payment from the end user using saved payment information.](/accept-payments/integration-guide/payments-via-api-1/pay-with-tokens)
+- `PAY_AND_SAVE` - [collect a regular payment from the end user while saving their payment information as a token for future use.](/accept-payments/integration-guide/payments-via-api-1/pay-and-save)
+- `REUSABLE_PAYMENT_CODE` - [collect multiple payments using an allocated payment code for a user or a store.](/accept-payments/integration-guide/payments-via-api-1/reusable-payment-codes) An example could be a static QR code or a fixed bank account number.
+
+Once the endpoint is called to create a payment transaction, our API will dynamically guide your system on the next step to take with the end user.
+
+- *For payments over Card networks (e.g. Visa, Mastercard), there are additional requirements when it comes to integration.* [*You can find the information here*](/accept-payments/integration-guide/card-payments-via-api/cards-api-overview)*.*
+
+## Payment confirmation
+
+Our API provides real-time payment confirmation to keep your system synchronized. When a payment requires no further action from the end-user and is completed, our API instantly notifies your system synchronously on our endpoint and currently sends a webhook notification to your system. For payments requiring end-user action, such as 3D Secure authentication, we’ll send a webhook notification to your system the moment the payment is completed. [You can find our recommendations for handling webhooks here](/integration-best-practices/handling-webhooks).   
+  
+We strive for instant payment confirmation and relay the confirmation from the payment provider to you as soon as we receive it. Please note that some payment providers may have delayed confirmation flows, which may impact the immediacy of the notification.

@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx skills:*)",
+      "Bash(curl -s -L \"https://www.mintlify.com/docs/ai/model-context-protocol\")"
+    ]
+  }
+}

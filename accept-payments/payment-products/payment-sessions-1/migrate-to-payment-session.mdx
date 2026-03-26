@@ -1,0 +1,86 @@
+---
+title: "Migrate from (legacy) Payment Links/Invoice to Payment Session"
+---
+
+![](/images/doc360/image_174_.png)
+
+We recommend that you migrate from the legacy Payment Link API to the new Payment SessionsAPI using the `PAYMENT_LINK` mode for the following benefits:
+
+## Feature Comparison
+
+| Feature | Legacy Payment Link | Payment Session |
+| --- | --- | --- |
+| Payment flows supported | Designed exclusively for one-time transactions | One-time payment, pay and save, save payment method, subscriptions (coming soon) within single integration |
+| Payment Channels Availability | Limited to legacy payment methods and specific regions | Availability for all existing channels and new channels in all regions Xendit supported |
+| New design for Xendit Hosted Page | Old design style, payment channel categorization is outdated | Fresh new design with improvement in user experience |
+| Failure Information | No feedback information send to the merchant when user fails payment attempts | Will send `payment.failure` for any failed payment attempts |
+| Integration Interfaces | Different endpoint required for various use cases | One integration method for all interfaces, including subscription (coming soon) |
+
+## Key Changes in Terminology
+
+Before updating your implementation, understand how the concepts map to the Payment Sessions API:
+
+- Session Type: Instead of just "creating a link," you now define a goal: PAY (one-time), SAVE (save payment method), or PAY AND SAVE with `allow_save_payment_method` enabled.
+- Interface: You specify the mode on `PAYMENT_LINK` to tell Xendit that you want us to host the UI.
+- New Primary Identifier: `payment_session_id` is the primary identifier for tracking the payment lifecycle, replacing the older payment link `id`.
+
+## How to migrate
+
+### Update your integration
+
+#### Endpoints
+
+| Feature | Legacy Payment Link | Payment Session |
+| --- | --- | --- |
+| API Endpoint | `/v2/invoices` | `/sessions` |
+
+#### Parameter Conversion
+
+The new Payment Sessions API supports most of the functionality of the legacy Payment Link. The following table maps the parameters and configuration between two APIs. Please refer to the [API docs](/v1-api/apidocs/create-session) for the full lists
+
+| Legacy Payment Link | Payment Session | Notes |
+| --- | --- | --- |
+| `external_id` | `reference_id` | A reference to uniquely identify your transaction/order. |
+| `customer` | `customer` or `customer_id` | You can create the customer\_id separately aor directly in the payment session request |
+| `invoice_duration` | `expires_at` | Now defined as a specific timestamp or duration |
+| `payment_methods` | `allowed_payment_channels` | Define what payment channels you want offer inside the hosted page |
+| `mid_label` | `channel_properties.cards.mid_label` | Define specific MID routing for cards payment. It’s commonly used if you use your own acquirer for cards payment. |
+| `fees` | `items` with type as ‘fees’ | Fee items are now defined as line items |
+| `should_authenticate_credit_card` | `channel_properties.cards.skip_three_ds` | Controls whether 3DS authentication is skipped |
+| `channel_properties.installment_configuration` | - | Currently it’s not yet supported (will be available in Q1 2026) |
+| `customer_notification_preference` | - | Currently it’s not yet supported (will be available in Q1 2026) |
+
+### Handle new errors
+
+Adapt on your server’s logic to handle [errors in Payment Sessions response](/v1-api/apidocs/create-session).
+
+### Update and handle your webhook setup
+
+[Adjust the webhook URL](/accept-payments/integration-guide/integration-setup-3#3-set-up-your-webhooks) to receive the information upon your payment sessions lifecycle.
+
+Legacy Payment Link API
+
+- `Invoices paid`: Xendit will send webhook for paid invoices
+- `Invoice expired`: Xendit will send webhook for expired invoices
+
+Payment Sessions API
+
+- `Payment Session Completed`: Xendit will send webhook when the payment session has completed
+- `Payment Session Expired`: Xendit will send webhook when the payment session has expired
+
+#### Optional but recommended
+
+Payment v3 – Payment Status
+
+Xendit sends webhooks whenever there is a status update on a Payment object.
+
+- `payment.succeeded` Identifies successful payments and includes full payment details.
+- `payment.failure`Identifies failed payment attempts, including failures that occur on the Xendit hosted page.
+
+Payment Tokens v3 – Payment Token Status
+
+Xendit sends webhooks whenever there is a status update on a Payment Token object.
+
+This applies to `PAY`sessions with payment method saving enabled and `SAVE` session types.
+
+---

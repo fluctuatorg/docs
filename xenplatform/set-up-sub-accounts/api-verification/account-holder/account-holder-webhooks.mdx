@@ -1,0 +1,29 @@
+---
+title: "Handling xenPlatform webhooks"
+---
+
+You can integrate webhooks to receive real-time notifications about events related to your `Account Holders` on xenPlatform. These webhooks allow your system to automatically respond to various status changes.
+
+Before you begin: Ensure you have set your webhook URL for xenPlatform - Account Holder. Refer to our [guide](/accept-payments/integration-setup/set-up-webhooks) or API documentation for instructions on how to set your webhook URL.
+
+| Webhook event | Trigger | Description |
+| --- | --- | --- |
+| KYC verification passed `account_holder.kyc.status:passed` | When Xendit decides that Account Holder information is sufficient for sub-account to be verified | Use this event to notify your merchants that their Account has passed KYC verification from Xendit |
+| KYC verification failed `account_holder.kyc.status:failed` | When Xendit decides that Account Holder does not have sufficient information for Account | Use this event to notify your merchants that their onboarding is declined by Xendit Platform can also use the ``failure\_reason to notify their Partners the reason why their submission is failed |
+| Document resubmission required `account_holder.kyc.status:resubmission_required` | When Xendit requires additional documents | Use this event to notify your merchants that their onboarding information is invalid and needs document resubmission We will also notify you via webhook and and specify the invalid fields so that your merchants can update the invalid fields with the right information |
+| Capabilities have been activated `account_holder.capabilities.status:live` | When capabilities has been activated for the sub-account | Use this event to notify your merchants that the requested capabilities or payment channel have been activated for the sub-account |
+| Capabilities activation request has been declined `account_holder.capabilities.status:declined` | When capabilities has been declined for the sub-account and you can no longer resubmit | Use this event to notify your merchants that their activation request is declined by Xendit. The `failure_reason` explains the reason why their submission is declined. |
+| Capabilities activation needs documents resubmission `account_holder.capabilities.status:resubmission_required` | When Xendit request additional documents so that you can resubmit the correct information to activate certain capabilities | Use this event to notify your merchants that their information is invalid and needs resubmission. The invalid fields that need to be updated are specified in the webhook. |
+
+## Simulating Webhook Scenarios in Test Mode
+
+You can use the following Account Holder IDs as magic numbers to simulate API responses for different webhook scenarios.
+
+| Scenario | Account Holder ID | Endpoint |
+| --- | --- | --- |
+| Accounts KYC verification passed | 00000000-0000-0000-0000-000000000000 | PATCH v2/accounts/:id |
+| Accounts KYC verification failed | 00000000-0000-0000-0000-111111111111 | PATCH v2/accounts/:id |
+| Accounts KYC needs documents resubmission | 00000000-0000-0000-0000-222222222222 | PATCH v2/accounts/:id |
+| Capabilities has been activated | 00000000-0000-0000-0000-333333333333 | PATCH account\_holders/:id |
+| Capabilities activation request has been declined | 00000000-0000-0000-0000-444444444444 | PATCH account\_holders/:id |
+| Capabilities activation needs documents resubmission | 00000000-0000-0000-0000-555555555555 | PATCH account\_holders/:id |

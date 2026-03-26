@@ -1,0 +1,35 @@
+---
+title: "Reconciling your Xendit Invoice"
+---
+
+To match transactions to your Xendit Invoice, use our Billing Report.
+
+The Billing Report shows the full list of individual transactions and associated fees that were charged in the monthly Invoice.
+
+## Available columns in the Billing Report
+
+The table below provides the definition of every column available in the Billing Report:
+
+| Title | Description |
+| --- | --- |
+| id | The transaction\_id used in balance history and transactions tab reports or an ID that uniquely defines a billable event |
+| reference | The unique identifier you input for the transaction. Usually the external\_id or reference\_id in your transaction request |
+| transaction\_type | The product such as VA\_PAYMENT, EWALLET\_PAYMENT, etc |
+| transaction\_channel | The subcategory of transaction\_type used such as DANA, BNI, BCA, etc |
+| transaction\_label | The subcategory of transaction\_channel used such as QR, Installments 3 Months, etc |
+| is\_switcher | Whether a transaction\_type was a switcher transaction. Only relevant for Virtual Account and Cards transactions |
+| calculation\_method | The identifier of refund fee calculation of refund transactions. DEFAULT = Full refund. VARIABLE\_FEE\_REFUND = Partial refund. NO\_FEE\_REFUND = Refund transaction with no fee refunded |
+| business\_id | The unique identifier used to identify a Xendit merchant |
+| billed\_at | The timestamp of a transaction being billed based on your registered country timezone. For example, Indonesian merchants will have GMT+7 while Philippines merchants will have GMT+8 as the timestamp timezone |
+| fee\_pricing\_currency | The currency in which the flat fees are denominated |
+| tier | The pricing tier applicable to the transaction |
+| flat\_fee | The flat fee billing rate used for the transaction to calculate the transaction fee |
+| fee\_percentage | The percentage billing rate used for the transaction to calculate the transaction fee |
+| net\_currency | The currency of settlement of the transaction |
+| gross\_amount | Transaction amount expressed in net currency |
+| transaction\_currency | The customer facing currency for money-in and the balance currency for money-out |
+| fee\_amount | The amount of fees for the transaction |
+| vat\_amount | The amount of VAT charged to the transaction |
+| deduction | Indicates if the fee is directly or indirectly deducted. Values: DIRECT (fee deducted from the transaction amount), INDIRECT (fee invoiced separately) |
+
+##

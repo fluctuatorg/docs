@@ -1,0 +1,218 @@
+---
+title: "Understanding chargebacks"
+---
+
+A dispute (also known as a chargeback) occurs when a cardholder questions a transaction with their bank and requests their money back. When this happens, the bank will investigate the claim and may temporarily reverse the payment while the dispute is being resolved.
+
+> Note
+>
+> While the terms "dispute" and "chargeback" are often used interchangeably, a chargeback specifically refers to the process of returning funds to a cardholder after a successful dispute.
+
+## Key differences between disputes and refunds
+
+| Aspect | Disputes/Chargebacks | Refunds |
+| --- | --- | --- |
+| Who initiates? | Customer through their card-issuing bank | Merchant directly to the customer |
+| Who handles the process? | Bank manages the dispute on the customer's behalf | Customer works directly with the merchant |
+| Processing time | Variable (can take 30-90 days) | Typically within 14 business days |
+| Associated fees | Up to USD 500 or more per dispute | No additional fees |
+| Impact on merchant | Can affect dispute ratio and may incur monitoring programs | Normal part of business operations |
+
+## Common dispute reasons
+
+Cardholders may initiate disputes for various reasons, including:
+
+1. Fraudulent transactions
+
+- Unauthorized purchases
+- Card theft or compromise
+- Identity theft
+- Social engineering fraud
+
+2. Product or service issues
+
+- Item not received
+- Item significantly different from description
+- Defective or damaged products
+- Services not rendered as promised
+
+3. Technical issues
+
+- Duplicate charges
+- Incorrect amount charged
+- Credit not processed
+- Currency conversion issues
+
+4. Friendly fraud
+
+- Customer doesn't recognize the transaction
+- Customer forgot about the purchase
+- Family member made unauthorized purchase
+- Customer attempting to get free products/services
+
+## Understanding dispute liability
+
+Your liability for disputes depends largely on how you process transactions.
+
+Chargebacks can happen in:  
+- Cards  
+- QR codes
+
+## Cards
+
+### 3D Secure (3DS) transactions
+
+When you use 3DS authentication:
+
+- The liability for fraudulent transaction disputes typically shifts to the issuing bank
+- You receive protection against unauthorized transaction claims
+- You may still be liable for disputes related to:
+
+  - Product not received
+  - Product not as described
+  - Services not rendered
+  - Other non-fraud disputes
+
+> Important
+>
+> While 3DS provides protection against fraud-related disputes, it doesn't protect against all types of disputes. Always maintain good business practices regardless of using 3DS.
+
+### Non-3DS transactions
+
+For transactions without 3DS:
+
+- You assume full liability for fraudulent transaction disputes
+- You bear the financial responsibility for any disputed charges
+- Your dispute ratio may be more heavily impacted
+
+## The dispute lifecycle
+
+![](/images/doc360/image_24_.png)
+
+1.Initial dispute (T+120 days)
+
+- Cardholder raises dispute with their bank
+- Bank reviews initial claim
+- If valid, temporary credit issued to cardholder
+
+2. Retrieval stage (T+30 days)
+
+- Bank requests transaction documentation
+- Merchant must provide evidence
+- Initial investigation conducted
+
+3. Chargeback stage (T+30 days)
+
+- Bank reviews evidence
+- Merchant can challenge with additional documentation
+- Decision made based on evidence provided
+
+4. Arbitration stage (T+30 days)
+
+- Final appeal stage
+- Card network makes final decision
+- Additional fee of USD 500 applies
+- Decision is final and binding
+
+## Scheme monitoring programs
+
+Scheme maintain monitoring programs to track merchant dispute rates. Exceeding thresholds can result in fines and restrictions.
+
+> Important
+>
+> Being placed in these programs can result in significant fines and may affect your ability to process payments. Maintaining a low dispute ratio should be a top priority.
+
+### Visa Dispute Monitoring Program (VDMP)
+
+VDMP tracks dispute (chargeback) activity based on two key metrics:
+
+- Dispute Count: Total number of disputes received
+- Dispute Ratio: Percentage of disputed transactions compared to total transactions
+
+| Program Level | Monthly Disputes | Dispute Ratio | Consequences |
+| --- | --- | --- | --- |
+| Early Warning | 75 | 0.65% | No fines, warning only |
+| Standard | 100 | 0.9% | $50 per dispute after 4 months |
+| Excessive | 1,000 | 1.8% | $50 per dispute immediately |
+
+### Visa Fraud Monitoring Program (VFMP)
+
+VFMP monitors fraudulent transaction activity using:
+
+- Fraud Volume: Total amount of fraudulent transactions
+- Fraud Ratio: Percentage of fraudulent transactions to total transactions
+
+| Program Level | Fraud Volume (USD) | Fraud Ratio | Consequences |
+| --- | --- | --- | --- |
+| Early Warning | $50,000 | 0.65% | - Notification only - No direct penalties - Opportunity to address issues |
+| Standard | $75,000 | 0.9% | - Program notification - Must implement fraud controls - Monthly fraud reporting required |
+| Excessive | $250,000 | 1.8% | - Immediate fines of $10,000/month - Continues until program exit - Mandatory fraud controls - Risk of termination |
+
+### Mastercard Excessive Chargeback Program (ECP)
+
+ECP consists of two levels focusing on chargeback ratios:
+
+| Program Level | Monthly Disputes | Dispute Ratio | Consequences |
+| --- | --- | --- | --- |
+| Excessive (ECM) | 100-299 | 1.5-2.99% | Fines start month 2 |
+| High Excessive (HECM) | 300+ | 3.0%+ | Higher fines start month 2 |
+
+### Mastercard Excessive Fraud Merchant Program (EFM)
+
+A merchant is identified for EFM when meeting ALL of the following criteria:
+
+| Criteria | Threshold | Details |
+| --- | --- | --- |
+| Transaction Volume | 1,000+ | - Minimum monthly e-commerce Mastercard transactions - Only counts card-not-present transactions - Calculated per merchant ID |
+| Fraud Chargeback Rate | 0.5%+ | - Based on specific reason codes:    - 4837 (No Cardholder Authorization)   - 4863 (Cardholder Does Not Recognize) - Calculated as: (Fraud Chargebacks ÷ Total Transactions) × 100 |
+| Fraud Amount | $50,000+ | - Net fraud volume in USD - Calculated from fraud-related chargebacks - Measured monthly |
+| 3DS Usage | Below minimum | - Non-regulated countries: < 10% of transactions - Regulated countries: < 50% of transactions - Based on successful 3DS authentications |
+
+## QR codes
+
+### Indonesia
+
+- ShopeePay
+
+  - ShopeePay currently offers 2 payment flows -- QRIS for desktop flow and deep link for mobile flow. If a user scans and pays the presented QRIS with a non-ShopeePay app, the payment is subject to QR dispute.
+
+### Philippines
+
+- PayMaya (Maya)
+
+  - PayMaya (Maya) currently offers 2 payment flows -- QR PH and Express Checkout. If a user scans and pays the presented QR PH with a non-PayMaya (Maya) app, the payment is subject to QR dispute.
+
+## What are Some Common QR Disputes?
+
+The circumstances usually involve billing errors, duplicate processing, refund issues, or fraud.
+
+The merchant needs to contact the end users and clarifies regarding the QR dispute reason, which can be either:
+
+- Billing error (transaction failed or did not complete but the amount was still deducted from the end user’s balance.
+- Duplicate processing (the amount was taken twice from the end user’s account).
+
+  - E.g. An end user scanned a code that was no longer in use and so the store owner/merchant made the end user pay afresh.
+- End user claims the transaction is fraudulent.
+
+  - E.g. An end user scanned a fake QR code and was tricked to give out their money or personal information.
+- Credit not processed.
+
+  - E.g. The end user is highly likely to raise a dispute with their Bank if the merchant failed to issue a refund after the item has been returned.
+- Goods/services were not received or not as described.
+- Refund amount does not match the original amount of the transaction.
+
+## How Do You Get Notified?
+
+When an end user raises a QR dispute to their paying bank or e-wallet, called the Issuer, the Acquiring Partner (ShopeePay or Maya/PayMaya) will let you know about the details.
+
+## QR Dispute Prevention Methods
+
+A QR code can be generated for any web address, so scammers or fraudsters can print one linking to a website designed to steal payment information and paste it over an existing code at a business. An error can also occur during the scanning and codes can be tampered. Here’s how you can prevent this from happening:
+
+- Always check if a transaction went through. Always ask the customer to wait for a few extra seconds till you get the SMS alert to ensure the receipt of the payment. It is the merchant’s responsibility to confirm the genuineness of the QR code being used.
+- Always update the QR code, make sure to remove code that is no longer in use to avoid hassle and double billing error dispute.
+- For merchants who use physical QR codes, they must be checked regularly for tampering. Even if the code is within sight of employees, applying a sticker with a fake QR code is something that can be done discreetly, and in less than a second. Always make sure there's no sticker on top of the legitimate QR code.
+- Keep receipt of the transaction confirmation or screenshot of SMS alert.
+- Keep records of all transaction proof (invoices, order receipt etc.)
+- Respond to end user’s inquiries ASAP.
+- Process a refund as necessary.

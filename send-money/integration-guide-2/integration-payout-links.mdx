@@ -1,0 +1,152 @@
+---
+title: "Payout Links"
+---
+
+> Important Note
+>
+> Payout Links API is only available for Payouts to Indonesia at the moment.
+
+Learn how to programmatically create Payout Links through the following sections.
+
+## Before you start
+
+- Create an API Key in your Xendit Dashboard. You will need the API Key to make API calls.
+- Setup your webhook URL. Configure this to receive real-time notifications on payout status changes.
+
+## Create a Payout Link
+
+Call `Create Payout Links API` with your recipient’s email to create a payout link.
+
+#### Example Request
+
+```javascript
+curl https://api.xendit.co/payouts -X POST \
+-u xnd_development_O46JfOtygef9kMNsK+ZPGT+ZZ9b3ooF4w3Dn+R1k+2fT/7GlCAN3jg==: \
+-d external_id=demo_2392329329 \
+-d amount=23000 \
+-d email=demo@xendit.co
+```
+
+#### Example Response
+
+```json
+{
+  "id": "67f1b30c-0262-4955-8777-95aa0478c2fc",
+  "external_id": "demo_2392329329",
+  "amount": 23000,
+  "merchant_name": "First Business",
+  "status": "PENDING",
+  "expiration_timestamp": "2019-12-12T06:13:21.637Z",
+  "created": "2019-12-09T06:13:20.363Z",
+  "payout_url": "https://payout.xendit.co/web/67f1b30c-0262-4955-8777-95aa0478c2fc"
+}
+```
+
+## Retrieve a Payout Link
+
+Call `Get Payout Link API` to retrieve a payout link’s details. This is usually useful to get your payout link’s status. In addition to this, we recommend you to subscribe to our webhook events for any updates to your payout link’s statuses.
+
+For more information, see [Setting Up Webhooks](/send-money/integration-setup-2/payouts-set-up-webhooks).
+
+#### Example Request
+
+```javascript
+curl https://api.xendit.co/payouts/:id -X GET \
+    -u xnd_development_O46JfOtygef9kMNsK+ZPGT+ZZ9b3ooF4w3Dn+R1k+2fT/7GlCAN3jg==:
+```
+
+#### Example Response
+
+```json
+{
+  "id": "00754a09-ad00-4475-b874-1dd97f83fc24",
+  "external_id": "ext-121313",
+  "amount": 20000,
+  "merchant_name": "First Business",
+  "status": "PENDING",
+  "expiration_timestamp": "2019-12-12T06:45:30.041Z",
+  "created": "2019-12-09T06:45:28.628Z",
+  "payout_url": "https://payout.xendit.co/web/00754a09-ad00-4475-b874-1dd97f83fc24"
+}
+```
+
+## Void a Payout Link
+
+Call `Cancel Payout Link API` to void payout links that has not been claimed by your recipient.
+
+Payouts can only be cancelled if the status is `PENDING`. It is recommended to refer to the `Get Payout Link API` to know if a payout link is still voidable or not. Upon request of void, we will return a response with a `VOID` status. Once voided, the payout link should not be able to be claimed.
+
+#### Example Request
+
+```javascript
+curl https://api.xendit.co/payouts/:id/void -X POST \
+    -u xnd_development_O46JfOtygef9kMNsK+ZPGT+ZZ9b3ooF4w3Dn+R1k+2fT/7GlCAN3jg==:
+```
+
+#### Example Response
+
+```json
+{
+  "id": "00754a09-ad00-4475-b874-1dd97f83fc24",
+  "external_id": "ext-121312",
+  "amount": 20000,
+  "merchant_name": "First Business",
+  "status": "VOIDED",
+  "expiration_timestamp": "2019-12-12T06:45:30.041Z",
+  "created": "2019-12-09T06:45:28.628Z"
+}
+```
+
+## Error Handling
+
+### Errors In Creating the Payout Link
+
+All the possible errors while creating payouts via our API endpoints are listed in this page.
+
+For errors generally, the response you receive will contain:
+
+- `error_code`: A semantic code specifying the error encountered;
+- `message`: A brief statement that explains the code.
+
+Example:
+
+```json
+{
+    "error_code": "DUPLICATE_PAYOUT_ERROR",
+    "message": "A payout with this idempotency key already exists. If you meant to execute a different request, please use another idempotency key."
+}
+```
+
+If you receive an error in our API response, this means that there were issues creating the payout due to invalid inputs or issues with the server. For detailed handling instructions of each error, please see the table below:
+
+| Error Code | Explanation |
+| --- | --- |
+| `API_VALIDATION_ERROR` | Certain inputs do not meet our API validation requirements. |
+| `DUPLICATE_PAYOUT_ERROR` | `external_id` has been used before. Use a unique `external_id` and try again. |
+| `INSUFFICIENT_BALANCE` | The balance in your account is insufficient to make the payout in the desired amount. |
+
+### Errors In Claiming the Payout
+
+After a payout status is `REQUESTED`, it may fail our payout partner’s processing or be rejected by the recipient bank, at which point its status will transition to `FAILED`. Subscribe to `disbursement.failed` webhook events to receive real-time notifications of each transfer's failure and its reason.
+
+It is important that you understand each failure code in detail in order to decide on the appropriate action to take. Below is a comprehensive list of the possible failure codes that you may receive, what they mean and what our corresponding suggested action is:
+
+| Error Code | Description | Should you retry? |
+| --- | --- | --- |
+| `INSUFFICIENT_BALANCE` | Client has insufficient balance for the payout amount | Yes, retry the payout after ensuring that you have sufficient balance in your account |
+| `INVALID_DESTINATION` | The recipient account does not exist/is invalid | You are unlikely to succeed if you retry the payout request. Please confirm with the recipient whether their account is correct |
+| `DESTINATION_MAXIMUM_LIMIT` | The recipient is unable to receive the funds due to the payout amount exceeding the recipient’s ability to receive | You are unlikely to succeed if you retry the payout request. Please confirm with the recipient whether their account can receive the payout |
+| `REJECTED_BY_CHANNEL` | Payout failed due to an error from the destination channel. This is usually because of network issues associated with the destination bank or issues crediting funds into the destination bank account | Yes, retry the payout after validating that the destination bank account number is active and can receive funds in your chosen currency |
+| `TEMPORARY_TRANSFER_ERROR` | The channel networks are experiencing a temporary error | Yes, retry the payout in 1-3 hours |
+| `TRANSFER_ERROR` | We’ve encountered a fatal error while processing this payout. Normally, this means that certain API fields in your request are invalid | It is unlikely that the same disbursement request will succeed if you retry |
+
+Note: We could add new failure codes to the list above and your system should be able to handle the events even if the failure code is not recognized.
+
+## Payout Links Events
+
+Learn more below for the different webhook events that you can subscribe to. For more information of different payout link statuses, see [Payout Status Lifecycle](/send-money/payout-status-lifecycle).
+
+| Webhook Event | Payout Status |
+| --- | --- |
+| `disbursement.completed` | `SUCCEEDED` |
+| `disbursement.failed` | `FAILED` |

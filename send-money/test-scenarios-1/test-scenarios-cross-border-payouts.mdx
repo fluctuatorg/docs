@@ -1,0 +1,65 @@
+---
+title: "Cross-Border Payouts"
+---
+
+Before taking your integration live, we recommend you to test your integration thoroughly in development mode. Use our Test Mode simulation to simulate various positive and negative scenarios and ensure the flows in your integration are handled correctly.
+
+*Note: We recommend using Postman collections for testing. Please see our postman integrations page for more details on how to set up your collections.*
+
+## Before you start
+
+> Important Note
+>
+> Simulation is only available in Test Mode. Ensure you are using a Development API Key to test.
+
+- Ensure that you have the right API Key for the currency you want to test
+
+  - One currency = One dashboard account = One API key
+  - If you want to payout to currency: PHP, then you must create a dashboard where country of operation: Philippines and create an API Key with Money Out Read and Write permission from that dashboard
+  - If you would also like to payout to currency: IDR, then you must create another dashboard account where country of operation: Indonesia and similarly create an API Key using that dashboard account
+
+## Test Guideline
+
+- Test calling all Cross Border Payouts endpoints that you are implementing
+- Test as much simulation scenarios as possible according to your use case
+- Ensure your subscribed webhook events are received and handled in your integration
+
+## Simulation Scenarios
+
+Call `Create Cross Border Payouts API` using any of the following test details to simulate the scenario you’re testing.
+
+### Positive Scenarios
+
+  
+
+|  |  |  |
+| --- | --- | --- |
+| Scenario | Criteria | Expected Result |
+| Successful remittance to Indonesia Channel | First, create new customers representing the sender and recipient. Use the following values for the recipient customer:  Option 1   - identity\_accounts    - company: ID\_PANIN   - properties:      - account\_holder\_name: Maria Wenger     - account\_number: 818181   Option 2   - identity\_accounts    - company: ID\_OVO   - properties:      - account\_holder\_name: Ari Fernandes     - account\_number: 081234567890   Then create a Remittance using required params (refer to Create Remittance Payout) and the above sender and recipient customer ids | Will complete remittance and send a callback to your callback URL with status: “SUCCEEDED” |
+| Successful remittance to Philippine Channel | First, create new customers representing the sender and recipient. Use the following values for the recipient customer:   - identity\_accounts    - company: PH\_BDO   - properties      - account\_holder\_name: Kal Stones     - account\_number: 828282   Then create a Remittance using required params (refer to Create Remittance Payout) and the above sender and recipient customer ids | Will complete remittance and send a callback to your callback URL with status: “SUCCEEDED” |
+| Successful remittance to Singapore Channel | First, create new customers representing the sender and recipient. Use the following values for the recipient customer:   - identity\_accounts    - company: SG\_BOC - properties    - account\_holder\_name: Ruth Langmore   - account\_number: 838383   Then create a Remittance using required params (refer to Create Remittance Payout) and the above sender and recipient customer ids | Will complete remittance and send a callback to your callback URL with status: “SUCCEEDED” |
+| Successful remittance to Thailand Channel | First, create new customers representing the sender and recipient. Use the following values for the recipient customer:   - identity\_accounts    - company: TH\_SCB - properties    - account\_holder\_name: Justin Morph   - account\_number: 267267   Then create a Remittance using required params (refer to Create Remittance Payout) and the above sender and recipient customer ids | Will complete remittance and send a callback to your callback URL with status: “SUCCEEDED” |
+| Remittance has been assessed to be medium or high risk and requires compliance verification. Remittance is eventually approved by compliance and succeeds | First, create customers representing the sender and recipient. Use the following values for the recipient customer:  Option 1   - identity\_accounts    - company: ID\_MANDIRI   - properties      - account\_holder\_name: Evan Dimas     - account\_number: 808080   Option 2   - identity\_accounts    - company: Anything   - properties      - account\_holder\_name: Anything     - account\_number: 87778798   Then create a Remittance using required params (refer to Create Remittance Payout) and the above sender and recipient customer ids | Will send a callback to your callback URL with status: “PENDING\_COMPLIANCE\_ASSESSMENT”  Then, will send a second callback to your callback URL with status: “SUCCEEDED” |
+| Remittance transaction is stuck in compliance assessment | First, create customers representing the sender and recipient. Use the following values for the recipient customer:  Option 1   - identity\_accounts    - company: ID\_MANDIRI   - properties      - account\_holder\_name: Shawn     - account\_number: 898989   Option 2   - identity\_accounts    - company: Anything   - properties      - account\_holder\_name: Anything     - account\_number: 4455445544   Then create a Remittance using required params (refer to Create Remittance Payout) and the above sender and recipient customer ids | Will send a callback to your callback URL with status: “PENDING\_COMPLIANCE\_ASSESSMENT” |
+| Successful remittance to Indonesia Cash Channel | First, create customers representing the sender and recipient. Use the following values for the recipient customer:   - identity\_accounts    - company: ID\_ALFAMART   - properties      - payment\_code: 898900   Then create a Remittance using required params (refer to Create Remittance Payout) and the above sender and recipient customer ids | Will send a callback to your callback URL with disbursement\_code and status: “READY”  Then,will send a callback to your callback URL with status: “LOCKED”  Then,will complete remittance and send a callback to your callback URL with status: “SUCCEEDED” |
+| Simulate an online remittance cancellation flow | First, create customers representing the sender and recipient. Use the following values for the recipient customer:   - identity\_accounts    - company: ID\_MANDIRI   - properties      - account\_holder\_name: Gustafo Vring     - account\_number: 10101010   Then create a Remittance using required params (refer to Create Remittance Payout) and the above sender and recipient customer ids | Remittance status will remain on ACCEPTED.  You can then try a Cancel Remittance request |
+| Cash remittance ready to pick up | First, create customers representing the sender and recipient. Use the following values for the recipient customer:   - identity\_accounts    - company: ID\_ALFAMART   - properties      - payment\_code: 898911   Then create a Remittance using required params (refer to Create Remittance Payout) and the above sender and recipient customer ids | Will send a callback to your callback URL with disbursement\_code and status: “READY”  Remittance status will remain on READY. |
+| Simulate a cash remittance cancellation flow | First, create customers representing the sender and recipient. Use the following values for the recipient customer:   - identity\_accounts    - company: ID\_ALFAMART   - properties      - payment\_code: 898911   Then create a Remittance using required params (refer to Create Remittance Payout) and the above sender and recipient customer ids | Remittance status will remain on READY.  You can then try a Cancel Remittance request |
+| Successful remittance to Singapore Channel | First, create new customers representing the sender and recipient. Use the following values for the recipient customer:  Option 1   - identity\_accounts    - company: SG\_DBS   - properties:      - account\_number: 818181 | Will complete remittance and send a callback to your callback URL with status: “SUCCEEDED” |
+
+## Negative scenarios
+
+  
+
+|  |  |  |
+| --- | --- | --- |
+| Scenario | Criteria | Expected Result |
+| Remittance has been assessed to be medium or high risk and requires compliance verification. Remittance is eventually rejected by compliance | First, create customers representing the sender and recipient. Use the following values for the recipient customer:  Option 1   - identity\_accounts    - company: ID\_MANDIRI   - properties      - account\_holder\_name: Cynthia Rodriguez     - account\_number: 909090   Option 2   - identity\_accounts    - company: Anything   - properties      - account\_holder\_name: Anything     - account\_number: 987654321   Then create a Remittance using required params (refer to Create Remittance Payout) and the above sender and recipient customer ids | Will send a callback to your callback URL with status: “PENDING\_COMPLIANCE\_ASSESSMENT”  Then, we will send a second callback to your callback URL with status: “COMPLIANCE\_REJECTED |
+| Destination account does not exist/is invalid. | First, create customers representing the sender and recipient. Use the following values for the recipient customer:   - identity\_accounts    - company: ID\_MANDIRI   - properties      - account\_holder\_name: Teo Alcantara     - account\_number: 4567890   Then create a Remittance using required params (refer to Create Remittance Payout) and the above sender and recipient customer ids | Will send a callback to your callback URL with status: “FAILED”  and failure\_code: “INVALID\_DESTINATION” |
+| Transaction has been rejected by the destination channel without a clear error reason | First, create customers representing the sender and recipient. Use the following values for the recipient customer:   - identity\_accounts    - company: ID\_CIMB   - properties      - account\_holder\_name: Ichwan De Bruyne     - account\_number: 8787878   Then create a Remittance using required params (refer to Create Remittance Payout) and the above sender and recipient customer ids | Will send a callback to your callback URL with status: “FAILED”  and failure\_code: "REJECTED\_BY\_CHANNEL" |
+| Transaction failed because of a known temporary issue | First, create customers representing the sender and recipient. Use the following values for the recipient customer:   - identity\_accounts    - company: PH\_OMNI   - properties      - account\_holder\_name: Ayrton Da Silva     - account\_number: 868686   Then create a Remittance using required params (refer to Create Remittance Payout) and the above sender and recipient customer ids | Will send a callback to your callback URL with status: “FAILED”  and failure\_code: “TEMPORARY\_TRANSFER\_ERROR” |
+| Insufficient Balance | First, create customers representing the sender and recipient (which field detail is different with above specifications)  Then, Create remittance payout request with amount greater than the balance you have | Will send a callback to your callback URL with status: “FAILED”  and failure\_code: “INSUFFICIENT\_BALANCE” |
+| Cash remittance expired | First, create customers representing the sender and recipient. Use the following values for the recipient customer:   - identity\_accounts    - company: ID\_ALFAMART   - properties      - payment\_code: 898922   Then create a Remittance using required params (refer to Create Remittance Payout) and the above sender and recipient customer ids | Will send a callback to your callback URL with disbursement\_code and status: “READY”  Then,will send a callback to your callback URL with status: “EXPIRED” |
+| Singapore bank networks have rejected the transaction due to maintenance or unknown reason | First, create customers representing the sender and recipient. Use the following values for the recipient customer:   - identity\_accounts    - channel\_code: SG\_DBS   - properties      - account\_number: 999999 | Payout will be FAILED with failure\_code = REJECTED\_BY\_CHANNEL |
+| Destination account does not exist/is invalid for Singapore channel | First, create customers representing the sender and recipient. Use the following values for the recipient customer:   - identity\_accounts    - company: SG\_BOC      - properties     - account\_holder\_name: Darlene Snell     - account\_number: 733810   Then create a Remittance using required params (refer to Create Remittance Payout) and the above sender and recipient customer ids | Will send a callback to your callback URL with status: “FAILED”  and failure\_code: “INVALID\_DESTINATION” |
+| Destination account does not exist/is invalid for Thailand channel | First, create customers representing the sender and recipient. Use the following values for the recipient customer:   - identity\_accounts    - company: TH\_SCB - properties    - account\_holder\_name: Harry Johnson   - account\_number: 588372   Then create a Remittance using required params (refer to Create Remittance Payout) and the above sender and recipient customer ids | Will send a callback to your callback URL with status: “FAILED”  and failure\_code: “INVALID\_DESTINATION” |

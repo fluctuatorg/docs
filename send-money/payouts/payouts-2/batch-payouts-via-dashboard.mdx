@@ -1,0 +1,140 @@
+---
+title: "Batch Payouts via dashboard"
+---
+
+Whether you're managing local accounts or expanding your reach with global accounts, our payouts via the dashboard simplify how you send money.
+
+For local accounts, our Batch Payouts feature lets you send up to 10,000 transactions simultaneously with a single Excel file upload, saving you significant time and resources. This is perfect for mass payments like salaries, supplier payments, or earnings distribution.
+
+For global accounts, our Payouts feature enables you to easily send funds to external bank accounts worldwide, directly from your dashboard.
+
+Both solutions are available out-of-the-box, requiring no code integration for a seamless and efficient experience.
+
+## How to create a Batch Payout
+
+> Important Note
+>
+> To create a payout via dashboard, you must have a local account `Edit` and `Approve` permissions.
+
+Navigate to [Batch Payouts](https://dashboard.xendit.co/batch_disbursements) and click Create. Follow these easy steps below.
+
+#### 1. Download the template
+
+You can fill out up to 10,000 payout transactions in the batch payout template file.
+
+![](https://archive.docs.xendit.co/_next/image?url=https%3A%2F%2Fres.cloudinary.com%2Fdpvzoteik%2Fimage%2Fupload%2Fc_fill%2Ch_1500%2Cw_2902%2Fv1%2FDisbursements%2FScreenshot_2024-01-05_at_13.50.54_wqdbjk%3F_a%3DBATCr5fi0&w=3840&q=75)
+
+#### Template File
+
+The downloaded batch template excel file consists of 2 worksheets:
+
+1. Instructions - Instructions for your reference. Read this to start.
+2. Template - Template for you to fill in the transfer details.
+
+In the Template sheet, you will find the following columns:
+
+| Column Name | Required? | Description |
+| --- | --- | --- |
+| Reference ID | Required | Include this for reference in reports and API callbacks - can be the unique ID in your system to help reconciliation |
+| Amount | Required | Amount to be sent to the Recipient |
+| Channel Code | Required | Destination Channel Code. Refer to [Payout Coverage](https://docs.xendit.co/docs/available-payout-products). |
+| Bank Account Name | Required | Recipient Account Name |
+| Bank Account Number | Required | Recipient Bank Account Number |
+| Description | Required | Description of payout. Utilize this to send a unique identifier for your recipient. The description can appear in the recipient's bank statement and/or app interface. |
+| Email | Optional | If filled in, once the payout is processed, we’ll send a payment receipt to this email automatically. Maximum 3 email addresses accepted. Use commas to specify multiple email addresses. |
+| Email CC | Optional | If filled in, once the payout is processed, we’ll send a payment receipt to this email as carbon copy receiver. Maximum 3 email addresses accepted. Use commas to specify multiple email addresses. Only allowed if email column is filled. |
+| Email BCC | Optional | If filled in, once the payout is processed, we’ll send a payment receipt to this email as blind carbon copy receiver. Maximum 3 email addresses accepted. Use commas to specify multiple email addresses. Only allowed if email column is filled. |
+
+To help you, we’ve color-coded the template columns. The blue columns are required to process the payout while the green columns are optional.
+
+#### 2. Upload filled template
+
+Once you’ve listed all of your payout transactions in the template file, upload the batch file by selecting it or dragging it inside the upload area.
+
+#### 3. Enable account name check (Optional)
+
+Xendit account name check feature allows you to verify the recipient's account number and the account's name with the bank's database. This allows you to:
+
+- Check if the account number that you've filled is valid
+- Check on whether the account name you've filled matches the name of the account provided by the bank
+
+#### 4. Input batch reference
+
+Batch Reference is used as a reference to identify your different batch payouts and help you with reconciliation. While it is possible to use the same reference, we recommend you to use different batch reference for all your batch payouts.
+
+#### 5. Select category (Optional)
+
+If you activate Multi Level Approval (MLA) feature on [Disbursement Category & Approval](https://dashboard.xendit.co/settings/sending-money#multi-level-approval), you would be asked to select the category that should be applied for that Batch. Leave it blank if you do not have an active MLA feature.
+
+#### 6. Click Create button
+
+Once you’ve done everything, click the Create button to create your batch payout!
+
+## Validate a Batch Payout
+
+Once a batch payout has been successfully created, we automatically validate transaction details to check for errors to pre-empt wrong or failed payouts. If an error is found in the transaction, the batch will require validation and can be found in the `Needs Validation` tab. You can fix all the issues directly on the Dashboard before proceeding with the transfer.
+
+If no transactions need to be validated, you can directly move to [Review and Approve a Batch Payout](https://docs.xendit.co/v1/docs/en/82cd4f6f-ea70-46ee-a4e5-0c69f1f700a5?isPreview=true&versionNumber=2#review-and-approve-a-batch-payout).
+
+![](https://archive.docs.xendit.co/_next/image?url=https%3A%2F%2Fres.cloudinary.com%2Fdpvzoteik%2Fimage%2Fupload%2Fc_fill%2Ch_1506%2Cw_2924%2FScreenshot_2024-01-05_at_14.29.35_mflgdk%3F_a%3DBATCr5fi0&w=3840&q=75)
+
+Transactions that require validation will be highlighted for your attention and can be edited by clicking the edit button ✎ . Once it has been edited, you may select the transaction via the checkbox and click the validate button.
+
+![](https://archive.docs.xendit.co/_next/image?url=https%3A%2F%2Fres.cloudinary.com%2Fdpvzoteik%2Fimage%2Fupload%2Fc_fill%2Ch_1498%2Cw_2922%2FScreenshot_2024-01-05_at_14.32.10_blviqj%3F_a%3DBATCr5fi0&w=3840&q=75)
+
+Once all of the invalid transactions are resolved, proceed for approval by clicking `Submit for Approval`.
+
+#### Validation Errors
+
+On this tab, you need to validate the transaction/s which need to be validated. There are 2 sections:
+
+1. Validated transactions - This section is for transactions validated from transactions with issue part
+2. Transactions with issue - This section consists of the list of error transactions that need to be validated
+
+Below is an overview of possible validation errors and recommended steps to fix the issue:
+
+| Error | What it means | What you can do |
+| --- | --- | --- |
+| Account does not exist | The account number you entered is invalid. | Verify the account number with the recipient. If needed, edit the account number before proceeding. |
+| Account name mismatch | The account name did not match with account number | Verify the account owner's name and number with the recipient. If needed, edit the bank account number or bank account name before proceeding. Please note: this error is only available in Indonesia and Vietnam |
+| Invalid Description | The description entered is invalid | Edit the Description to include the transaction description. The description can appear in the recipient's bank statement and transfer receipt. |
+| Invalid Bank Code | The Bank Code is Incorrect | Verify the bank destination with the recipient & edit the bank code by selecting the right bank destination in the dropdown list. List of bank codes can be found on Payout channels tab |
+| Invalid Amount | The Amount entered is Invalid | Edit the amount for the transaction to a valid format and revalidate the transaction |
+
+Note: You may submit the batch by clicking the `Submit For Approval` button directly If you are sure all the transactions do not need further action.
+
+## Review and Approve a Batch Payout
+
+> Important Note
+>
+> To approve a payout via dashboard, you should have `Approve` permission
+
+Once you’ve reviewed all the transaction details, you can submit the batch for approval. Transactions that have been validated will be in the `Needs Approval` tab.
+
+The Approver will receive an email notification that a batch was submitted for approval. They can then log on to the dashboard to approve the batch using their 6-digit PIN.
+
+![](https://archive.docs.xendit.co/_next/image?url=https%3A%2F%2Fres.cloudinary.com%2Fdpvzoteik%2Fimage%2Fupload%2Fc_fill%2Ch_1502%2Cw_2912%2FScreenshot_2024-01-05_at_17.31.56_f09jzi%3F_a%3DBATCr5fi0&w=3840&q=75)
+
+Once the Approver approves the batch, Xendit will process the payouts immediately. Please note that once submitted, payouts are final and cannot be amended or reversed. We are also unable to correct bank names or account numbers after a batch has been submitted.
+
+## Track your Batch Payout
+
+Once approved, we will process your batch payout where its status will be `Disbursing`. To monitor each payout’s status within an approved batch payout, follow below steps:
+
+1. Go to [Batch Disbursements](https://dashboard.xendit.co/batch_disbursements)
+2. Select the Approved tab
+3. Select a batch payout
+4. View the status of each payout
+
+## Batch Payout Statuses
+
+Batch Payout has its own status that will help you to easily identify which batch are already completed, failed, or is still in process by Xendit. These are the possible statuses a batch payout can have:
+
+| Status | Description |
+| --- | --- |
+| `Needs Validation` | Some payouts within the batch requires validation |
+| `Needs Approval` | The batch payout is ready to be processed pending approval |
+| `Disbursing` | Batch payout is approved and payouts are being processed |
+| `Completed` | All payouts within the batch is `SUCCEEDED` |
+| `Failed` | All payouts within the batch is `FAILED` |
+| `Check` | All payouts within the batch has reached its final status. The batch has both `FAILED` and `SUCCEEDED` payouts. |

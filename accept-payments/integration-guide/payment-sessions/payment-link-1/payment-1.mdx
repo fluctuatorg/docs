@@ -1,0 +1,70 @@
+---
+title: "One Time Payment"
+---
+
+Payment Sessions allow you to securely collect a payment from your customer during checkout. This feature ensures regulatory compliance and provides a smooth, hosted payment experience through Xendit’s checkout page. It’s a common flow to accept one-time payments with a simple integration.
+
+Example usage:
+
+- eCommerce checkout: Collect immediate payment from customers when placing an order.
+- Service booking: Confirm a reservation only after successful payment.
+
+## How to integrate
+
+![](/images/doc360/image_145_.png)
+
+1. During checkout or whenever your customer is ready to make a one-time purchase, your system should Create a Payment Session with Xendit using the example payload provided below.
+
+Request - POST /sessions
+
+```json
+{
+    "reference_id": "{{$YOUR_REFERENCE_ID}}",
+    "session_type": "PAY",
+    "mode": "PAYMENT_LINK",
+    "amount": 150000,
+    "currency": "IDR",
+    "country": "ID",
+    "customer": {
+        "reference_id": "{{$randomUUID}}",
+        "type": "INDIVIDUAL",
+        "email": "customer@yourdomain.com",
+        "mobile_number": "+628123456789",
+        "individual_detail": {
+            "given_names": "John",
+            "surname": "Doe"
+        }
+    },
+    "success_return_url": "https://yourcompany.com/order/complete",
+    "cancel_return_url": "https://yourcompany.com/order/cancel"
+}
+```
+
+Response - POST /sessions
+
+```json
+{
+    "payment_session_id": "ps-67527107dda8b2513acdaef0",
+    "created": "2024-12-06T03:35:36.032Z",
+    "updated": "2024-12-06T03:35:36.032Z",
+    "status": "ACTIVE",
+    "reference_id": "b767f88f-b5bc-4836-9c47-c14261909dec",
+    "currency": "IDR",
+    "amount": 150000,
+    "country": "ID",
+    "customer_id": "cust-fe8743c3-f554-4d25-a0e9-9980226c4b1b",
+    "expires_at": "2024-12-06T04:05:35.049Z",
+    "session_type": "PAY",
+    "mode": "PAYMENT_LINK",
+    "locale": "en",
+    "business_id": "62440e322008e87fb29c1fd0",
+    "success_return_url": "https://yourcompany.com/order/complete",
+    "cancel_return_url": "https://yourcompany.com/order/cancel",
+    "payment_link_url": "https://dev.xen.to/qZx5RD_7"
+}
+
+```
+
+2. Once the Payment Session is created, redirect your end user to the Xendit-hosted checkout page using the `payment_link_url` from the response.
+3. Your customer will complete the payment on the Xendit-hosted page using their preferred payment channel (e.g., cards, eWallets, bank transfer, QR, etc.).
+4. Upon successful payment, Xendit will send a `payment_session.completed` webhook to your system. You should use these webhooks to update the order status in your system. Optionally you can also handle webhook of `payment.capture` to see the payment details. Both webhook has the correlation of `payment_id`.

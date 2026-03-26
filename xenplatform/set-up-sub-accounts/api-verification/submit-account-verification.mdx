@@ -1,0 +1,1327 @@
+---
+title: "Submit Account Verification"
+---
+
+First, you will need to identify the entity type of your merchants. The required parameters are available below for each country and entity type (e.g. Philippines Corporation).
+
+You may also need to get a your merchants to sign a Service Agreement with Xendit. Please consult your account manager and we will provide this template as necessary.
+
+## Upload KYC Files
+
+Next, you will also need to use the [Upload File API](https://developers.xendit.co/api-reference/#upload-file) in order to upload the documents you collected from your merchants to Xendit, and save the IDs to include during the Account Verification submission.
+
+```plaintext
+POST https://api.xendit.co/files
+```
+
+```json
+{
+  "purpose": "KYC_DOCUMENT",
+  "file": "@/Users/MyName/Documents/identity-card.pdf"
+}
+```
+
+## Submit Account Verification
+
+This POST API can be used to submit verification (KYC) information for your sub-account, and to resubmit information when requested. The required parameters are detailed below, but you can also [view this page](/get-started/create-account) to see the required documents per country.
+
+Ensure that your Platform account’s API key is granted the permissions below:
+
+- xenPlatform Accounts `write`
+
+You will need to fill in the required parameters according to your sub-account’s country of incorporation and entity type. Refer to the list of requirements below to build your request body structure.
+
+Copy
+```plaintext
+POST https://api.xendit.co/account_verification
+```
+
+### Required Parameters
+
+#### Headers
+
+| Field Name | Data Type | Description |
+| --- | --- | --- |
+| for-user-id | string (optional) | The business ID of the sub-account |
+
+#### Body
+
+| Field Name | Data Type | Description |
+| --- | --- | --- |
+| country\_of\_incorporation | string (required) | Country of incorporation in ISO format (e.g. SG, HK, CN, ID, etc.) |
+| business\_entity\_type | string  (required) | The entity type such as CORPORATION or PARTNERSHIP. Please refer to the [valid list of entity types below](/xenplatform/set-up-sub-accounts/api-verification/submit-account-verification#enumeration-value-reference). |
+| business\_industry\_code | string  (required) | The industry the business operates under. Must be one of the accepted [Industry Codes below](/xenplatform/set-up-sub-accounts/api-verification/submit-account-verification#enumeration-value-reference). |
+| kyc\_details | object (required) | The KYC Details object containing the KYC information of the sub-merchant. See the table below to view all the parameters. |
+| third\_party\_verifications | array (optional) | An array of Third-party Verification objects, if necessary.  This is where we would require information from Jumio, Sanction Screening, Zhongshu Data, etc. |
+
+#### KYC Details
+
+Use the tabs below to select the parameters that apply based on your merchant’s Country of Incorporation.
+
+General RequirementsIndonesiaPhilippines
+
+| Field Name | Data Type | Description |
+| --- | --- | --- |
+| business\_legal\_name | string (required) | The legal name registered for the business |
+| business\_description | string (required) | Description of your business |
+| business\_registration\_number | string (required) | The legal business registration number |
+| business\_establishment\_date | string (required) | The date of establishment of the business in YYYY-MM-DD format. |
+| business\_tax\_number | string (optional) | The country-issued Tax ID number from the country of incorporation. Required for the following `country_of_incorporation` : `ID`, `MY` |
+| business\_address | object (required) | An Address Object for the address of the business. |
+| legal\_entity\_address | object (required) | An Address Object for the address of the legal entity. May be the same as the `business_address` |
+| office\_store\_address\_proof\_document | object (optional) | A File Object required if the legal address is not the same as the office/store address |
+| proof\_of\_business\_websites | object (optional) | A Proof of Business Websites object.  (At least 1 proof\_of\_business\_websites or proof\_of\_business\_documents is required) |
+| proof\_of\_business\_documents | array (optional) | An array of Proof of Business Document objects.  (At least 1 proof\_of\_business\_websites or proof\_of\_business\_documents is required) |
+| business\_registration\_documents | array (required) | An array of Business Registration objects. Refer to the [types below](/xenplatform/set-up-sub-accounts/api-verification/submit-account-verification#enumeration-value-reference) to see the required documents for each country. |
+| business\_license\_documents | array (optional) | An array of File objects representing country and industry-specific business licenses if required. Refer to [this section](/xenplatform/set-up-sub-accounts/api-verification/submit-account-verification#industries-that-require-business-licenses) for the list of industries that are required to submit license documents. |
+| business\_bank\_account\_document | object (optional) | A File object containing proof of the bank account ownership (bank book or statement). |
+| business\_bank\_channel\_code | string (optional) | Bank account number associated with the business for withdrawal. Required for the following `country_of_incorporation` : `ID` |
+| business\_bank\_account\_number | string (optional) | Bank code for the account number above such as BCA, BRI (retrieve bank codes using this API). Required for the following `country_of_incorporation` : `ID` |
+| business\_bank\_name | string (optional) | Bank account holder name that must match the Business’ Legal Name. Required for the following `country_of_incorporation` : `ID` |
+| business\_intents | array (required) | An array containing the Xendit use cases for this merchant. Supported values: PAYMENTS, PAYOUT, GLOBAL\_PAYOUT, BUSINESS\_EXPENSES |
+| business\_average\_monthly\_basket\_size | string (required) | The business’s estimated monthly transaction amount or gross sales. Please use one of the accepted string values below:   - “lt $5K” - “$5K - 25K” - “$25K - $50K” - “$50K - $300K” - “$300K - $750K” - “gt $750K” |
+| business\_source\_of\_funds | array (optional) | An array listing the source of funds for the business. Supported values: REVENUE, INVESTOR\_SHAREHOLDER\_FUNDING, INVESTMENT\_INCOME, BUSINESS\_LOAN, PERSONAL\_FUNDING, DONATIONS, GRANTS, OTHER |
+| money\_out\_transaction\_frequency | string (required) | The expected frequency to do Payouts or Withdrawals. Supported values: DAILY, WEEKLY, FORTNIGHTLY, MONTHLY, LESS\_THAN\_ONCE\_A\_MONTH |
+| Authorized Person | | |
+| authorized\_person\_first\_name | string (required) | First name of the Authorized Person |
+| authorized\_person\_last\_name | string (required) | Last name or Surname of the Authorized Person |
+| authorized\_person\_gender | string (required) | Supported values: M or F |
+| authorized\_person\_nationality | string (required) | The authorized person’s nationality in ISO format |
+| authorized\_person\_date\_of\_birth | string (required) | The authorized person’s date of birth in YYYY-MM-DD format |
+| authorized\_person\_role | string (required) | Supported values: CEO, CTO, COO, CFO, FOUNDER, OWNER, DIRECTOR, MANAGING\_DIRECTOR, GENERAL\_PARTNER, PARTNER, TRUSTEE, OTHER |
+| authorized\_person\_email\_address | string (required) | Email address of the Contact Person |
+| authorized\_person\_mobile\_country\_code | string (required) | Country code of the mobile number of the Authorized Person (E.g. +65) |
+| authorized\_person\_mobile\_number\_only | string (required) | Mobile number of the Authorized Person without country codes and `0` prefixes |
+| authorized\_person\_address | object (required) | An Address Object for the address of the authorized person. |
+| authorized\_person\_selfie\_document | object (optional) | A File object for the selfie photo of the authorized representative |
+| authorized\_person\_identification | array (required) | An array of Identification objects |
+| authorized\_person\_proof\_of\_residency\_document | object (optional) | A File object for the authorised person’s proof of address.  This is required if authorized\_person\_identification ID does not have an address indicated. (e.g. HK\_NATIONAL\_ID, PASSPORT) |
+| authorized\_person\_board\_resolution\_document | object (optional) | A File object. Required for Corporations if the authorized representative is NOT listed as a Board Director. Otherwise, please specify `is_authorized_person` for one of the Board Directors in the Stakeholders array. |
+| authorized\_person\_letter\_of\_authorization\_document | object (optional) | A File object. This is required for:   - Sole Proprietorship: if the authorized representative is NOT the business owner - Partnership: if the authorized representative is NOT a partner in the company |
+| Contact Person (Can be the same as the Authorized Representative) | | |
+| contact\_person\_first\_name | string (required) | First name of the Contact Person |
+| contact\_person\_last\_name | string (required) | Last name or Surname of the Contact Person |
+| contact\_person\_email\_address | string (required) | Email address of the Contact Person |
+| contact\_person\_mobile\_country\_code | string (required) | Country code of the mobile number of the Contact Person (E.g. +65) |
+| contact\_person\_mobile\_number\_only | string (required) | Mobile number of the Contact Person without country codes and `0` prefixes |
+| Shareholder Information | | |
+| shareholders\_include\_corporate\_entity | bool (optional) | Specify `true` for `CORPORATION` type entities if at least one of the shareholders is a corporate entity. This will require a business\_shareholding\_chart\_document to be uploaded. |
+| business\_shareholding\_chart\_document | object (optional) | A File object. Required if `shareholders_include_corporate_entity` is `true` |
+| stakeholders | array (required) | An array of Stakeholder objects. There are different requirements depending on the entity type:   - Corporations: At least 1 Board Director and 1 Business Owner - Partnership: At least 1 Partner and 1 Business Owner - Sole Proprietorship: At least 1 Business Owner |
+| service\_agreement\_document | object (required) | A File object representing the service agreement signed by sub-merchants |
+
+| Field Name | Data Type | Description |
+| --- | --- | --- |
+| business\_legal\_name | string (required) | The legal name registered for the business |
+| business\_description | string (required) | Description of your business |
+| business\_registration\_number | string (required) | The legal business registration number |
+| business\_establishment\_date | string (required) | The date of establishment of the business in YYYY-MM-DD format. |
+| business\_tax\_number | string (optional) | The country-issued Tax ID number from the country of incorporation. |
+| business\_address | object (required) | An Address Object for the address of the business. |
+| legal\_entity\_address | object (required) | An Address Object for the address of the legal entity. May be the same as the `business_address` |
+| office\_store\_address\_proof\_document | object (optional) | A File Object required if the legal address is not the same as the office/store address |
+| proof\_of\_business\_websites | object (optional) | A Proof of Business Websites object.  (At least 1 proof\_of\_business\_websites or proof\_of\_business\_documents is required) |
+| proof\_of\_business\_documents | array (optional) | An array of Proof of Business Document objects.  (At least 1 proof\_of\_business\_websites or proof\_of\_business\_documents is required) |
+| business\_registration\_documents | array (required) | An array of Business Registration objects. Types for `ID`:  ID\_NIB, ID\_COMPANY\_NPWP, ID\_AKTA, ID\_SKMENKEH |
+| business\_license\_documents | array (optional) | An array of File objects representing country and industry-specific business licenses, if applicable (e.g. Alcohol license, Cryptocurrency exchange license, etc.) |
+| business\_bank\_account\_document | object (optional) | A File object containing proof of the bank account ownership (bank book or statement) for withdrawal. |
+| business\_bank\_channel\_code | string (optional) | Bank account number associated with the business for withdrawal. |
+| business\_bank\_account\_number | string (optional) | Bank code for the account number above such as BCA, BRI (retrieve bank codes using this API) for withdrawal. |
+| business\_bank\_name | string (optional) | Bank account holder name that must match the Business’ Legal Name. |
+| business\_intents | array (required) | An array containing the Xendit use cases for this merchant. Supported values: PAYMENTS, PAYOUT, GLOBAL\_PAYOUT, BUSINESS\_EXPENSES |
+| business\_average\_monthly\_basket\_size | string (required) | The business’s estimated monthly transaction amount or gross sales. Please use one of the accepted string values below:   - “lt $5K” - “$5K - 25K” - “$25K - $50K” - “$50K - $300K” - “$300K - $750K” - “gt $750K” |
+| business\_source\_of\_funds | array (optional) | An array listing the source of funds for the business. Supported values: REVENUE, INVESTOR\_SHAREHOLDER\_FUNDING, INVESTMENT\_INCOME, BUSINESS\_LOAN, PERSONAL\_FUNDING, DONATIONS, GRANTS, OTHER |
+| Authorized Person | | |
+| authorized\_person\_first\_name | string (required) | First name of the Authorized Person |
+| authorized\_person\_last\_name | string (required) | Last name or Surname of the Authorized Person |
+| authorized\_person\_gender | string (required) | Supported values: M or F |
+| authorized\_person\_nationality | string (required) | The authorized person’s nationality in ISO format |
+| authorized\_person\_date\_of\_birth | string (required) | The authorized person’s date of birth in YYYY-MM-DD format |
+| authorized\_person\_role | string (required) | Supported values: CEO, CTO, COO, CFO, FOUNDER, OWNER, DIRECTOR, MANAGING\_DIRECTOR, GENERAL\_PARTNER, PARTNER, TRUSTEE, OTHER |
+| authorized\_person\_email\_address | string (required) | Email address of the Contact Person |
+| authorized\_person\_mobile\_country\_code | string (required) | Country code of the mobile number of the Authorized Person (E.g. +65) |
+| authorized\_person\_mobile\_number\_only | string (required) | Mobile number of the Contact Person excluding the country code |
+| authorized\_person\_address | object (required) | An Address Object for the address of the authorized person. |
+| authorized\_person\_selfie\_document | object (optional) | A File object for the selfie photo of the authorized representative |
+| authorized\_person\_identification | array (required) | An array of Identification objects. Types for `ID`: ID\_NATIONAL\_ID\_KTP, ID\_KITAS\_KITAP |
+| authorized\_person\_proof\_of\_residency\_document | object (optional) | A File object for the authorised person’s proof of address.  This is required if authorized\_person\_identification ID does not have an address indicated. (e.g. ID\_NATIONAL\_ID\_KTP) |
+| authorized\_person\_board\_resolution\_document | object (optional) | A File object. Required for Corporations if the authorized representative is NOT listed as a Board Director |
+| authorized\_person\_letter\_of\_authorization\_document | object (optional) | A File object. This is required for:   - Sole Proprietorship: if the authorized representative is NOT the business owner - Partnership: if the authorized representative is NOT a partner in the company |
+| Contact Person (Can be the same as the Authorized Representative) | | |
+| contact\_person\_first\_name | string (required) | First name of the Contact Person |
+| contact\_person\_last\_name | string (required) | Last name or Surname of the Contact Person |
+| contact\_person\_email\_address | string (required) | Email address of the Contact Person |
+| contact\_person\_mobile\_country\_code | string (required) | Country code of the mobile number of the Contact Person (E.g. +62) |
+| contact\_person\_mobile\_number\_only | string (required) | Mobile number of the Contact Person excluding the country code |
+| Shareholder Information | | |
+| shareholders\_include\_corporate\_entity | bool (required) | Specify true if at least one of the shareholders is a corporate entity. This will require a business\_shareholding\_chart\_document to be uploaded. |
+| business\_shareholding\_chart\_document | object (optional) | A File object. Required if `shareholders_include_corporate_entity` is `true` |
+| stakeholders | array (required) | An array of Stakeholder objects. There are different requirements depending on the entity type:   - Corporations: At least 1 Board Director and 1 Business Owner - Partnership: At least 1 Partner and 1 Business Owner - Sole Proprietorship: At least 1 Business Owner |
+| service\_agreement\_document | object (required) | A File object representing the service agreement signed by sub-merchants |
+
+| Field Name | Data Type | Description |
+| --- | --- | --- |
+| business\_legal\_name | string (required) | The legal name registered for the business |
+| business\_description | string (required) | Description of your business |
+| business\_registration\_number | string (required) | The legal business registration number |
+| business\_establishment\_date | string (required) | The date of establishment of the business in YYYY-MM-DD format. |
+| business\_address | object (required) | An Address Object for the address of the business. |
+| legal\_entity\_address | object (required) | An Address Object for the address of the legal entity. May be the same as the `business_address` |
+| office\_store\_address\_proof\_document | object (optional) | A File Object required if the legal address is not the same as the office/store address |
+| proof\_of\_business\_websites | object (optional) | A Proof of Business Websites object.  (At least 1 proof\_of\_business\_websites or proof\_of\_business\_documents is required) |
+| proof\_of\_business\_documents | array (optional) | An array of Proof of Business Document objects.  (At least 1 proof\_of\_business\_websites or proof\_of\_business\_documents is required) |
+| business\_registration\_documents | array (required) | An array of Business Registration objects. Types for `PH`:  PH\_ARTICLES\_OF\_INCORPORATION, PH\_ARTICLES\_OF\_PARTNERSHIP, PH\_DTI\_REGISTRATION, PH\_GIS, PH\_NOTARIZED\_PARTNER\_CERTIFICATE, PH\_NOTARIZED\_SECRETARY\_CERTIFICATE, PH\_BIR\_2303 |
+| business\_license\_documents | array (optional) | An array of File objects representing country and industry-specific business licenses, if applicable (e.g. Alcohol license, Cryptocurrency exchange license, etc.) |
+| business\_bank\_account\_document | object (optional) | A File object containing proof of the bank account ownership (bank book or statement). |
+| business\_intents | array (required) | An array containing the Xendit use cases for this merchant. Supported values: PAYMENTS, PAYOUT, GLOBAL\_PAYOUT, BUSINESS\_EXPENSES |
+| business\_average\_monthly\_basket\_size | string (required) | The business’s estimated monthly transaction amount or gross sales. Please use one of the accepted string values below:   - “lt $5K” - “$5K - 25K” - “$25K - $50K” - “$50K - $300K” - “$300K - $750K” - “gt $750K” |
+| business\_source\_of\_funds | array (optional) | An array listing the source of funds for the business. Supported values: REVENUE, INVESTOR\_SHAREHOLDER\_FUNDING, INVESTMENT\_INCOME, BUSINESS\_LOAN, PERSONAL\_FUNDING, DONATIONS, GRANTS, OTHER |
+| Authorized Person | | |
+| authorized\_person\_first\_name | string (required) | First name of the Authorized Person |
+| authorized\_person\_last\_name | string (required) | Last name or Surname of the Authorized Person |
+| authorized\_person\_gender | string (required) | Supported values: M or F |
+| authorized\_person\_nationality | string (required) | The authorized person’s nationality in ISO format |
+| authorized\_person\_date\_of\_birth | string (required) | The authorized person’s date of birth in YYYY-MM-DD format |
+| authorized\_person\_role | string (required) | Supported values: CEO, CTO, COO, CFO, FOUNDER, OWNER, DIRECTOR, MANAGING\_DIRECTOR, GENERAL\_PARTNER, PARTNER, TRUSTEE, OTHER |
+| authorized\_person\_email\_address | string (required) | Email address of the Contact Person |
+| authorized\_person\_mobile\_country\_code | string (required) | Country code of the mobile number of the Authorized Person (E.g. +65) |
+| authorized\_person\_mobile\_number\_only | string (required) | Mobile number of the Contact Person excluding the country code |
+| authorized\_person\_address | object (required) | An Address Object for the address of the authorized person. |
+| authorized\_person\_selfie\_document | object (optional) | A File object for the selfie photo of the authorized representative |
+| authorized\_person\_identification | array (required) | An array of Identification objects. Types for `PH`: PH\_DRIVERS\_LICENSE, PH\_PHILSYS\_PHYSICAL, PH\_PHILSYS\_DIGITAL, PH\_UMID, PH\_SSS\_OR\_GSIS, PH\_PRC\_LICENSE, PH\_POSTAL\_ID, PH\_VOTER\_ID, PH\_ACR\_OR\_IMMIGRANT\_COR |
+| authorized\_person\_proof\_of\_residency\_document | object (optional) | A File object for the authorised person’s proof of address.  This is required if authorized\_person\_identification ID does not have an address indicated. (e.g. HK\_NATIONAL\_ID, PASSPORT) |
+| authorized\_person\_board\_resolution\_document | object (optional) | A File object. Required for Corporations if the authorized representative is NOT listed as a Board Director |
+| authorized\_person\_letter\_of\_authorization\_document | object (optional) | A File object. This is required for:   - Sole Proprietorship: if the authorized representative is NOT the business owner - Partnership: if the authorized representative is NOT a partner in the company |
+| Contact Person (Can be the same as the Authorized Representative) | | |
+| contact\_person\_first\_name | string (required) | First name of the Contact Person |
+| contact\_person\_last\_name | string (required) | Last name or Surname of the Contact Person |
+| contact\_person\_email\_address | string (required) | Email address of the Contact Person |
+| contact\_person\_mobile\_country\_code | string (required) | Country code of the mobile number of the Contact Person (E.g. +65) |
+| contact\_person\_mobile\_number\_only | string (required) | Mobile number of the Contact Person excluding the country code |
+| Shareholder Information | | |
+| shareholders\_include\_corporate\_entity | bool (required) | Specify true if at least one of the shareholders is a corporate entity. This will require a business\_shareholding\_chart\_document to be uploaded. |
+| business\_shareholding\_chart\_document | object (optional) | A File object. Required if `shareholders_include_corporate_entity` is `true` |
+| stakeholders | array (required) | An array of Stakeholder objects. There are different requirements depending on the entity type:   - Corporations: At least 1 Board Director and 1 Business Owner - Partnership: At least 1 Partner and 1 Business Owner - Sole Proprietorship: At least 1 Business Owner |
+| service\_agreement\_document | object (required) | A File object representing the service agreement signed by sub-merchants |
+
+#### Object References
+
+Business RegistrationProof of BusinessStakeholderIdentificationFileAddressThird Party Verification
+
+| Field Name | Data Type | Description |
+| --- | --- | --- |
+| file\_name | string (required) | The name or label for the file |
+| file\_id | string (required) | The file ID generated from the Upload API response |
+
+| Field Name | Data Type | Description |
+| --- | --- | --- |
+| street\_line\_1 | string (required) | Required for all countries |
+| street\_line\_2 | string (optional) | Optional |
+| city | string (required) | Required for all countries |
+| district | string (optional) | Required for: `ID`, `TH`, `VN` |
+| sub\_district | string (optional) | Required for: `ID`, `TH` |
+| province | string (optional) | Required for: `ID`, `TH`, `PH`, `VN` |
+| state | string (optional) | Required for: `PH`, `MY` |
+| ward | string (optional) | Required for: `VN` |
+| postal\_code | string (required) | Required for all countries |
+| country\_code | string (required) | Country code in ISO format (SG, US, ID, etc.) |
+
+Proof of Business - Websites
+
+Provide an object containing at least one of the following website URLs required.
+
+| Field Name | Data Type | Description |
+| --- | --- | --- |
+| website | string (optional) | Website URL of the business |
+| website\_staging\_url | string (optional) | A staging website URL of the business |
+| website\_staging\_username | string (optional) | A username that can be used to log into the staging website |
+| website\_staging\_password | string (optional) | The password that can be used to log into the staging website |
+| social\_instagram\_url | string (optional) | Instagram profile URL |
+| social\_facebook\_url | string (optional) | Facebook profile URL |
+| social\_others\_url | string (optional) | Other social media profile URL |
+| marketplace\_url | string (optional) | A store URL under a marketplace website or application |
+
+Proof of Business - Documents
+
+Provide an array of objects with these parameters. One or more documents can be submitted.
+
+| Field Name | Data Type | Description |
+| --- | --- | --- |
+| type | string (required) | The type for the proof of business. Supported values: POSTER\_BROCHURE\_PAMPHLET\_DOCUMENT, INVOICE\_PURCHASE\_ORDER\_DOCUMENT, OFFLINE\_STORE\_PHOTO\_DOCUMENT, OTHER\_DOCUMENT |
+| file\_name | string (required) | The name or label for the file |
+| file\_id | string (required) | The file ID generated from the [Upload API](https://developers.xendit.co/api-reference/#upload-file) response |
+
+| Field Name | Data Type | Description |
+| --- | --- | --- |
+| type | string (required) | Required values based on the `country_of_incorporation`  Refer to the [enumeration values](/xenplatform/set-up-sub-accounts/api-verification/submit-account-verification#enumeration-value-reference) below. |
+| file\_name | string (required) | The name or label for the file |
+| file\_id | string (required) | The file ID generated from the Upload API response |
+
+| Field Name | Data Type | Description |
+| --- | --- | --- |
+| roles | array (required) | An array containing these supported values: BOARD\_DIRECTOR, BUSINESS\_OWNER, LEGAL\_PARTNER, AUTHORIZED\_SIGNATORY |
+| first\_name | string (required) | First name of the stakeholder |
+| last\_name | string (required) | Last name or Surname of the stakeholder |
+| nationality | string (required) | Nationality of the stakeholder (ISO format) |
+| date\_of\_birth | string (required) | Date of birth of the stakeholder (YYYY-MM-DD format) |
+| address | object (required) | An Address Object for the stakeholder |
+| is\_authorized\_person | boolean (optional) | Indicate whether this Stakeholder is also the authorized person. Removes the requirement to submit an `authorized_person_board_resolution_document` if one of the `roles` includes `BOARD_DIRECTOR`. Defaults to `false` if not specified. |
+| identification | array (required) | An array containing [Identification objects](https://docs.google.com/document/d/1DTHd9DN8DbZV_XiWdMPI3WfAGAQ0ce9mDyGTvANNeCg/edit?tab=t.0#heading=h.fh27h1zbihif) |
+| proof\_of\_residency\_document | object (optional) | A [File object](https://docs.google.com/document/d/1DTHd9DN8DbZV_XiWdMPI3WfAGAQ0ce9mDyGTvANNeCg/edit?pli=1&tab=t.0#heading=h.a3evrvs7q9j4) for the authorised person’s proof of address.  This is required if identification submitted does not have an address indicated. (e.g. `HK_NATIONAL_ID`, `PASSPORT`) |
+
+| Field Name | Data Type | Description |
+| --- | --- | --- |
+| type | string (required) | The identification document or card type.  Refer to the [enumeration values](/xenplatform/set-up-sub-accounts/api-verification/submit-account-verification#enumeration-value-reference) below. |
+| number | string (required) | The identification document number |
+| document\_front | object (required) | A File object for the front of the ID document |
+| document\_back | object (required) | A File object for the back of the ID document |
+
+| Field Name | Data Type | Description |
+| --- | --- | --- |
+| type | string (required) | The type of verification completed for the sub-merchant. Supported values: SANCTION\_SCREENING, GOVT\_DATABASE, LIVENESS\_VERIFICATION |
+| date | string (required) | The date the verification was completed or extracted in YYYY-MM-DD format. |
+| result | object (required) | A JSON object containing the verification results. This can be in any structure. It is advised to include the entity and individual names in the results. |
+
+### Request Samples
+
+Below are sample request payloads for different countries and types of entities.
+
+HK CorporationID Corporation
+```json
+{
+   "country_of_incorporation": "HK",
+   "business_entity_type": "CORPORATION",
+   "business_industry_code": "ACCOUNTING_AUDITING_AND_BOOKKEEPING_SERVICES",
+   "kyc_details": {
+        "business_legal_name": "Sub Legal Name",
+        "business_description": "Generic store",
+        "business_registration_number": "XX12345678",
+        "business_establishment_date": "2025-03-14",
+        "business_address": {
+            "street_line_1": "Prosperous Coml Bldg Causeway Bay",
+            "sub_district": "Wan Chai District",
+            "city": "Hong Kong",
+            "state": "NA",
+            "province": "NA",
+            "postal_code": "999077",
+            "country_code": "HK"
+        },
+        "legal_entity_address": {
+            "street_line_1": "Prosperous Coml Bldg Causeway Bay",
+            "sub_district": "Wan Chai District",
+            "city": "Hong Kong",
+            "state": "NA",
+            "province": "NA",
+            "postal_code": "999077",
+            "country_code": "HK"
+        },
+        "office_store_address_proof_document": {
+            "file_name": "Photo of offline business.jpg",
+            "file_id": "file-5fbfd3e3-6d6d-493d-bef2-765462117527"
+        },
+        "proof_of_business_websites": {
+          "website": "https://example.com"
+        },
+        "proof_of_business_documents": [
+            {
+                "type": "INVOICE_PURCHASE_ORDER_DOCUMENT",
+                "file_name": "sample-invoice.pdf",
+                "file_id": "file-c7bdf24b-738d-4c47-a919-55479daf7603"
+            }
+        ],
+        "business_registration_documents": [
+            {
+                "type": "HK_CI",
+                "file_name": "Certificate of Incorporation.pdf",
+                "file_id": "file-c7bdf24b-738d-4c47-a919-55479daf7603"
+            },
+            {
+                "type": "HK_NAR1",
+                "file_name": "NAR1.pdf",
+                "file_id": "file-c7bdf24b-738d-4c47-a919-55479daf7603"
+            }
+        ],
+        "business_license_documents": [
+          {
+            "file_name": "bus-license.pdf",
+            "file_id": "file-c7bdf24b-738d-4c47-a919-55479daf7603"
+          }
+        ],
+        "business_bank_account_document": {
+            "file_name": "bank-account.pdf",
+            "file_id": "file-c7bdf24b-738d-4c47-a919-55479daf7603"
+        },
+        "business_average_monthly_basket_size": "$50K - $300K",
+        "business_source_of_funds": [
+            "REVENUE"
+        ],
+        "business_shareholding_chart_document": {
+            "file_name": "NAR1 - Annual Report.pdf",
+            "file_id": "file-c7bdf24b-738d-4c47-a919-55479daf7603"
+        },
+        "business_intents": [
+            "PAYMENTS"
+        ],
+        "authorized_person_first_name": "Jackie",
+        "authorized_person_last_name": "Chung",
+        "authorized_person_gender": "M",
+        "authorized_person_nationality": "HK",
+        "authorized_person_date_of_birth": "1960-01-30",
+        "authorized_person_role": "FOUNDER",
+        "authorized_person_mobile_country_code": "+852",
+        "authorized_person_mobile_number_only": "28405817",
+        "authorized_person_email_address": "johndoe@test.com",
+        "authorized_person_address": {
+            "street_line_1": "Two Pacific Place",
+            "sub_district": "Queensway",
+            "city": "Hong Kong",
+            "state": "NA",
+            "province": "NA",
+            "postal_code": "999077",
+            "country_code": "HK"
+        },
+        "authorized_person_selfie_document": {
+            "file_name": "jackie-chung-selfie.jpg",
+            "file_id": "file-5a552596-d507-45a7-9dcf-51b214da1cec"
+        },
+        "authorized_person_identification": [
+            {
+                "type": "PASSPORT",
+                "number": "X123456AA",
+                "document_front": {
+                    "file_name": "passport-front.jpg",
+                    "file_id": "file-5fbfd3e3-6d6d-493d-bef2-765462117527"
+                },
+                "document_back": {
+                    "file_name": "passport-back.jpg",
+                    "file_id": "file-5fbfd3e3-6d6d-493d-bef2-765462117527"
+                }
+            }
+        ],
+        "authorized_person_proof_of_residency_document": {
+            "file_name": "proof-of-residency.pdf",
+            "file_id": "file-c7bdf24b-738d-4c47-a919-55479daf7603"
+        },
+        "contact_person_first_name": "Jennie",
+        "contact_person_last_name": "Chiu",
+        "contact_person_mobile_country_code": "+852",
+        "contact_person_mobile_number_only": "25701174",
+        "contact_person_email_address": "jennie@test.com",
+        "stakeholders": [
+            {
+                "roles": ["BUSINESS_OWNER", "BOARD_DIRECTOR"],
+                "first_name": "Jackie",
+                "last_name": "Chung",
+                "nationality": "HK",
+                "date_of_birth": "1960-01-30",
+                "is_authorized_person": true,
+                "address": {
+                    "street_line_1": "Two Pacific Place",
+                    "sub_district": "Queensway",
+                    "city": "Hong Kong",
+                    "state": "NA",
+                    "province": "NA",
+                    "postal_code": "999077",
+                    "country_code": "HK"
+                },
+                "identification": [
+                    {
+                        "type": "PASSPORT",
+                        "number": "X123456AA",
+                        "document_front": {
+                            "file_name": "passport-front.jpg",
+                            "file_id": "file-5fbfd3e3-6d6d-493d-bef2-765462117527"
+                        },
+                        "document_back": {
+                            "file_name": "passport-back.jpg",
+                            "file_id": "file-5fbfd3e3-6d6d-493d-bef2-765462117527"
+                        }
+                    }
+                ],
+                "proof_of_residency_document": {
+                    "file_name": "proof-of-residency.pdf",
+                    "file_id": "file-c7bdf24b-738d-4c47-a919-55479daf7603"
+                }
+            },
+            {
+                "roles": ["BOARD_DIRECTOR"],
+                "first_name": "Jenny",
+                "last_name": "Chiu",
+                "nationality": "HK",
+                "date_of_birth": "1975-02-25",
+                "address": {
+                    "street_line_1": "Three Pacific Place",
+                    "city": "Queensway",
+                    "state": "Hong Kong",
+                    "postal_code": "999077",
+                    "country_code": "HK"
+                },
+                "identification": [
+                    {
+                        "type": "HK_NATIONAL_ID",
+                        "number": "ABCD12345",
+                        "document_front": {
+                            "file_name": "passport-front.jpg",
+                            "file_id": "file-5fbfd3e3-6d6d-493d-bef2-765462117527"
+                        },
+                        "document_back": {
+                            "file_name": "passport-back.jpg",
+                            "file_id": "file-5fbfd3e3-6d6d-493d-bef2-765462117527"
+                        }
+                    }
+                ]
+            }
+        ],
+        "shareholders_include_corporate_entity": false,
+        "service_agreement_document": {
+            "file_name": "agreement.pdf",
+            "file_id": "file-c7bdf24b-738d-4c47-a919-55479daf7603"
+        }
+   },
+   "third_party_verifications": [
+       {
+           "type": "GOVT_DATABASE",
+           "date": "2025-02-01",
+           "result": {
+                "name": "Jackie Chung",
+                "source": "HK_GOVT",
+                "verified": true
+           }
+       },
+       {
+           "type": "SANCTION_SCREENING",
+           "date": "2025-02-01",
+           "result": {
+                "name": "Jackie Chung",
+                "is_sanctioned_entity": false
+           }
+       }
+   ]
+}
+```
+
+```json
+{
+   "country_of_incorporation": "ID",
+   "business_entity_type": "CORPORATION",
+   "business_industry_code": "ACCOUNTING_AUDITING_AND_BOOKKEEPING_SERVICES",
+   "kyc_details": {
+        "business_legal_name": "Sub Legal Name",
+        "business_description": "Generic store",
+        "business_registration_number": "XX12345678",
+        "business_tax_number": "12345678901234",
+        "business_establishment_date": "2025-03-14",
+        "business_address": {
+            "street_line_1": "Jalan Merdeka 1234",
+            "district": "Kebayoran Baru",
+            "sub_district": "Melawai",
+            "city": "Jakarta Selatan",
+            "state": "DKI Jakarta",
+            "province": "DKI Jakarta",
+            "postal_code": "12345",
+            "country_code": "ID"
+        },
+        "legal_entity_address": {
+            "street_line_1": "Jalan Merdeka 1234",
+            "district": "Kebayoran Baru",
+            "sub_district": "Melawai",
+            "city": "Jakarta Selatan",
+            "state": "DKI Jakarta",
+            "province": "DKI Jakarta",
+            "postal_code": "12345",
+            "country_code": "ID"
+        },
+        "office_store_address_proof_document": {
+            "file_name": "Photo of offline business.jpg",
+            "file_id": "file-7871a410-2ea4-4518-bd0d-9dabdb506179"
+        },
+        "proof_of_business_websites": {
+          "website": "https://example.com"
+        },
+        "proof_of_business_documents": [
+            {
+                "type": "INVOICE_PURCHASE_ORDER_DOCUMENT",
+                "file_name": "sample-invoice.pdf",
+                "file_id": "file-6f4fb582-5306-469a-b234-9e67f64fa2aa"
+            }
+        ],
+        "business_registration_documents": [
+            {
+                "type": "ID_NIB",
+                "file_name": "reg-doc.pdf",
+                "file_id": "file-6f4fb582-5306-469a-b234-9e67f64fa2aa"
+            },
+            {
+                "type": "ID_COMPANY_NPWP",
+                "file_name": "reg-doc.pdf",
+                "file_id": "file-6f4fb582-5306-469a-b234-9e67f64fa2aa"
+            },
+            {
+                "type": "ID_AKTA",
+                "file_name": "reg-doc.pdf",
+                "file_id": "file-6f4fb582-5306-469a-b234-9e67f64fa2aa"
+            },
+            {
+                "type": "ID_SKMENKEH",
+                "file_name": "reg-doc.pdf",
+                "file_id": "file-6f4fb582-5306-469a-b234-9e67f64fa2aa"
+            }
+        ],
+        "business_license_documents": [
+          {
+            "file_name": "bus-license.pdf",
+            "file_id": "file-6f4fb582-5306-469a-b234-9e67f64fa2aa"
+          }
+        ],
+        "business_bank_account_document": {
+            "file_name": "bank-account.pdf",
+            "file_id": "file-6f4fb582-5306-469a-b234-9e67f64fa2aa"
+        },
+        "business_average_monthly_basket_size": "$50K - $300K",
+        "business_source_of_funds": [
+            "REVENUE"
+        ],
+        "business_shareholding_chart_document": {
+            "file_name": "NAR1 - Annual Report.pdf",
+            "file_id": "file-6f4fb582-5306-469a-b234-9e67f64fa2aa"
+        },
+        "business_intents": [
+            "PAYMENTS"
+        ],
+        "business_bank_account_number": "12345678",
+        "business_bank_channel_code": "ID_BCA",
+        "business_bank_name": "Teguh Perkasa",
+        "business_registration_documents_amended": false,
+        "authorized_person_first_name": "Puput",
+        "authorized_person_last_name": "Widodo",
+        "authorized_person_gender": "F",
+        "authorized_person_nationality": "HK",
+        "authorized_person_date_of_birth": "1980-01-30",
+        "authorized_person_role": "FOUNDER",
+        "authorized_person_mobile_country_code": "+62",
+        "authorized_person_mobile_number_only": "28405817",
+        "authorized_person_email_address": "johndoe@test.com",
+        "authorized_person_address": {
+            "street_line_1": "Jalan Merdeka 1234",
+            "district": "Kebayoran Baru",
+            "sub_district": "Melawai",
+            "city": "Jakarta Selatan",
+            "state": "DKI Jakarta",
+            "province": "DKI Jakarta",
+            "postal_code": "12345",
+            "country_code": "ID"
+        },
+        "authorized_person_selfie_document": {
+            "file_name": "auth-person-selfie.jpg",
+            "file_id": "file-5a552596-d507-45a7-9dcf-51b214da1cec"
+        },
+        "authorized_person_identification": [
+            {
+                "type": "PASSPORT",
+                "number": "X123456AA",
+                "document_front": {
+                    "file_name": "passport-front.jpg",
+                    "file_id": "file-7871a410-2ea4-4518-bd0d-9dabdb506179"
+                },
+                "document_back": {
+                    "file_name": "passport-back.jpg",
+                    "file_id": "file-7871a410-2ea4-4518-bd0d-9dabdb506179"
+                }
+            }
+        ],
+        "authorized_person_proof_of_residency_document": {
+            "file_name": "proof-of-residency.pdf",
+            "file_id": "file-6f4fb582-5306-469a-b234-9e67f64fa2aa"
+        },
+        "contact_person_first_name": "Teguh",
+        "contact_person_last_name": "Perkasa",
+        "contact_person_mobile_country_code": "+62",
+        "contact_person_mobile_number_only": "25701174",
+        "contact_person_email_address": "example@test.com",
+        "stakeholders": [
+            {
+                "roles": ["BUSINESS_OWNER", "BOARD_DIRECTOR"],
+                "first_name": "Puput",
+                "last_name": "Widodo",
+                "nationality": "ID",
+                "date_of_birth": "1980-01-30",
+                "is_authorized_person": true,
+                "address": {
+                    "street_line_1": "Jalan Merdeka 1234",
+                    "district": "Kebayoran Baru",
+                    "sub_district": "Melawai",
+                    "city": "Jakarta Selatan",
+                    "state": "DKI Jakarta",
+                    "province": "DKI Jakarta",
+                    "postal_code": "12345",
+                    "country_code": "ID"
+                },
+                "identification": [
+                    {
+                        "type": "PASSPORT",
+                        "number": "X123456AA",
+                        "document_front": {
+                            "file_name": "passport-front.jpg",
+                            "file_id": "file-7871a410-2ea4-4518-bd0d-9dabdb506179"
+                        },
+                        "document_back": {
+                            "file_name": "passport-back.jpg",
+                            "file_id": "file-7871a410-2ea4-4518-bd0d-9dabdb506179"
+                        }
+                    }
+                ],
+                "proof_of_residency_document": {
+                    "file_name": "proof-of-residency.pdf",
+                    "file_id": "file-6f4fb582-5306-469a-b234-9e67f64fa2aa"
+                }
+            },
+            {
+                "roles": ["BOARD_DIRECTOR"],
+                "first_name": "Teguh",
+                "last_name": "Perkasa",
+                "nationality": "ID",
+                "date_of_birth": "1975-02-25",
+                "address": {
+                    "street_line_1": "Jalan Merdeka 1234",
+                    "district": "Kebayoran Baru",
+                    "sub_district": "Melawai",
+                    "city": "Jakarta Selatan",
+                    "state": "DKI Jakarta",
+                    "province": "DKI Jakarta",
+                    "postal_code": "12345",
+                    "country_code": "ID"
+                },
+                "identification": [
+                    {
+                        "type": "ID_NATIONAL_ID_KTP",
+                        "number": "1234567890123456",
+                        "document_front": {
+                            "file_name": "ktp-front.jpg",
+                            "file_id": "file-7871a410-2ea4-4518-bd0d-9dabdb506179"
+                        },
+                        "document_back": {
+                            "file_name": "ktp-back.jpg",
+                            "file_id": "file-7871a410-2ea4-4518-bd0d-9dabdb506179"
+                        }
+                    }
+                ]
+            }
+        ],
+        "shareholders_include_corporate_entity": false,
+        "service_agreement_document": {
+            "file_name": "agreement.pdf",
+            "file_id": "file-6f4fb582-5306-469a-b234-9e67f64fa2aa"
+        }
+   }
+}
+```
+
+### Response
+
+| Field Name | Data Type | Description |
+| --- | --- | --- |
+| id | string | The unique KYC request ID |
+| status | string | The status of the KYC verification. Possible values: `PENDING_VERIFICATION`, `VERIFICATION_IN_PROGRESS`, `AWAITING_RESUBMISSION`, `PASSED`, `FAILED` |
+| business\_id | string | The business ID of the sub-account linked to the verification request |
+| country\_of\_incorporation | string | The entity’s country of incorporation in ISO format |
+| business\_entity\_type | string | The entity type |
+| kyc\_details | object | The KYC Details object that was submitted |
+
+### Errors
+
+| Error | Error Code | Description |
+| --- | --- | --- |
+| INVALID\_DATA\_SUBMITTED | 400 | The field name provided in the payload is not supported and cannot be stored in our KYC data. Please follow the parameter list above. |
+| The fields provided in the payload do not satisfy requirements. Please provide the required parameters above. |
+| REQUEST\_FORBIDDEN\_ERROR | 403 | The API key is forbidden to perform this request. You need to use the Platform API key with Account Verification write access. |
+| INVALID\_API\_KEY | 401 | The API key format is invalid |
+| XEN\_PLATFORM\_SUB\_ACCOUNT\_NOT\_LIVE | 404 | KYC API submission is only allowed for sub-accounts created in LIVE mode, the sub-accounts created in TEST mode cannot be used to submit KYC through the API |
+| SERVER\_ERROR | 500 | Something unexpected, our devs have been notified to troubleshoot the issue |
+
+## Enumeration Value Reference
+
+Entity TypesBusiness Industry CodesBusiness Registration Document TypesIdentification Types
+
+| Country | Entity Type Codes |
+| --- | --- |
+| All Countries (applies to all the countries below and others not in this list) | - CORPORATION - PARTNERSHIP |
+| Indonesia | - SOLE\_PROPRIETORSHIP - NON\_PROFIT - UNION (This refers to “Koperasi”) - PMA - INDIVIDUAL |
+| Malaysia | - SOLE\_PROPRIETORSHIP - ASSOCIATION |
+| Philippines | - ONE\_PERSON\_CORPORATION - SOLE\_PROPRIETORSHIP - INDIVIDUAL |
+| Thailand | - NON\_PROFIT - INDIVIDUAL - OTHER |
+| Vietnam | - JOINT\_STOCK - PRIVATE\_ENTERPRISE |
+
+```plaintext
+ACCOUNTING_AUDITING_AND_BOOKKEEPING_SERVICES
+ADVERTISING_SERVICES
+AGRICULTURAL_COOPERATIVES
+ALCOHOLIC_BEVERAGE_WHOLESALERS
+AMUSEMENT_PARKS_CIRCUSES_CARNIVALS_AND_FORTUNE_TELLERS
+ANTIQUE_REPRODUCTION_SHOPS
+ARCHITECTURAL_ENGINEERING_AND_SURVEYING_SERVICES
+ART_AND_CRAFTS_NEW
+ASSET_MANAGEMENT_COMPANY_NEW
+AUCTION
+AUTOMATED_FUEL_DISPENSERS
+AUTOMOBILE_RENTALS
+AUTOMOTIVE_BODY_REPAIR_SHOPS
+AUTOMOTIVE_CAR_MOTORCYCLE_BOATS_AND_MISCELLANEOUS_AUTOMOTIVE_EQUIPMENT_DEALER
+AUTOMOTIVE_PARTS_AND_ACCESSORIES_OUTLETS
+AUTOMOTIVE_REPAIR_WASHES_AND_TOWING_SERVICE
+BAKERIES
+BANKS
+BEAUTY_AND_BARBER_SHOPS
+BILLIARD_AND_POOL_ESTABLISHMENTS
+BOAT_RENTAL_MARINAS_AND_MARINE_SERVICE_INC_SUPPLIES
+BOOKS_AND_STATIONARY
+BUSINESS_AND_SECRETARIAL_SCHOOLS
+BUYING_AND_SHOPPING_SERVICES_AND_CLUBS
+CABLE_AND_OTHER_PAY_TELEVISION_SERVICES
+CAMERA_AND_PHOTOGRAPHIC_SUPPLY_SHOPS
+CAR_AND_TRUCK_DEALERS_SALES_SERVICES_REPAIRS_PARTS_AND_LEASING
+CARPET_AND_UPHOLSTERY_CLEANING
+CATERERS
+CHARITABLE_AND_SOCIAL_SERVICE_ORGANIZATIONS
+CHILD_CARE_SERVICES
+CHIROPRACTORS
+CIGAR_SHOPS_AND_STANDS
+CIVIC_SOCIAL_AND_FRATERNAL_ASSOCIATIONS
+CLEANING_MAINTENANCE_AND_JANITORIAL_SERVICES
+CLOTHING_RENTALS_COSTUMES_UNIFORMS_AND_FORMAL_WEAR
+CLOTHING_STORES
+COMMERCIAL_PHOTOGRAPHY_ART_AND_GRAPHICS
+COMPUTER_NETWORKINFORMATION_SERVICES
+COMPUTER_SOFTWARE_OUTLETS
+CONSUMER_CREDIT_REPORTING_AGENCIES
+CONTRACTORS_STONEWORK_INSULATION_CAPENTRY_ROOFING_CONCRETE_OTHER
+CORRESPONDENCE_SCHOOLS
+COSMETIC_SHOPS_EXISTING_BRAND
+COSMETIC_SHOPS_OWN_BRAND
+COUNSELLING_SERVICES_DEBT_MARRIAGE_AND_PERSONAL
+CRYPTOCURRENCY
+DANCE_HALLS_STUDIOS_AND_SCHOOLS
+DATING_AND_ESCORT_SERVICES
+DEALSITES_NON_DIGITAL_VOUCHER
+DEALSITES_SELLING_EVOUCHER
+DENTAL_LABORATORY_MEDICAL_OPHTHALMIC_HOSPITAL_EQUIPMENT_AND_SUPPLIES
+DENTISTS
+DEPARTMENT_STORES
+DETECTIVE_AGENCIES_PROTECTIVE_AGENCIES_AND_SECURITY_SERVICES_INCLUDING_ARMOURED_CARS_AND_GUARD_DOGS
+DIGITAL_GOODS
+DIRECT_MARKETING_CATALOGUE_MERCHANTS
+DIRECT_MARKETING_COMBINATION_CATALOGUE_AND_RETAIL_MERCHANTS
+DIRECT_MARKETING_CONTINUITYSUBSCRIPTION_MERCHANTS
+DIRECT_MARKETING_INBOUND_TELEMARKETING_MERCHANTS
+DIRECT_MARKETING_INSURANCE_SERVICES
+DIRECT_MARKETING_OUTBOUND_TELEMARKETING_MERCHANTS
+DISCOUNT_SHOPS
+DOORTODOOR_SALES
+DRAPERY_WINDOW_COVERING_UPHOLSTERY_FIREPLACES_FIREPLACE_SCREENS_AND_ACCESSORIES_SHOPS
+DRINKING_PLACES_ALCOHOLIC_BEVERAGES_BARS_TAVERNS_NIGHTCLUBS_COCKTAIL_LOUNGES_AND_DISCOTHQUES
+DRUG_STORES_AND_PHARMACIES
+DRUGS_DRUG_PROPRIETORS
+DUTYFREE_SHOPS
+EATING_PLACES_AND_RESTAURANTS
+ECOMMERCE
+ELECTRIC_RAZOR_SHOPS_SALES_AND_SERVICE
+ELECTRIC_VEHICLE_CHARGING
+ELECTRONICS_AND_ACCESSORIES_NEW
+ELECTRONICS_REPAIR_SHOPS
+EMPLOYMENT_AGENCIES_AND_TEMPORARY_HELP_SERVICES
+EQUIPMENT_TOOL_FURNITURE_AND_APPLIANCE_RENTALS_AND_LEASING
+EWALLETS
+EXTERMINATING_AND_DISINFECTING_SERVICES
+FAST_FOOD_RESTAURANTS
+FINANCIAL_INSTITUTIONS_AUTOMATED_CASH_DISBURSEMENTS
+FINANCIAL_INSTITUTIONS_MANUAL_CASH_DISBURSEMENTS
+FINANCIAL_INSTITUTIONS_MERCHANDISE_AND_SERVICES
+FIREPLACES_FIREPLACE_SCREENS_AND_ACCESSORIES_SHOPS
+FLOOR_COVERING_SERVICES
+FLORISTS
+FLORISTS_SUPPLIES_NURSERY_STOCK_AND_FLOWERS
+FUEL_DEALERS_FUEL_OIL_WOOD_COAL_AND_LIQUEFIED_PETROLEUM
+FUNERAL_SERVICES_AND_CREMATORIUMS
+FURNITURE_HOME_FURNISHINGS_AND_EQUIPMENT_SHOPS_AND_MANUFACTURERS_EXCEPT_APPLIANCES
+GENERAL_CONTRACTORS_RESIDENTIAL_AND_COMMERCIAL
+GIFT_CARD_NOVELTY_AND_SOUVENIR_SHOPS
+GLASSWARE_AND_CRYSTAL_SHOPS
+HAJ_AND_UMRAH_PROVIDER_NEW
+HEALTH_AND_BEAUTY_SPAS
+HEALTH_SUPPLEMENT_SELLING_OWN_BRAND
+HEARING_AIDS_ORTHOPAEDIC_GOODS_AND_PROSTHETIC_DEVICES_SALES_SERVICE_AND_SUPPLIES
+HEATING_PLUMBING_AND_AIRCONDITIONING_CONTRACTORS
+HOBBY_TOY_AND_GAME_SHOPS
+HOME_SUPPLY_HARDWARE_AND_OTHER_BUILDING_MATERIALS
+HOSPITALS
+HOUSEHOLD_APPLICANCES_HOME_FURNISHING_AND_ELECTRONICS_SHOPS
+INSURANCE_SALES_UNDERWRITING_AND_PREMIUMS
+INSURTECH
+INTERNET_SERVICE_PROVIDER_NEW
+INVESTMENT_SERVICES_NEW
+IT_SERVICES_NEW
+JEWELLERY_WATCH_CLOCK_AND_SILVERWARE_SHOPS
+LANDSCAPING_AND_HORTICULTURAL_SERVICES
+LAUNDRY_CLEANING_AND_GARMENT_SERVICES
+LAWN_AND_GARDEN_SUPPLIES_OUTLETS_INCLUDING_NURSERIES
+LEGAL_SERVICES_AND_ATTORNEYS
+LENDING
+LOCAL_AND_SUBURBAN_COMMUTER_PASSENGER_TRANSPORTATION_INCLUDING_FERRIES
+LODGING_HOTELS_MOTELS_AND_RESORTS
+LUGGAGE_AND_LEATHER_GOODS_SHOPS
+MANAGEMENT_CONSULTING_AND_PUBLIC_RELATIONS_SERVICES
+MARKETPLACE_NEW
+MASSAGE_PARLOURS
+MEDICAL_AND_DENTAL_LABORATORIES
+MEMBERSHIP_CLUBS_SPORTS_RECREATION_ATHLETIC_COUNTRY_CLUBS_AND_PRIVATE_GOLF_COURSES
+METAL_SERVICE_CENTRES_AND_OFFICES
+MISCELLANEOUS_AND_SPECIALITY_RETAIL_OUTLETS
+MISCELLANEOUS_APPAREL_AND_ACCESSORY_SHOPS
+MISCELLANEOUS_FOOD_SHOPS_CONVENIENCE_AND_SPECIALITY_RETAIL_OUTLETS
+MISCELLANEOUS_GENERAL_MERCHANDISE
+MISCELLANEOUS_REPAIR_SHOPS_AND_RELATED_SERVICES
+MOBILE_HOME_DEALERS
+MONTHLY_SUMMARY_TELEPHONE_CHARGES
+MOTION_PICTURE_THEATRES
+MOTOR_FREIGHT_CARRIERS_AND_TRUCKING_LOCAL_AND_LONG_DISTANCE_MOVING_AND_STORAGE_COMPANIES_AND_LOCAL_DELIVERY
+MOTOR_VEHICLE_SUPPLIES_AND_NEW_PARTS
+MULTI_FINANCE_COMPANY
+MULTI_LEVEL_MARKETING_NEW
+MUSIC_SHOPS_MUSICAL_INSTRUMENTS_PIANOS_AND_SHEET_MUSIC
+NEWSAGENTS_AND_NEWSSTANDS
+NON_FINANCIAL_INSTITUTIONS_FOREIGN_CURRENCY_MONEY_ORDERS_NOT_WIRE_TRANSFER_SCRIP_AND_TRAVELLERS_CHECKS
+NURSING_AND_PERSONAL_CARE_FACILITIES
+OFFICE_AND_COMMERCIAL_FURNITURE
+OFFICE_PHOTOGRAPHIC_COMMERCIAL_EQUIPMENT_AND_OTHER_INDUSTRIAL_SUPPLIES
+OPTICIANS_OPTICAL_GOODS_AND_EYEGLASSES
+OPTOMETRISTS_AND_OPHTHALMOLOGISTS
+OSTEOPATHS
+OTHER_BUSINESS_SERVICES
+OTHER_CHEMICALS_AND_ALLIED_PRODUCTS
+OTHER_CONSTRUCTION_MATERIALS
+OTHER_DIRECT_MARKETINGDIRECT_MARKETERS
+OTHER_DOCTORS_AND_PHYSICIANS
+OTHER_DURABLE_GOODS
+OTHER_GOVERNMENT_SERVICES
+OTHER_MEDICAL_SERVICES_AND_HEALTH_PRACTITIONERS
+OTHER_MEMBERSHIP_ORGANIZATIONS
+OTHER_MISCELLANEOUS_PERSONAL_SERVICES
+OTHER_NONDURABLE_GOODS
+OTHER_PROFESSIONAL_SERVICES
+OTHER_RECREATION_SERVICES
+OTHER_TRANSPORTATION_SERVICES
+PACKAGE_SHOPS_BEER_WINE_AND_LIQUOR
+PARKING_LOTS_AND_GARAGES
+PAWN_SHOPS
+PAYMENT_GATEWAY_NEW
+PEERTOPEER_LENDING
+PET_SHOPS_PET_FOOD_AND_SUPPLIES
+PETROLEUM_AND_PETROLEUM_PRODUCTS
+PHOTOFINISHING_LABORATORIES_AND_PHOTO_DEVELOPING
+PHOTOGRAPHIC_STUDIOS
+PIECE_GOODS_NOTIONS_AND_OTHER_DRY_GOODS
+PLUMBING_AND_HEATING_EQUIPMENT_AND_SUPPLIES
+PODIATRISTS_AND_CHIROPODISTS
+POLITICAL_ORGANIZATIONS
+PRECIOUS_STONES_AND_METALS_WATCHES_AND_JEWELLERY
+PUBLIC_WAREHOUSING_AND_STORAGE_FARM_PRODUCTS_REFRIGERATED_GOODS_AND_HOUSEHOLD_GOODS
+REAL_ESTATE_AGENTS_AND_MANAGERS
+RECORD_SHOPS
+RELIGIOUS_GOODS_AND_SHOPS
+RELIGIOUS_ORGANIZATIONS
+REMITTANCE_NEW
+RIDE_SHARING_NEW
+SCHOOLS_UNIVERSITY_AND_EDUCATIONAL_SERVICE_INC_TRADE_AND_VOCATIONAL_SCHOOL
+SECURITIES_BROKERS_AND_DEALERS
+SERVICE_STATIONS_WITH_OR_WITHOUT_ANCILLARY_SERVICES
+SEWING_NEEDLEWORK_FABRIC_AND_PIECE_GOODS_SHOPS
+SHOE_REPAIR_SHOPS_SHOE_SHINE_PARLOURS_AND_HAT_CLEANING_SHOPS
+SHOE_SHOPS
+SPECIALITY_CLEANING_POLISHING_AND_SANITATION_PREPARATIONS
+SPORTING_AND_RECREATIONAL_CAMPS
+SPORTING_GOODS_NEW
+SPORTS_AND_RIDING_APPAREL_SHOPS
+SUPERMARKET_CONVENIENCE_STORES_CONFECTIONERY_SHOPS_AND_BUTCHERY
+SWIMMING_POOLS_SALES_SUPPLIES_AND_SERVICES
+TAILORS_SEAMSTRESSES_MENDING_AND_ALTERATIONS
+TAX_PAYMENTS
+TAX_PREPARATION_SERVICES
+TAXICABS_AND_LIMOUSINES
+TELECOMMUNICATION_EQUIPMENT_AND_TELEPHONE_SALES
+TELECOMMUNICATION_SERVICES_INCLUDING_LOCAL_AND_LONG_DISTANCE_CALLS_CREDIT_CARD_CALLS_CALLS_THROUGH_USE_OF_MAGNETIC_STRIPE_READING_TELEPHONES_AND_FAXES
+TELEGRAPH_SERVICES
+TELEMARKETING_TRAVEL_RELATED_ARRANGEMENT_SERVICES
+TENT_AND_AWNING_SHOPS
+TESTING_LABORATORIES_NONMEDICAL
+THEATRICAL_PRODUCERS_EXCEPT_MOTION_PICTURES_AND_TICKET_AGENCIES
+TIMESHARES
+TOLLS_AND_BRIDGE_FEES
+TOURIST_ATTRACTIONS_AND_EXHIBITS
+TRAILER_PARKS_AND_CAMPSITES
+TRAINING_ONLINE_INCLASS_SHORT_COURSES
+TRAVEL_AGENCIES_AND_TOUR_OPERATORS
+TRUCK_AND_UTILITY_TRAILER_RENTALS
+TYPEWRITER_OUTLETS_SALES_SERVICE_AND_RENTALS
+UNIFORM_AND_COMMERCIAL_CLOTHING
+UTILITIES_ELECTRIC_GAS_WATER_AND_SANITARY
+VETERINARY_SERVICES
+VIDEO_AMUSEMENT_GAME_SUPPLIES
+VIDEO_GAME_ARCADES_AND_ESTABLISHMENTS
+VIDEO_TAPE_RENTALS
+WELDING_SERVICES
+WIRE_TRANSFERS_AND_MONEY_ORDERS
+WRECKING_AND_SALVAGE_YARDS
+ZAKAT_COLLECTION_NEW
+```
+
+| Country | Document Codes |
+| --- | --- |
+| Singapore | SG\_ACRA |
+| Indonesia | ID\_NIB, ID\_COMPANY\_NPWP, ID\_AKTA, ID\_SKMENKEH, ID\_SOLE\_PROP\_ESTABLISHMENT, ID\_SOLE\_PROP\_CERT |
+| Philippines | PH\_ARTICLES\_OF\_INCORPORATION, PH\_ARTICLES\_OF\_PARTNERSHIP, PH\_DTI\_REGISTRATION, PH\_GIS, PH\_NOTARIZED\_PARTNER\_CERTIFICATE, PH\_NOTARIZED\_SECRETARY\_CERTIFICATE, PH\_BIR\_2303, PH\_SEC\_CERTIFICATE\_REGISTRATION |
+| Malaysia | MY\_BUSINESS\_REGISTRATION\_CERT, MY\_SEC\_SEVENTEEN, MY\_SSM\_PROFILE, MY\_SHAREHOLDERS, MY\_ORGANIZATIONAL\_CHART |
+| Thailand | TH\_COMPANY\_CERT, TH\_FOUNDATION\_LICENSE, TH\_BOJ\_FIVE, TH\_FOUNDATION\_REGULATION, TH\_FOUNDATION\_REGISTRATION\_CORRECTION, TH\_ASSOCIATION\_GAZETTE, TH\_PARTNER\_DEED |
+| Vietnam | VN\_ENTERPRISE\_REGISTRATION\_CERT |
+| Others | HK\_CERT\_OF\_INCORPORATION, HK\_BRP, HK\_NAR1, CN\_BUSINESS\_LICENSE |
+
+| Country | Document Codes |
+| --- | --- |
+| International (Any) | PASSPORT |
+| Singapore | SG\_NATIONAL\_ID\_NRIC, SG\_NATIONAL\_ID\_NRIC\_DIGITAL |
+| Indonesia | ID\_NATIONAL\_ID\_KTP, ID\_KITAS\_KITAP |
+| Philippines | PH\_DRIVERS\_LICENSE, PH\_PHILSYS\_PHYSICAL, PH\_PHILSYS\_DIGITAL, PH\_UMID, PH\_SSS\_OR\_GSIS, PH\_PRC\_LICENSE, PH\_POSTAL\_ID, PH\_VOTER\_ID, PH\_ACR\_OR\_IMMIGRANT\_COR |
+| Malaysia | MY\_NATIONAL\_ID\_MYKAD |
+| Thailand | TH\_NATIONAL\_ID |
+| Vietnam | VN\_NATIONAL\_ID |
+| Others | HK\_NATIONAL\_ID, CN\_NATIONAL\_ID\_RIC |
+
+### Industries that require business licenses
+
+SingaporeThailandIndonesiaVietnamPhilippinesMalaysiaHong Kong
+```plaintext
+ACCOUNTING_AUDITING_AND_BOOKKEEPING_SERVICES
+ASSET_MANAGEMENT_COMPANY_NEW
+BANKS
+CHARITABLE_AND_SOCIAL_SERVICE_ORGANIZATIONS
+CHIROPRACTORS
+CRYPTOCURRENCY
+DIRECT_MARKETING_CATALOGUE_MERCHANTS
+DIRECT_MARKETING_COMBINATION_CATALOGUE_AND_RETAIL_MERCHANTS
+DIRECT_MARKETING_CONTINUITYSUBSCRIPTION_MERCHANTS
+DIRECT_MARKETING_INBOUND_TELEMARKETING_MERCHANTS
+DIRECT_MARKETING_INSURANCE_SERVICES
+DIRECT_MARKETING_OUTBOUND_TELEMARKETING_MERCHANTS
+DOORTODOOR_SALES
+DRINKING_PLACES_ALCOHOLIC_BEVERAGES_BARS_TAVERNS_NIGHTCLUBS_COCKTAIL_LOUNGES_AND_DISCOTHQUES
+DRUG_STORES_AND_PHARMACIES
+DRUGS_DRUG_PROPRIETORS
+EWALLETS
+FINANCIAL_INSTITUTIONS_AUTOMATED_CASH_DISBURSEMENTS
+FINANCIAL_INSTITUTIONS_MANUAL_CASH_DISBURSEMENTS
+FINANCIAL_INSTITUTIONS_MERCHANDISE_AND_SERVICES
+INSURANCE_SALES_UNDERWRITING_AND_PREMIUMS
+INSURTECH
+INVESTMENT_SERVICES_NEW
+LEGAL_SERVICES_AND_ATTORNEYS
+LENDING
+MASSAGE_PARLOURS
+MULTI_FINANCE_COMPANY
+MULTI_LEVEL_MARKETING_NEW
+NON_FINANCIAL_INSTITUTIONS_FOREIGN_CURRENCY_MONEY_ORDERS_NOT_WIRE_TRANSFER_SCRIP_AND_TRAVELLERS_CHECKS
+NON_FINANCIAL_INSTITUTIONS_STORED_VALUE_CARD_PURCHASELOAD
+OPTICIANS_OPTICAL_GOODS_AND_EYEGLASSES
+OPTOMETRISTS_AND_OPHTHALMOLOGISTS
+OSTEOPATHS
+OTHER_DIRECT_MARKETINGDIRECT_MARKETERS
+OTHER_DOCTORS_AND_PHYSICIANS
+OTHER_MEDICAL_SERVICES_AND_HEALTH_PRACTITIONERS
+OTHER_SCHOOLS_AND_EDUCATIONAL_SERVICES
+PAWN_SHOPS
+PAYMENT_GATEWAY_NEW
+PEERTOPEER_LENDING
+PODIATRISTS_AND_CHIROPODISTS
+PRECIOUS_STONES_AND_METALS_WATCHES_AND_JEWELLERY
+REAL_ESTATE_AGENTS_AND_MANAGERS
+REGULATED_GAMING
+REMITTANCE_NEW
+RIDE_SHARING_NEW
+SECURITIES_BROKERS_AND_DEALERS
+TAXICABS_AND_LIMOUSINES
+TRAVEL_AGENCIES_AND_TOUR_OPERATORS
+WIRE_TRANSFERS_AND_MONEY_ORDERS
+```
+
+```plaintext
+ACCOUNTING_AUDITING_AND_BOOKKEEPING_SERVICES
+ASSET_MANAGEMENT_COMPANY_NEW
+BANKS
+BEAUTY_AND_BARBER_SHOPS
+BUSINESS_AND_SECRETARIAL_SCHOOLS
+CHARITABLE_AND_SOCIAL_SERVICE_ORGANIZATIONS
+CIVIC_SOCIAL_AND_FRATERNAL_ASSOCIATIONS
+COLLEGES_UNIVERSITIES_PROFESSIONAL_SCHOOLS_AND_JUNIOR_COLLEGES
+COSMETIC_SHOPS_EXISTING_BRAND
+CRYPTOCURRENCY
+DIRECT_MARKETING_INSURANCE_SERVICES
+ELEMENTARY_AND_SECONDARY_SCHOOLS
+EWALLETS
+FINANCIAL_INSTITUTIONS_MERCHANDISE_AND_SERVICES
+HAJ_AND_UMRAH_PROVIDER_NEW
+HEALTH_AND_BEAUTY_SPAS
+HEALTH_SUPPLEMENT_SELLING_EXISTING_BRAND
+INSURANCE_SALES_UNDERWRITING_AND_PREMIUMS
+INSURTECH
+INVESTMENT_SERVICES_NEW
+LENDING
+LODGING_HOTELS_MOTELS_AND_RESORTS
+MULTI_FINANCE_COMPANY
+NON_FINANCIAL_INSTITUTIONS_FOREIGN_CURRENCY_MONEY_ORDERS_NOT_WIRE_TRANSFER_SCRIP_AND_TRAVELLERS_CHECKS
+NURSING_AND_PERSONAL_CARE_FACILITIES
+PAYMENT_GATEWAY_NEW
+PEERTOPEER_LENDING
+POLITICAL_ORGANIZATIONS
+PRECIOUS_STONES_AND_METALS_WATCHES_AND_JEWELLERY
+REMITTANCE_NEW
+SECURITIES_BROKERS_AND_DEALERS
+TOURIST_ATTRACTIONS_AND_EXHIBITS
+TRADE_AND_VOCATIONAL_SCHOOLS
+TRAVEL_AGENCIES_AND_TOUR_OPERATORS
+```
+
+```plaintext
+AIRLINES_AND_AIR_CARRIERS
+AIRPORTS_FLYING_FIELDS_AND_AIRPORT_TERMINALS
+ALCOHOLIC_BEVERAGE_WHOLESALERS
+ASSET_MANAGEMENT_COMPANY_NEWEXCEPTSOLEPROP
+BAKERIES
+BANK_PERKREDITAN_RAKYAT_BPREXCEPTSOLEPROP
+BANKSEXCEPTSOLEPROP
+BUS_LINES
+BUSINESS_AND_SECRETARIAL_SCHOOLS
+CHARITABLE_AND_SOCIAL_SERVICE_ORGANIZATIONSEXCEPTSOLEPROP
+CHIROPRACTORSEXCEPTSOLEPROP
+CIVIC_SOCIAL_AND_FRATERNAL_ASSOCIATIONS
+COLLEGES_UNIVERSITIES_PROFESSIONAL_SCHOOLS_AND_JUNIOR_COLLEGES
+CORRESPONDENCE_SCHOOLS
+COSMETIC_SHOPS_OWN_BRAND
+COURIER_SERVICES_AIR_AND_GROUND_AND_FREIGHT_FORWARDERS
+CRYPTOCURRENCYEXCEPTSOLEPROP
+DENTISTS
+DIRECT_MARKETING_INSURANCE_SERVICESEXCEPTSOLEPROP
+DRINKING_PLACES_ALCOHOLIC_BEVERAGES_BARS_TAVERNS_NIGHTCLUBS_COCKTAIL_LOUNGES_AND_DISCOTHQUES
+DRUG_STORES_AND_PHARMACIES
+DRUGS_DRUG_PROPRIETORS
+ELEMENTARY_AND_SECONDARY_SCHOOLS
+EWALLETSEXCEPTSOLEPROP
+FINANCIAL_INSTITUTIONS_MERCHANDISE_AND_SERVICESEXCEPTSOLEPROP
+HAJ_AND_UMRAH_PROVIDER_NEW
+HEALTH_AND_BEAUTY_SPAS
+HEALTH_SUPPLEMENT_SELLING_OWN_BRAND
+HOSPITALS
+INSURANCE_SALES_UNDERWRITING_AND_PREMIUMSEXCEPTSOLEPROP
+INSURTECHEXCEPTSOLEPROP
+INTERNET_SERVICE_PROVIDER_NEW
+INVESTMENT_SERVICES_NEWEXCEPTSOLEPROP
+LENDINGEXCEPTSOLEPROP
+LOCAL_AND_SUBURBAN_COMMUTER_PASSENGER_TRANSPORTATION_INCLUDING_FERRIES
+MARKETPLACE_NEW
+MEDICAL_AND_DENTAL_LABORATORIES
+MULTI_FINANCE_COMPANYEXCEPTSOLEPROP
+MULTI_LEVEL_MARKETING_NEW
+NURSING_AND_PERSONAL_CARE_FACILITIES
+OPTICIANS_OPTICAL_GOODS_AND_EYEGLASSESEXCEPTSOLEPROP
+OPTOMETRISTS_AND_OPHTHALMOLOGISTSEXCEPTSOLEPROP
+OSTEOPATHSEXCEPTSOLEPROP
+OTHER_CHEMICALS_AND_ALLIED_PRODUCTS
+OTHER_DOCTORS_AND_PHYSICIANSEXCEPTSOLEPROP
+OTHER_MEDICAL_SERVICES_AND_HEALTH_PRACTITIONERSEXCEPTSOLEPROP
+OTHER_SCHOOLS_AND_EDUCATIONAL_SERVICES
+PACKAGE_SHOPS_BEER_WINE_AND_LIQUOR
+PASSENGER_RAILWAYS
+PAYMENT_GATEWAY_NEWEXCEPTSOLEPROP
+PEERTOPEER_LENDINGEXCEPTSOLEPROP
+PODIATRISTS_AND_CHIROPODISTSEXCEPTSOLEPROP
+POLITICAL_ORGANIZATIONS
+RAILROADS
+RELIGIOUS_ORGANIZATIONSEXCEPTSOLEPROP
+REMITTANCE_NEWEXCEPTSOLEPROP
+RIDE_SHARING_NEW
+STEAMSHIPS_AND_CRUISE_LINES
+TAXICABS_AND_LIMOUSINES
+TRADE_AND_VOCATIONAL_SCHOOLS
+TRAINING_ONLINE_INCLASS_SHORT_COURSES
+WIRE_TRANSFERS_AND_MONEY_ORDERS
+ZAKAT_COLLECTION_NEWEXCEPTSOLEPROP
+```
+
+```plaintext
+BOAT_RENTAL_MARINAS_AND_MARINE_SERVICE_INC_SUPPLIES
+BOAT_RENTALS_AND_LEASING
+BUSINESS_AND_SECRETARIAL_SCHOOLS
+CHARITABLE_AND_SOCIAL_SERVICE_ORGANIZATIONS
+COLLEGES_UNIVERSITIES_PROFESSIONAL_SCHOOLS_AND_JUNIOR_COLLEGES
+COMPUTER_NETWORKINFORMATION_SERVICES
+CORRESPONDENCE_SCHOOLS
+ELEMENTARY_AND_SECONDARY_SCHOOLS
+FUEL_DEALERS_FUEL_OIL_WOOD_COAL_AND_LIQUEFIED_PETROLEUM
+GOVERNMENT_LICENSED_HORSEDOG_RACING
+GOVERNMENT_LICENSED_ONLINE_CASINOS_ONLINE_GAMBLING
+GOVERNMENT_OWNED_LOTTERY
+HEALTH_AND_BEAUTY_SPAS
+INSURANCE_SALES_UNDERWRITING_AND_PREMIUMS
+INSURTECH
+INTERNET_SERVICE_PROVIDER_NEW
+INVESTMENT_SERVICES_NEW
+JEWELLERY_WATCH_CLOCK_AND_SILVERWARE_SHOPS
+LENDING
+LODGING_HOTELS_MOTELS_AND_RESORTS
+MEMBERSHIP_CLUBS_SPORTS_RECREATION_ATHLETIC_COUNTRY_CLUBS_AND_PRIVATE_GOLF_COURSES
+NURSING_AND_PERSONAL_CARE_FACILITIES
+OTHER_SCHOOLS_AND_EDUCATIONAL_SERVICES
+PASSENGER_RAILWAYS
+PAYMENT_GATEWAY_NEW
+PEERTOPEER_LENDING
+RAILROADS
+REAL_ESTATE_AGENTS_AND_MANAGERS
+REGULATED_GAMING
+REMITTANCE_NEW
+STEAMSHIPS_AND_CRUISE_LINES
+TELECOMMUNICATION_SERVICES_INCLUDING_LOCAL_AND_LONG_DISTANCE_CALLS_CREDIT_CARD_CALLS_CALLS_THROUGH_USE_OF_MAGNETIC_STRIPE_READING_TELEPHONES_AND_FAXES
+VETERINARY_SERVICES
+```
+
+```plaintext
+ACCOUNTING_AUDITING_AND_BOOKKEEPING_SERVICESEXCEPTSOLEPROP
+ASSET_MANAGEMENT_COMPANY_NEWEXCEPTSOLEPROP
+AUTO_AND_HOME_SUPPLY_OUTLETS
+AUTOMATED_FUEL_DISPENSERS
+AUTOMOTIVE_PARTS_AND_ACCESSORIES_OUTLETS
+AUTOMOTIVE_TYRE_OUTLETS
+BANKSEXCEPTSOLEPROP
+BOAT_DEALERS
+CAMPER_RECREATIONAL_AND_UTILITY_TRAILER_DEALERS
+CAR_AND_TRUCK_DEALERS_NEW_AND_USED_SALES_SERVICES_REPAIRS_PARTS_AND_LEASING
+CAR_AND_TRUCK_DEALERS_USED_ONLY_SALES_SERVICE_REPAIRS_PARTS_AND_LEASING
+CHARITABLE_AND_SOCIAL_SERVICE_ORGANIZATIONS
+CIVIC_SOCIAL_AND_FRATERNAL_ASSOCIATIONS
+CRYPTOCURRENCYEXCEPTSOLEPROP
+DIRECT_MARKETING_INSURANCE_SERVICESEXCEPTSOLEPROP
+EWALLETSEXCEPTSOLEPROP
+FINANCIAL_INSTITUTIONS_MERCHANDISE_AND_SERVICESEXCEPTSOLEPROP
+GOVERNMENT_LICENSED_HORSEDOG_RACING
+GOVERNMENT_LICENSED_ONLINE_CASINOS_ONLINE_GAMBLING
+GOVERNMENT_OWNED_LOTTERY
+INSURANCE_SALES_UNDERWRITING_AND_PREMIUMSEXCEPTSOLEPROP
+INSURTECHEXCEPTSOLEPROP
+INVESTMENT_SERVICES_NEWEXCEPTSOLEPROP
+JEWELLERY_WATCH_CLOCK_AND_SILVERWARE_SHOPS
+LENDINGEXCEPTSOLEPROP
+MARKETPLACE_NEW
+MOBILE_HOME_DEALERS
+MOTOR_HOME_DEALERS
+MOTOR_VEHICLE_SUPPLIES_AND_NEW_PARTS
+MOTORCYCLE_SHOPS_AND_DEALERS
+MULTI_FINANCE_COMPANYEXCEPTSOLEPROP
+MULTI_LEVEL_MARKETING_NEW
+NON_FINANCIAL_INSTITUTIONS_FOREIGN_CURRENCY_MONEY_ORDERS_NOT_WIRE_TRANSFER_SCRIP_AND_TRAVELLERS_CHECKSEXCEPTSOLEPROP
+OTHER_MISCELLANEOUS_AUTOMOTIVE_AIRCRAFT_AND_FARM_EQUIPMENT_DEALERS
+PAYMENT_GATEWAY_NEWEXCEPTSOLEPROP
+PEERTOPEER_LENDINGEXCEPTSOLEPROP
+POLITICAL_ORGANIZATIONS
+PRECIOUS_STONES_AND_METALS_WATCHES_AND_JEWELLERY
+REAL_ESTATE_AGENTS_AND_MANAGERS
+REGULATED_GAMING
+RELIGIOUS_ORGANIZATIONS
+REMITTANCE_NEWEXCEPTSOLEPROP
+SNOWMOBILE_DEALERS
+WIRE_TRANSFERS_AND_MONEY_ORDERS
+```
+
+```plaintext
+DRINKING_PLACES_ALCOHOLIC_BEVERAGES_BARS_TAVERNS_NIGHTCLUBS_COCKTAIL_LOUNGES_AND_DISCOTHQUES
+DRUGS_DRUG_PROPRIETORS
+ALCOHOLIC_BEVERAGE_WHOLESALERS
+DRUG_STORES_AND_PHARMACIES
+PACKAGE_SHOPS_BEER_WINE_AND_LIQUOR
+DIRECT_MARKETING_INSURANCE_SERVICES
+PEERTOPEER_LENDING
+INSURTECH
+INSURANCE_SALES_UNDERWRITING_AND_PREMIUMS
+```
+
+```plaintext
+ACCOUNTING_AUDITING_AND_BOOKKEEPING_SERVICES
+ASSET_MANAGEMENT_COMPANY_NEW
+BANKS
+CHARITABLE_AND_SOCIAL_SERVICE_ORGANIZATIONS
+CHIROPRACTORS
+CRYPTOCURRENCY
+DIRECT_MARKETING_CATALOGUE_MERCHANTS
+DIRECT_MARKETING_COMBINATION_CATALOGUE_AND_RETAIL_MERCHANTS
+DIRECT_MARKETING_CONTINUITYSUBSCRIPTION_MERCHANTS
+DIRECT_MARKETING_INBOUND_TELEMARKETING_MERCHANTS
+DIRECT_MARKETING_INSURANCE_SERVICES
+DIRECT_MARKETING_OUTBOUND_TELEMARKETING_MERCHANTS
+DOORTODOOR_SALES
+DRINKING_PLACES_ALCOHOLIC_BEVERAGES_BARS_TAVERNS_NIGHTCLUBS_COCKTAIL_LOUNGES_AND_DISCOTHQUES
+DRUG_STORES_AND_PHARMACIES
+DRUGS_DRUG_PROPRIETORS
+EWALLETS
+FINANCIAL_INSTITUTIONS_AUTOMATED_CASH_DISBURSEMENTS
+FINANCIAL_INSTITUTIONS_MANUAL_CASH_DISBURSEMENTS
+FINANCIAL_INSTITUTIONS_MERCHANDISE_AND_SERVICES
+INSURANCE_SALES_UNDERWRITING_AND_PREMIUMS
+INSURTECH
+INVESTMENT_SERVICES_NEW
+LEGAL_SERVICES_AND_ATTORNEYS
+LENDING
+MASSAGE_PARLOURS
+MULTI_FINANCE_COMPANY
+MULTI_LEVEL_MARKETING_NEW
+NON_FINANCIAL_INSTITUTIONS_FOREIGN_CURRENCY_MONEY_ORDERS_NOT_WIRE_TRANSFER_SCRIP_AND_TRAVELLERS_CHECKS
+NON_FINANCIAL_INSTITUTIONS_STORED_VALUE_CARD_PURCHASELOAD
+OPTICIANS_OPTICAL_GOODS_AND_EYEGLASSES
+OPTOMETRISTS_AND_OPHTHALMOLOGISTS
+OSTEOPATHS
+OTHER_DIRECT_MARKETINGDIRECT_MARKETERS
+OTHER_DOCTORS_AND_PHYSICIANS
+OTHER_MEDICAL_SERVICES_AND_HEALTH_PRACTITIONERS
+OTHER_SCHOOLS_AND_EDUCATIONAL_SERVICES
+PAWN_SHOPS
+PAYMENT_GATEWAY_NEW
+PEERTOPEER_LENDING
+PODIATRISTS_AND_CHIROPODISTS
+PRECIOUS_STONES_AND_METALS_WATCHES_AND_JEWELLERY
+REAL_ESTATE_AGENTS_AND_MANAGERS
+REGULATED_GAMING
+REMITTANCE_NEW
+RIDE_SHARING_NEW
+SECURITIES_BROKERS_AND_DEALERS
+TAXICABS_AND_LIMOUSINES
+TRAVEL_AGENCIES_AND_TOUR_OPERATORS
+WIRE_TRANSFERS_AND_MONEY_ORDERS
+```
+
+## Retrieving the Verification Information
+
+This GET API can be used to retrieve verification (KYC) information for your sub-account. This might be useful if you need to resubmit information with the POST API when requested, and make the necessary changes.
+
+Ensure that your Platform account’s API key is granted the permissions below:
+
+- xenPlatform Accounts `read`
+
+Copy
+```plaintext
+GET https://api.xendit.co/account_verification
+```
+
+### Required Parameters
+
+#### Headers
+
+| Field Name | Data Type | Description |
+| --- | --- | --- |
+| for-user-id | string (optional) | The business ID of the sub-account |
+
+#### Response
+
+The returned response from this `GET` request will match the response for the `POST` request [above](/xenplatform/set-up-sub-accounts/api-verification/submit-account-verification#response).

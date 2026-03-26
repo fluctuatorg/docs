@@ -1,0 +1,108 @@
+---
+title: "Global Account (Beta)"
+---
+
+A Xendit Global Account supports businesses with cross-border payments and operational needs, whether you're expanding into new markets, paying global suppliers, or managing a multi-country platform.
+
+- If your business is registered outside of Indonesia, the Philippines, Malaysia, Thailand, and Vietnam, a global account is automatically available to you.
+- If your business is registered in Indonesia, the Philippines, Malaysia, Thailand, or Vietnam and you are interested in using a global account, please contact [help@xendit.co](mailto:help@xendit.co) for assistance.
+
+This account simplifies multi-country operations by providing a unified platform for payments, payouts, and balance management across various currencies and markets.
+
+## Why use a Global Account?
+
+Managing multiple payment accounts and dashboards for different business entities across various countries can lead to complex onboarding, separate agreements, and a fragmented financial overview.
+
+The Xendit global account provides a single unified account, dashboard, and API key. This means less administrative overhead, a streamlined onboarding process, and a clear, consolidated view of all your payments, payouts, and balances across all supported currencies and markets.
+
+## Key capabilities and benefits
+
+The Xendit global account enables you to manage multi-currency operations through a single dashboard and API key.
+
+- Multi-Currency Operations: Manage payments in various currencies and view multiple currency balances directly from your single dashboard.
+- Global Collections: Collect payments in multiple markets and currencies with ease.
+- Flexible Fund Management: Convert funds seamlessly between your different currency balances.
+- Worldwide Payouts: Make payouts to customers, suppliers, or other third parties using Xendit's expanding global network.
+- Simplified Settlement: Settle payments into your preferred home currency, streamlining your reconciliation process.
+
+## Use cases
+
+| Use case | Example fund flow |
+| --- | --- |
+| US business expanding into multiple countries in Southeast Asia | - Collect payments in Philippines, and Thailand - Automatically convert and settle into USD - Withdraw USD to its bank account in its home country |
+| Business opens local operations in multiple countries in Southeast Asia | - Collect payments in Indonesia and Philippines - Make refunds and local operational payouts in IDR and PHP - Convert IDR and PHP into USD - Withdraw USD into its bank account in its headquarters |
+| Bulk payouts to affiliate partners’ bank accounts in Southeast Asia | - Top up in USD - Convert to PHP - Payout via APIs to bank accounts in the Philippines |
+| Supplier and vendor payments in Southeast Asia and the rest of the world | - Top up funds - Payout via the dashboard interface to bank accounts in our supported countries |
+
+## Currencies
+
+You may manage multiple currencies with your Xendit account. Your country of incorporation determines the operational capabilities of your currency balances.
+
+The table below sets out the default permissions per currency. Select the tab that represents your country of incorporation to see what actions you’re able to perform with the currency balance. For example:
+
+- If you are incorporated in Indonesia, select the “Indonesia” tab.
+- If you do not see your country of incorporation in any of the tabs, select the “Other” tab.
+
+<iframe src="https://airtable.com/embed/appa8YthqtdBznm0k/shrOjr8m5XimeUuyO" title="" className="w-full rounded-xl" height="533"></iframe>
+
+Several actions are not enabled by default because they require additional documentation or approvals. If a particular action you’d like to perform with your currency balance is not enabled by default, contact [help@xendit.co](http://help@xendit.co) for assistance.
+
+## Differences in multi-currency features between local account and global account
+
+Your new Xendit global account includes immediate access to multi-currency payments and currency management. Here's how it compares to a standard local account:
+
+| Feature | Local Account | Global Account |
+| --- | --- | --- |
+| Payment acceptance | Single market | Multiple markets and currencies |
+| Balance available | Single currency | Multi-currency (IDR, PHP, MYR, etc.) |
+| Foreign exchange conversions | Not available | Available across multiple currencies |
+| Payout recipient accounts | Single market and currency | Multiple markets and currencies |
+| Settlement withdrawals | Multiple markets and currencies | Multiple markets and currencies |
+
+Some features on the standard local account are not yet available or are limited on the global account. The table below outlines the key differences.
+
+If a feature is missing on your dashboard, please contact [help@xendit.co](mailto:help@xendit.co).
+
+| Feature | Local Account | Global Account |
+| --- | --- | --- |
+| Billing currency | Local currency | USD only |
+| Invoicing entity | Local Xendit entity | Xendit Payments Singapore Pte. Ltd. |
+| Payment channel availability | Single country payment channels only | Multi-country payment channels available  \Some channels (e.g. SPP) can’t be activated via dashboard* |
+| Transaction history | Single currency only | Multi-currency |
+| Reports | Single currency reports | Multi-currency reports |
+| Supported currencies | Single currency only | Multi-currency |
+| Supported products | Payments API, Payment Links, Payment Sessions, Plug-ins, Subscriptions | Payments API, Payment Links (except Batch Payment Links), Payment Sessions  ⚠️ Batch Payment Links are not available  ⚠️ Only Shopify and WooCommerce plugins are supported  ⚠️ QR codes are API only, not available from the dashboard  ❌ Subscriptions (Q3)  ❌ Cards (Q4) |
+| Refunds | Available for Cards and E-Wallet from the dashboard and APIs | ⚠️ API only, not available from the dashboard |
+| Customers | Available on the dashboard and APIs | ⚠️ API only, not available from the dashboard |
+| Payouts - Supported currencies | Single currency only | Multi-currency and FX |
+| Payouts - Supported products | Payouts API, Batch payouts, Payout links | Payouts API  ❌ Batch payouts  ❌ Payout links |
+| Payouts - Available tabs | API Disbursements, Batch Disbursements, Payout links, Maker/approver flow | Single payouts only  ❌ Batch payouts  ❌ Payout links  ❌ Approval workflow |
+| Balance conversions | ❌ Not available | Available between these balances: IDR, PHP, THB, MYR, VND, USD, HKD |
+| Manual withdrawals | IDR, PHP, THB, MYR, VND (local)  USD, EUR (cross-border) | IDR, PHP, THB, MYR, VND, USD, HKD Cross-border supported (e.g., IDR → MYR) |
+| Auto-withdrawals | Available | ❌ Not available (Q4) |
+| xenPlatform Availability | Available | Available  ⚠️ Owned accounts can only be created using the API |
+| Developer - Webhook logs | On Par | On Par |
+| Settings | Full configuration available | Limited configurations  ❌ Sending Money  ❌ Team members (email recipients) |
+
+## API Key
+
+Xendit offers different API key functionalities depending on your account type, catering to both local market operations and broader global reach. Understanding these differences is crucial for seamless integration and managing your transactions.
+
+For Local Accounts:
+
+If you operate a local Xendit account (e.g., exclusively for Indonesia, Philippines, etc.), your API keys are scoped to your specific market. This means:
+
+- Market-Specific Usage: An API key generated for your Indonesian account can only be used for transactions within Indonesia (IDR currency, local payment methods, etc.). Similarly, an API key for a Philippine account is restricted to the Philippine market.
+- Segregated Data: All payments, payouts, and other transactions processed using a local API key will be reflected only within the dashboard interface for that specific local market. This provides a clear, focused view of your operations in that region.
+
+For Global Accounts (multi-currency support):
+
+Xendit's Global Account is designed for businesses that operate across multiple countries and currencies, providing a unified experience. With a Global Account:
+
+- Single API key for multiple markets: You will have one API key that can be used across all the various markets and currencies supported by your Global Account. This significantly simplifies your integration and management, as you don't need to manage separate keys for each country.
+- Centralized interface: All your payments, acceptances, and payouts, regardless of the currency or market they originate from, will be consolidated and visible on a single Xendit dashboard interface. This provides a holistic view of your entire global financial operations, making reconciliation and reporting much more efficient.
+- Multi-currency transactions: The single API key allows you to seamlessly add, accept, and send payments in multiple currencies supported by Xendit's Global Account, streamlining your cross-border transactions.
+
+Important Note for Payment API Users:
+
+It's important to be aware of this distinction from the outset. If you have a Global Account and use your single API key for transactions in different markets, all these transactions (both acceptances and payouts) will appear on one consolidated interface. This is a key benefit of the Global Account, designed to provide a unified overview of your multi-market operations. If you are accustomed to market-specific views, you will find all your data integrated into a single, comprehensive dashboard for your Global Account.

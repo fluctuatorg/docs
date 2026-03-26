@@ -1,0 +1,685 @@
+[
+  {
+    "group": "Get started",
+    "pages": [
+      "get-started/overview",
+      "get-started/create-account",
+      "get-started/global-account",
+      "get-started/your-dashboard",
+      {
+        "group": "Verification Requirements",
+        "pages": [
+          "get-started/verification-requirements/verifying-your-account",
+          "get-started/verification-requirements/indonesia-business-documents",
+          "get-started/verification-requirements/philippines-business-documents",
+          "get-started/verification-requirements/malaysia-business-documents",
+          "get-started/verification-requirements/thailand-business-documents",
+          "get-started/verification-requirements/vietnam-business-documents",
+          "get-started/verification-requirements/hong-kong-business-documents",
+          "get-started/verification-requirements/singapore-and-others-business-documents",
+          "get-started/verification-requirements/authorized-representative-requirements",
+          "get-started/verification-requirements/prohibited-and-high-risk-industries-and-countries"
+        ]
+      }
+    ]
+  },
+  {
+    "group": "Accept payments",
+    "pages": [
+      "accept-payments/available-payment-products",
+      {
+        "group": "Supported payment channels",
+        "pages": [
+          "accept-payments/payment-channel-details/activate-payment-channels",
+          "accept-payments/payment-channel-details/available-payment-channels",
+          {
+            "group": "Indonesia",
+            "pages": [
+              {
+                "group": "Indonesia",
+                "pages": [
+                  "accept-payments/payment-channel-details/indonesia/alfamart",
+                  "accept-payments/payment-channel-details/indonesia/akulaku",
+                  "accept-payments/payment-channel-details/indonesia/astrapay",
+                  "accept-payments/payment-channel-details/indonesia/bca-virtual-account",
+                  "accept-payments/payment-channel-details/indonesia/bjb-virtual-account",
+                  "accept-payments/payment-channel-details/indonesia/bnc-virtual-account",
+                  "accept-payments/payment-channel-details/indonesia/bni-virtual-account",
+                  "accept-payments/payment-channel-details/indonesia/bri-direct-debit",
+                  "accept-payments/payment-channel-details/indonesia/bri-virtual-account",
+                  "accept-payments/payment-channel-details/indonesia/bsi-virtual-account",
+                  "accept-payments/payment-channel-details/indonesia/bss-virtual-account",
+                  "accept-payments/payment-channel-details/indonesia/id-credit-cards",
+                  "accept-payments/payment-channel-details/indonesia/gopay",
+                  "accept-payments/payment-channel-details/indonesia/dana",
+                  "accept-payments/payment-channel-details/indonesia/indodana-paylater",
+                  "accept-payments/payment-channel-details/indonesia/indomaret",
+                  "accept-payments/payment-channel-details/indonesia/jeniuspay",
+                  "accept-payments/payment-channel-details/indonesia/kredivo",
+                  "accept-payments/payment-channel-details/indonesia/linkaja",
+                  "accept-payments/payment-channel-details/indonesia/ovo",
+                  "accept-payments/payment-channel-details/indonesia/shopeepay-e-wallets-id",
+                  "accept-payments/payment-channel-details/indonesia/mandiri-virtual-account",
+                  "accept-payments/payment-channel-details/indonesia/muamalat-virtual-account",
+                  "accept-payments/payment-channel-details/indonesia/permata-virtual-account",
+                  "accept-payments/payment-channel-details/indonesia/qris"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Malaysia",
+            "pages": [
+              {
+                "group": "Malaysia",
+                "pages": [
+                  "accept-payments/payment-channel-details/malaysia/cards",
+                  "accept-payments/payment-channel-details/malaysia/online-banking",
+                  "accept-payments/payment-channel-details/malaysia/ambank-virtual-account",
+                  "accept-payments/payment-channel-details/malaysia/payment-channel-page-pull-4",
+                  "accept-payments/payment-channel-details/malaysia/my-shopeepay",
+                  "accept-payments/payment-channel-details/malaysia/payment-channel-page-pull",
+                  "accept-payments/payment-channel-details/malaysia/my-wechatpay"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Philippines",
+            "pages": [
+              {
+                "group": "Philippines",
+                "pages": [
+                  "accept-payments/payment-channel-details/philippines/bank-transfer",
+                  "accept-payments/payment-channel-details/philippines/billease",
+                  "accept-payments/payment-channel-details/philippines/bpi-direct-debit",
+                  "accept-payments/payment-channel-details/philippines/bpi-recurring",
+                  "accept-payments/payment-channel-details/philippines/cebuana",
+                  "accept-payments/payment-channel-details/philippines/cvm",
+                  "accept-payments/payment-channel-details/philippines/ecpay",
+                  "accept-payments/payment-channel-details/philippines/ecpay-loans",
+                  "accept-payments/payment-channel-details/philippines/ecpay-school",
+                  "accept-payments/payment-channel-details/philippines/gcash",
+                  "accept-payments/payment-channel-details/philippines/grabpay",
+                  "accept-payments/payment-channel-details/philippines/instapay-online-banking",
+                  "accept-payments/payment-channel-details/philippines/lbc",
+                  "accept-payments/payment-channel-details/philippines/maya",
+                  "accept-payments/payment-channel-details/philippines/palawan",
+                  "accept-payments/payment-channel-details/philippines/pesonet-online-banking",
+                  "accept-payments/payment-channel-details/philippines/qrph",
+                  "accept-payments/payment-channel-details/philippines/rcbc-direct-debit",
+                  "accept-payments/payment-channel-details/philippines/robinson-bills",
+                  "accept-payments/payment-channel-details/philippines/shopeepay",
+                  "accept-payments/payment-channel-details/philippines/sm-bills-payment",
+                  "accept-payments/payment-channel-details/philippines/ubp-e-ada",
+                  "accept-payments/payment-channel-details/philippines/ubp-direct-debit",
+                  "accept-payments/payment-channel-details/philippines/ussc",
+                  "accept-payments/payment-channel-details/philippines/7-eleven",
+                  "accept-payments/payment-channel-details/philippines/7-eleven-cliqq"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Thailand",
+            "pages": [
+              {
+                "group": "Thailand",
+                "pages": [
+                  "accept-payments/payment-channel-details/thailand/krungsri-direct-debit",
+                  "accept-payments/payment-channel-details/thailand/bbl-direct-debit",
+                  "accept-payments/payment-channel-details/thailand/ktb-direct-debit",
+                  "accept-payments/payment-channel-details/thailand/scb-direct-debit",
+                  "accept-payments/payment-channel-details/thailand/th-credit-card",
+                  "accept-payments/payment-channel-details/thailand/qr-promptpay",
+                  "accept-payments/payment-channel-details/thailand/truemoney",
+                  "accept-payments/payment-channel-details/thailand/line-pay-e-wallet",
+                  "accept-payments/payment-channel-details/thailand/shopeepay-1",
+                  "accept-payments/payment-channel-details/thailand/virtual-account",
+                  "accept-payments/payment-channel-details/thailand/kbank-mobile-banking",
+                  "accept-payments/payment-channel-details/thailand/krungsri-mobile-banking",
+                  "accept-payments/payment-channel-details/thailand/bbl-mobile-banking",
+                  "accept-payments/payment-channel-details/thailand/mobile-banking",
+                  "accept-payments/payment-channel-details/thailand/ktb-mobile-banking"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Vietnam",
+            "pages": [
+              {
+                "group": "Vietnam",
+                "pages": [
+                  "accept-payments/payment-channel-details/vietnam/appota-wallet",
+                  "accept-payments/payment-channel-details/vietnam/clone-cards",
+                  "accept-payments/payment-channel-details/vietnam/vn-shopeepay",
+                  "accept-payments/payment-channel-details/vietnam/viettal-pay",
+                  "accept-payments/payment-channel-details/vietnam/vnpt-wallet",
+                  "accept-payments/payment-channel-details/vietnam/zalopay-e-wallet"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Singapore",
+            "pages": [
+              {
+                "group": "Singapore",
+                "pages": [
+                  "accept-payments/payment-channel-details/singapore-2/cards-2",
+                  "accept-payments/payment-channel-details/singapore-2/payment-channel-page-push-14"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "group": "Payment products",
+        "pages": [
+          {
+            "group": "Payments API",
+            "pages": [
+              {
+                "group": "Payments API",
+                "pages": [
+                  "accept-payments/payment-products/payments-api-intro/how-payments-api-work",
+                  "accept-payments/payment-products/payments-api-intro/payments-api-features"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Payment Links (Legacy)",
+            "pages": [
+              {
+                "group": "Payment Links (Legacy)",
+                "pages": [
+                  "accept-payments/payment-products/payment-links/how-payment-links-work",
+                  "accept-payments/payment-products/payment-links/payment-links-features"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Payment Sessions",
+            "pages": [
+              {
+                "group": "Payment Sessions",
+                "pages": [
+                  "accept-payments/payment-products/payment-sessions-1/how-payment-sessions-work",
+                  "accept-payments/payment-products/payment-sessions-1/supported-use-cases-1",
+                  "accept-payments/payment-products/payment-sessions-1/migrate-to-payment-session"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Subscriptions",
+            "pages": [
+              {
+                "group": "Subscriptions",
+                "pages": [
+                  "accept-payments/payment-products/subscriptions/how-subscriptions-work",
+                  "accept-payments/payment-products/subscriptions/subscriptions-features",
+                  "accept-payments/payment-products/subscriptions/recover-failed-payments"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Plug-ins",
+            "pages": [
+              {
+                "group": "Plug-ins",
+                "pages": [
+                  "accept-payments/payment-products/plug-ins/how-plug-ins-work",
+                  "accept-payments/payment-products/plug-ins/woocommerce-introduction",
+                  "accept-payments/payment-products/plug-ins/shopify-introduction",
+                  "accept-payments/payment-products/plug-ins/wix-introduction",
+                  "accept-payments/payment-products/plug-ins/magento-introduction",
+                  "accept-payments/payment-products/plug-ins/easystore-1"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "group": "Integration setup",
+        "pages": [
+          "accept-payments/integration-setup/check-channel-activations",
+          "accept-payments/integration-setup/create-an-api-key",
+          "accept-payments/integration-setup/set-up-webhooks"
+        ]
+      },
+      {
+        "group": "Integration guide",
+        "pages": [
+          "accept-payments/integration-guide/integration-setup-3",
+          "accept-payments/integration-guide/paylater-channels",
+          "accept-payments/integration-guide/refund-payment-request",
+          {
+            "group": "Payments via API",
+            "pages": [
+              {
+                "group": "Payments via API",
+                "pages": [
+                  "accept-payments/integration-guide/payments-via-api-1/reusable-payment-codes",
+                  "accept-payments/integration-guide/payments-via-api-1/payments-via-api-overview",
+                  "accept-payments/integration-guide/payments-via-api-1/payments-api-webhooks",
+                  "accept-payments/integration-guide/payments-via-api-1/pay-one-off-payment",
+                  "accept-payments/integration-guide/payments-via-api-1/save-payment-information",
+                  "accept-payments/integration-guide/payments-via-api-1/pay-and-save",
+                  "accept-payments/integration-guide/payments-via-api-1/pay-with-tokens",
+                  "accept-payments/integration-guide/payments-via-api-1/simulate-error-scenarios"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Card Payments via API",
+            "pages": [
+              {
+                "group": "Card Payments via API",
+                "pages": [
+                  "accept-payments/integration-guide/card-payments-via-api/cards-api-overview",
+                  "accept-payments/integration-guide/card-payments-via-api/available-integrations",
+                  "accept-payments/integration-guide/card-payments-via-api/cards-card-declines-and-error-codes",
+                  "accept-payments/integration-guide/card-payments-via-api/retrieving-authorization-and-decline-details",
+                  "accept-payments/integration-guide/card-payments-via-api/cards-simulate-card-scenarios",
+                  "accept-payments/integration-guide/card-payments-via-api/cards-authentication-3ds2",
+                  "accept-payments/integration-guide/card-payments-via-api/cards-address-verification-service",
+                  "accept-payments/integration-guide/card-payments-via-api/cards-token-migration",
+                  "accept-payments/integration-guide/card-payments-via-api/cards-virtual-credit-card-processing",
+                  "accept-payments/integration-guide/card-payments-via-api/cards-network-tokens",
+                  {
+                    "group": "Use case integration guides",
+                    "pages": [
+                      "accept-payments/integration-guide/card-payments-via-api/use-cases/cards-one-click-with-cvn",
+                      "accept-payments/integration-guide/card-payments-via-api/use-cases/cards-recurring-and-merchant-initiated-transactions",
+                      "accept-payments/integration-guide/card-payments-via-api/use-cases/cards-capturing-a-card-payment",
+                      "accept-payments/integration-guide/card-payments-via-api/use-cases/cards-refund-a-card-payment",
+                      "accept-payments/integration-guide/card-payments-via-api/use-cases/cards-cancel-a-payment"
+                    ]
+                  },
+                  {
+                    "group": "Card test scenarios",
+                    "pages": [
+                      "accept-payments/integration-guide/card-payments-via-api/card-test-scenarios/cancel"
+                    ]
+                  },
+                  {
+                    "group": "Full PAN integration",
+                    "pages": [
+                      "accept-payments/integration-guide/card-payments-via-api/full-pan-integration/pay-with-authentication",
+                      "accept-payments/integration-guide/card-payments-via-api/full-pan-integration/create-a-token",
+                      "accept-payments/integration-guide/card-payments-via-api/full-pan-integration/merchant-initiated-transaction-1",
+                      "accept-payments/integration-guide/card-payments-via-api/full-pan-integration/merchant-initiated-transaction-2",
+                      "accept-payments/integration-guide/card-payments-via-api/full-pan-integration/authorize-and-capture"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Payment Sessions",
+            "pages": [
+              {
+                "group": "Payment Sessions",
+                "pages": [
+                  "accept-payments/integration-guide/payment-sessions/payment-sessions-overview",
+                  {
+                    "group": "Payment Link",
+                    "pages": [
+                      "accept-payments/integration-guide/payment-sessions/payment-link-1/payment-1",
+                      "accept-payments/integration-guide/payment-sessions/payment-link-1/pay-and-save-2",
+                      "accept-payments/integration-guide/payment-sessions/payment-link-1/storing-payment-details",
+                      "accept-payments/integration-guide/payment-sessions/payment-link-1/authorization-and-capture-flow-manual-capture"
+                    ]
+                  },
+                  {
+                    "group": "Components",
+                    "pages": [
+                      "accept-payments/integration-guide/payment-sessions/component/components-overview",
+                      "accept-payments/integration-guide/payment-sessions/component/components-one-time-payment",
+                      "accept-payments/integration-guide/payment-sessions/component/pay-and-save-3",
+                      "accept-payments/integration-guide/payment-sessions/component/components-save-payment-method",
+                      "accept-payments/integration-guide/payment-sessions/component/authorize-and-capture-1"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Subscriptions",
+            "pages": [
+              {
+                "group": "Subscriptions",
+                "pages": [
+                  "accept-payments/integration-guide/subscriptions-1/subscriptions-overview",
+                  "accept-payments/integration-guide/subscriptions-1/fixed-amount-subscriptions",
+                  "accept-payments/integration-guide/subscriptions-1/usage-based-subscriptions"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Payment Link (Legacy)",
+            "pages": [
+              {
+                "group": "Payment Link (Legacy)",
+                "pages": [
+                  "accept-payments/integration-guide/payment-link/payment-links-api-overview",
+                  "accept-payments/integration-guide/payment-link/customize-checkout-page",
+                  "accept-payments/integration-guide/payment-link/send-notifications-to-customer",
+                  "accept-payments/integration-guide/payment-link/cards-bin-whitelist",
+                  "accept-payments/integration-guide/payment-link/conversion-tracking"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Partner UAT requirements",
+            "pages": [
+              {
+                "group": "Partner UAT requirements",
+                "pages": [
+                  "accept-payments/integration-guide/payment-channel-uat/kredivo-uat"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "group": "Plug-ins",
+        "pages": [
+          "accept-payments/plug-ins-1/plug-ins-overview",
+          "accept-payments/plug-ins-1/woocommerce",
+          "accept-payments/plug-ins-1/shopify",
+          "accept-payments/plug-ins-1/wix",
+          "accept-payments/plug-ins-1/magento",
+          "accept-payments/plug-ins-1/plug-in-cloudbeds",
+          "accept-payments/plug-ins-1/easystore"
+        ]
+      },
+      {
+        "group": "Settlement",
+        "pages": [
+          "accept-payments/settlement/settlements-overview",
+          "accept-payments/settlement/multi-currency-settlement",
+          "accept-payments/settlement/early-settlement"
+        ]
+      },
+      {
+        "group": "Fraud Risk",
+        "pages": [
+          "accept-payments/fraud-risk/understanding-payment-fraud",
+          "accept-payments/fraud-risk/manage-fraud-with-xenshield",
+          "accept-payments/fraud-risk/understanding-chargebacks",
+          "accept-payments/fraud-risk/managing-chargebacks"
+        ]
+      }
+    ]
+  },
+  {
+    "group": "Send money",
+    "pages": [
+      "send-money/send-payouts-overview",
+      "send-money/payout-status-lifecycle",
+      {
+        "group": "Payout coverage",
+        "pages": [
+          "send-money/payout-channels/overview-payouts-coverage",
+          "send-money/payout-channels/payout-coverage-indonesia",
+          "send-money/payout-channels/payouts-coverage-philippines",
+          "send-money/payout-channels/payouts-coverage-malaysia",
+          "send-money/payout-channels/payout-coverage-thailand",
+          "send-money/payout-channels/payouts-coverage-vietnam",
+          "send-money/payout-channels/payouts-coverage-singapore"
+        ]
+      },
+      {
+        "group": "Payout products",
+        "pages": [
+          "send-money/payouts/available-payout-products",
+          {
+            "group": "Payouts (Disbursements)",
+            "pages": [
+              {
+                "group": "Payouts (Disbursements)",
+                "pages": [
+                  "send-money/payouts/payouts-2/payouts-via-api",
+                  "send-money/payouts/payouts-2/batch-payouts-via-dashboard",
+                  "send-money/payouts/payouts-2/batch-payout-approval-workflows",
+                  "send-money/payouts/payouts-2/global-payouts-beta"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Cross border payout",
+            "pages": [
+              {
+                "group": "Cross border payout",
+                "pages": [
+                  "send-money/payouts/cross-border-payout-1/cross-border-payouts-overview",
+                  "send-money/payouts/cross-border-payout-1/batch-cross-border-payouts"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Payout links",
+            "pages": [
+              {
+                "group": "Payout links",
+                "pages": [
+                  "send-money/payouts/payout-links-1/payout-links-overview",
+                  "send-money/payouts/payout-links-1/payout-link-via-dashboard"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "group": "Integration setup",
+        "pages": [
+          "send-money/integration-setup-2/payouts-set-up-webhooks"
+        ]
+      },
+      {
+        "group": "Integration guide",
+        "pages": [
+          "send-money/integration-guide-2/integration-payouts",
+          "send-money/integration-guide-2/integration-cross-border-payouts",
+          "send-money/integration-guide-2/integration-payout-links",
+          {
+            "group": "Best practices",
+            "pages": [
+              {
+                "group": "Best practices",
+                "pages": [
+                  "send-money/integration-guide-2/best-practices-1/optimizing-operations"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "group": "Test scenarios",
+        "pages": [
+          "send-money/test-scenarios-1/test-scenarios-payouts",
+          "send-money/test-scenarios-1/test-scenarios-cross-border-payouts",
+          "send-money/test-scenarios-1/test-scenarios-payout-links"
+        ]
+      }
+    ]
+  },
+  {
+    "group": "Bill payments",
+    "pages": [
+      "bill-payments/product-overview-3",
+      "bill-payments/activate-products",
+      {
+        "group": "Integration setup",
+        "pages": [
+          "bill-payments/integration-setup-1/create-an-api-key-1",
+          "bill-payments/integration-setup-1/bill-payments-set-up-webhooks"
+        ]
+      },
+      {
+        "group": "Integration guide",
+        "pages": [
+          "bill-payments/integration-guide-1/bill-payment-overview"
+        ]
+      },
+      {
+        "group": "Test scenarios",
+        "pages": [
+          "bill-payments/test-scenarios-2/electricity-pln"
+        ]
+      }
+    ]
+  },
+  {
+    "group": "Balance",
+    "pages": [
+      "balance/balance-overview",
+      "balance/top-up-balance",
+      "balance/add-withdrawal-bank-account",
+      "balance/withdrawal",
+      "balance/opening-balances",
+      "balance/convert-balance",
+      "balance/auto-withdrawal",
+      "balance/reserves"
+    ]
+  },
+  {
+    "group": "Reports",
+    "pages": [
+      "reports/reports-overview",
+      "reports/balance-report",
+      "reports/transactions-report",
+      "reports/detailed-transactions-report",
+      "reports/auto-withdrawal-report",
+      "reports/billing-report",
+      "reports/scheduling-reports",
+      "reports/transaction-status",
+      "reports/reconciliations"
+    ]
+  },
+  {
+    "group": "Billing",
+    "pages": [
+      "billing/transaction-fees",
+      "billing/your-invoice",
+      "billing/documentation-template-16",
+      "billing/how-to-pay-bills",
+      {
+        "group": "Tax",
+        "pages": [
+          "billing/tax/value-added-tax-vat",
+          "billing/tax/indonesia-withholding-tax",
+          "billing/tax/philippines-withholding-tax",
+          "billing/tax/withholding-tax-on-gross-remittances-ph"
+        ]
+      }
+    ]
+  },
+  {
+    "group": "Security and Compliance",
+    "pages": [
+      "security-and-compliance/pci-dss-compliance"
+    ]
+  },
+  {
+    "group": "Account security",
+    "pages": [
+      "account-security/account-security-overview",
+      "account-security/set-up-2fa",
+      "account-security/users-permissions",
+      "account-security/api-keys",
+      "account-security/ip-allowlist"
+    ]
+  },
+  {
+    "group": "Integration best practices",
+    "pages": [
+      "integration-best-practices/integration-security",
+      "integration-best-practices/handling-webhooks",
+      "integration-best-practices/delayed-webhooks"
+    ]
+  },
+  {
+    "group": "Identity verification",
+    "pages": [
+      "identity-verification/identify-verification-overview"
+    ]
+  },
+  {
+    "group": "xenPlatform",
+    "pages": [
+      "xenplatform/xenplatform-overview",
+      "xenplatform/activate-xenplatform",
+      "xenplatform/testing-xenplatform-features",
+      "xenplatform/xenplatform-fees",
+      {
+        "group": "Set up sub-accounts",
+        "pages": [
+          "xenplatform/set-up-sub-accounts/sub-accounts",
+          "xenplatform/set-up-sub-accounts/create-sub-accounts",
+          "xenplatform/set-up-sub-accounts/xenplatform-global-accounts-setup",
+          "xenplatform/set-up-sub-accounts/verify-sub-accounts",
+          "xenplatform/set-up-sub-accounts/invite-team-members",
+          {
+            "group": "API Verification for Developers",
+            "pages": [
+              {
+                "group": "API Verification for Developers",
+                "pages": [
+                  "xenplatform/set-up-sub-accounts/api-verification/xenplatform-verification-api",
+                  "xenplatform/set-up-sub-accounts/api-verification/submit-account-verification",
+                  "xenplatform/set-up-sub-accounts/api-verification/verification-webhook",
+                  {
+                    "group": "Legacy Account Holder API",
+                    "pages": [
+                      "xenplatform/set-up-sub-accounts/api-verification/account-holder/xenplatform-account-holder-api",
+                      "xenplatform/set-up-sub-accounts/api-verification/account-holder/create-verification-requests",
+                      "xenplatform/set-up-sub-accounts/api-verification/account-holder/request-channel-capabilities",
+                      "xenplatform/set-up-sub-accounts/api-verification/account-holder/account-holder-webhooks",
+                      "xenplatform/set-up-sub-accounts/api-verification/account-holder/updating-verification-information"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "group": "Accept & Route Payments",
+        "pages": [
+          "xenplatform/xenplatform-route-payments/accepting-payments-for-sub-accounts",
+          "xenplatform/xenplatform-route-payments/token-sharing-for-cards",
+          "xenplatform/xenplatform-route-payments/split-payments",
+          "xenplatform/xenplatform-route-payments/transfer-balances",
+          "xenplatform/xenplatform-route-payments/payouts-for-sub-accounts"
+        ]
+      },
+      {
+        "group": "Monitoring & Reporting",
+        "pages": [
+          "xenplatform/monitoring-reporting/xenplatform-monitoring-transactions",
+          "xenplatform/monitoring-reporting/consolidated-reports"
+        ]
+      }
+    ]
+  }
+]

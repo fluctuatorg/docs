@@ -1,0 +1,372 @@
+---
+title: "Electricity - PLN"
+---
+
+![](/images/doc360/image_115_.png)
+
+Testing your Bill Payments integration thoroughly is essential to ensure a smooth experience for your users. This section provides test scenarios specifically for PLN (Perusahaan Listrik Negara) bill payments, which can serve as a foundation for testing other bill payment types as they become available.
+
+## PLN Test Scenarios
+
+PLN offers two types of electricity payments: Prepaid (token) and Postpaid (monthly bill). Below are test scenarios for both types.
+
+### PLN Prepaid (Token) Test Scenarios
+
+#### Positive
+
+|  |  |  |  |
+| --- | --- | --- | --- |
+| Scenario Name | Product Code | Customer Number(Magic Number) | Scenario Steps |
+| PLN Prepaid 50k Purchase | PLN\_PREPAID\_50K | 12345678910 | 1. POST /inquiry using known customer\_number 2. POST /payment using inquiry\_id from the inquiry response 3. Receive callback 4. GET /payment to get payment detail |
+| PLN Prepaid 200k Purchase | PLN\_PREPAID\_200K | 12345678910 | 1. POST /inquiry using known customer\_number 2. POST /payment using inquiry\_id from the inquiry response 3. Receive callback 4. GET /payment to get payment detail |
+
+#### Negative
+
+|  |  |  |  |
+| --- | --- | --- | --- |
+| Scenario Name | Product Code | Customer Number(Magic Number) | Scenario Steps |
+| PLN Prepaid: Invalid Customer Number | PLN\_PREPAID\_50K | 12345678911 | POST /inquiry using invalid customer\_number |
+| PLN Prepaid: Biller Timeout | PLN\_PREPAID\_50K | 12345678912 | POST /inquiry using congifured customer\_number for biller timeout |
+| PLN Prepaid: Biller Maintenance | PLN\_PREPAID\_50K | 12345678913 | POST /inquiry using congifured customer\_number for biller maintenance |
+| PLN Prepaid: Product Not Found | PLN\_PREPAID\_10K | 12345678914 | POST /inquiry using unknown product\_code |
+| PLN Prepaid: Failed Number Restriction | PLN\_PREPAID\_50K | 12345678915 | POST /inquiry using customer\_number outside 11-12 digits |
+| PLN Prepaid: General Error | PLN\_PREPAID\_50K | 12345678916 | 1. POST /inquiry 2. POST /payment using inquiry\_id from the inquiry response 3. Receive callback 4. GET /payment to get payment detail |
+| PLN Prepaid: Duplicated Transaction | PLN\_PREPAID\_50K | 12345678917 | 1. POST /inquiry 2. POST /payment using inquiry\_id from the inquiry response, using the previously created reference\_id  3. Receive callback 4. GET /payment to get payment detail |
+| PLN Prepaid: Overlimit KWH | PLN\_PREPAID\_50K | 12345678918 | 1. POST /inquiry 2. POST /payment using inquiry\_id from the inquiry response 3. Receive callback 4. GET /payment to get payment detail |
+| PLN Prepaid: Failed Transaction | PLN\_PREPAID\_50K | 12345678919 | 1. POST /inquiry 2. POST /payment using inquiry\_id from the inquiry response 3. Receive callback 4. GET /payment to get payment detail |
+| PLN Postpaid: Suspected Transaction | PLN\_PREPAID\_50K | 12345678920 | 1. POST /inquiry 2. POST /payment using inquiry\_id from the inquiry response 3. Receive callback 4. GET /payment to get payment detail |
+
+### PLN Postpaid Test Scenarios
+
+#### Positive
+
+|  |  |  |  |
+| --- | --- | --- | --- |
+| Scenario Name | Product Code | Customer Number(Magic Number) | Scenario Steps |
+| PLN Postpaid 1-month Bill Payment | PLN\_POSTPAID | 22345678910 | 1. POST /inquiry using known customer\_number 2. POST /payment using inquiry\_id from the inquiry response 3. Receive callback 4. GET /payment to get payment detail |
+| PLN Postpaid 2-month Bill Payment | PLN\_POSTPAID | 22345678911 | 1. POST /inquiry using known customer\_number 2. POST /payment using inquiry\_id from the inquiry response 3. Receive callback 4. GET /payment to get payment detail |
+| PLN Postpaid 3-month Bill Payment | PLN\_POSTPAID | 22345678912 | 1. POST /inquiry using known customer\_number 2. POST /payment using inquiry\_id from the inquiry response 3. Receive callback 4. GET /payment to get payment detail |
+| PLN Postpaid 6-month Bill Payment | PLN\_POSTPAID | 22345678913 | 1. POST /inquiry using known customer\_number 2. POST /payment using inquiry\_id from the inquiry response 3. Receive callback 4. GET /payment to get payment detail |
+
+#### Negative
+
+|  |  |  |  |
+| --- | --- | --- | --- |
+| Scenario Name | Product Code | Customer Number(Magic Number) | Scenario Steps |
+| PLN Postpaid: Invalid Customer Number | PLN\_POSTPAID | 22345678915 | POST /inquiry using invalid customer\_number |
+| PLN Postpaid: Bill is Already Paid or Not Available | PLN\_POSTPAID | 22345678916 | POST /inquiry using configured customer\_number |
+| PLN Postpaid: Biller Timeout | PLN\_POSTPAID | 22345678917 | POST /inquiry using congifured customer\_number for biller timeout |
+| PLN Postpaid: Biller Maintenance | PLN\_POSTPAID | 22345678918 | POST /inquiry using congifured customer\_number for biller maintenance |
+| PLN Postpaid: Product Not Found | PLNPOSTPAID | 22345678919 | POST /inquiry using unknown product\_code |
+| PLN Postpaid: Failed Number Restriction | PLN\_POSTPAID | 22345678920 | POST /inquiry using customer\_number outside 11-12 digits |
+| PLN Postpaid: General Error | PLN\_POSTPAID | 22345678921 | 1. POST /inquiry 2. POST /payment using inquiry\_id from the inquiry response 3. Receive callback 4. GET /payment to get payment detail |
+| PLN Postpaid: Invalid Inquiry | PLN\_POSTPAID | 22345678922 | 1. POST /inquiry 2. POST /payment using inquiry\_id from the inquiry response 3. Receive callback 4. GET /payment to get payment detail |
+| PLN Postpaid: Failed Transaction | PLN\_POSTPAID | 22345678923 | 1. POST /inquiry 2. POST /payment using inquiry\_id from the inquiry response 3. Receive callback 4. GET /payment to get payment detail |
+| PLN Postpaid: Suspected Transaction | PLN\_POSTPAID | 22345678924 | 1. POST /inquiry 2. POST /payment using inquiry\_id from the inquiry response 3. Receive callback 4. GET /payment to get payment detail |
+
+## Example Request and Response
+
+### Example 1: PLN Prepaid Token Purchase
+
+1. Product List Request:
+
+```plaintext
+GET /v1/product?category=ELECTRICITY
+
+```
+
+Response:
+
+```json
+{
+  "limit": 50,
+  "cursor": "dummy-cursor-value-001==",
+  "data": [
+    {
+      "type": "product",
+      "id": "PLN_PREPAID_100K",
+      "properties": {
+        "product_name": "PLN Prepaid 100.000",
+        "category": "ELECTRICITY",
+        "biller": "PLN",
+        "country": "ID",
+        "currency": "IDR",
+        "requires_inquiry": true,
+        "availability_status": "AVAILABLE",
+        "admin_amount": 2750,
+        "base_amount": 100000,
+        "total_amount": 102750,
+        "revenue_share_amount": 500,
+        "locale": {
+          "en": "PLN Prepaid 100.000",
+          "id": "PLN Prabayar 100.000"
+        }
+      }
+    }
+  ]
+}
+
+```
+
+2. Inquiry Request:
+
+```json
+{
+  "product_id": "PLN_PREPAID_100K",
+  "customer_number": "32185159194"
+}
+
+```
+
+Inquiry Response:
+
+```json
+{
+  "data": {
+    "business_id": "5f27a14a9bf05c73dd040bc8",
+    "type": "inquiry",
+    "id": "inq-98765",
+    "properties": {
+      "product_id": "PLN_PREPAID_100K",
+      "admin_amount": 2750,
+      "base_amount": 100000,
+      "total_amount": 102750,
+      "revenue_share_amount": 500,
+      "currency": "IDR",
+      "customer_number": "32185159194",
+      "customer_details": [
+        {
+          "key": "Nama Pelanggan",
+          "value": "Ismail Rabbanii"
+        },
+        {
+          "key": "Nomor Pelanggan",
+          "value": "32185159194"
+        }
+      ],
+      "product_details": [
+        {
+          "key": "Tarif/Daya",
+          "value": "R2/000003500"
+        },
+        {
+          "key": "Denom",
+          "value": "100.000"
+        }
+      ],
+      "bill_details": [
+        {
+          "key": "Admin Fee",
+          "value": "Rp2.750"
+        },
+        {
+          "key": "Total Bayar",
+          "value": "Rp102.750"
+        }
+      ]
+    }
+  }
+}
+
+```
+
+3. Payment Request:
+
+```json
+{
+  "product_id": "PLN_PREPAID_100K",
+  "customer_number": "32185159194",
+  "inquiry_id": "inq-98765",
+  "reference_id": "tx-pln-001",
+  "total_amount": 102750,
+  "additional_properties": {
+    "payment_reference": "sfinhsiof2309rr3"
+  }
+}
+
+```
+
+Payment Response:
+
+```json
+{
+  "data": {
+    "business_id": "5f27a14a9bf05c73dd040bc8",
+    "type": "payment",
+    "id": "trx-98765",
+    "properties": {
+      "product_id": "PLN_PREPAID_100K",
+      "customer_number": "32185159194",
+      "reference_id": "tx-pln-001",
+      "admin_amount": 2750,
+      "base_amount": 100000,
+      "total_amount": 102750,
+      "currency": "IDR",
+      "status": "PENDING",
+      "fulfilled_at": null,
+      "failure_code": null,
+      "failure_reason": null,
+      "customer_details": [],
+      "product_details": [],
+      "bill_details": [],
+      "payment_details": []
+    }
+  }
+}
+
+```
+
+4. Successful Payment Callback:
+
+```json
+{
+  "business_id": "5f27a14a9bf05c73dd040bc8",
+  "created": "2024-01-23T08:15:30Z",
+  "event": "bill_payments.succeeded",
+  "data": {
+    "id": "trx-98765",
+    "properties": {
+      "reference_id": "tx-pln-001",
+      "product_id": "PLN_PREPAID_100K",
+      "customer_number": "32185159194",
+      "total_amount": 102750,
+      "status": "SUCCEEDED",
+      "fulfilled_at": "2024-01-23T08:15:30Z"
+    }
+  }
+}
+
+```
+
+5. Get Payment Detail Request:
+
+```plaintext
+GET /v1/payment/trx-98765
+
+```
+
+Successful Response:
+
+```json
+{
+  "data": {
+    "business_id": "5f27a14a9bf05c73dd040bc8",
+    "type": "payment",
+    "id": "trx-98765",
+    "properties": {
+      "reference_id": "tx-pln-001",
+      "product_id": "PLN_PREPAID_100K",
+      "customer_number": "32185159194",
+      "admin_amount": 2750,
+      "base_amount": 100000,
+      "total_amount": 102750,
+      "status": "SUCCEEDED",
+      "fulfilled_at": "2024-01-23T08:15:30Z",
+      "failure_code": null,
+      "failure_reason": null,
+      "customer_details": [
+        {
+          "key": "Nama Pelanggan",
+          "value": "Ismail Rabbanii"
+        },
+        {
+          "key": "Nomor Pelanggan",
+          "value": "32185159194"
+        }
+      ],
+      "product_details": [
+        {
+          "key": "Tarif/Daya",
+          "value": "R2/000003500"
+        }
+      ],
+      "bill_details": [
+        {
+          "key": "Admin Fee",
+          "value": "Rp2.750"
+        },
+        {
+          "key": "Total Bayar",
+          "value": "Rp102.750"
+        }
+      ],
+      "payment_details": [
+        {
+          "key": "Token",
+          "value": "1234-5678-9012-3456-7890"
+        },
+        {
+          "key": "Serial Number",
+          "value": "PLN987654321"
+        }
+      ]
+    }
+  }
+}
+
+```
+
+### Example 2: Failed Transaction (System Timeout)
+
+Payment Response (same endpoint as successful case):
+
+```json
+{
+  "data": {
+    "business_id": "5f27a14a9bf05c73dd040bc8",
+    "type": "payment",
+    "id": "trx-98768",
+    "properties": {
+      "reference_id": "tx-pln-002",
+      "product_id": "PLN_PREPAID_100K",
+      "customer_number": "32185159195",
+      "admin_amount": 2750,
+      "base_amount": 100000,
+      "total_amount": 102750,
+      "currency": "IDR",
+      "status": "PENDING",
+      "fulfilled_at": null,
+      "failure_code": null,
+      "failure_reason": null,
+      "customer_details": [],
+      "product_details": [],
+      "bill_details": [],
+      "payment_details": []
+    }
+  }
+}
+
+```
+
+Failed Payment Callback:
+
+```json
+{
+  "business_id": "5f27a14a9bf05c73dd040bc8",
+  "created": "2024-01-23T08:30:00Z",
+  "event": "bill_payments.failed",
+  "data": {
+    "id": "trx-98768",
+    "reference_id": "tx-pln-002",
+    "product_id": "PLN_PREPAID_100K",
+    "customer_number": "32185159195",
+    "total_amount": 102750,
+    "status": "FAILED",
+    "fulfilled_at": "2024-01-23T08:30:00Z",
+    "failure_code": "BILLER_TIMEOUT",
+    "failure_reason": "Biller system timeout after 30 seconds"
+  }
+}
+
+```
+
+## Testing Best Practices
+
+1. Test all scenarios: Implement both positive and negative test cases.
+2. Verify callback handling: Ensure your system correctly processes both success and failure callbacks.
+3. Check idempotency: Verify that duplicate requests are handled properly.
+4. Test timeout scenarios: Simulate timeouts to ensure your system handles them gracefully.
+5. Validate error messages: Ensure error messages are user-friendly and actionable.
+6. Test status checking: Verify that your status checking mechanism works as a fallback.
+
+By thoroughly testing with these scenarios, you'll ensure your Bill Payments integration provides a smooth experience for your users while properly handling edge cases and error conditions.

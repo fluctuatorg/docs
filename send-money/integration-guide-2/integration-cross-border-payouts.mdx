@@ -1,0 +1,305 @@
+---
+title: "Cross-Border Payouts"
+---
+
+Learn how to programmatically send cross border payouts with our Cross Border Payout APIs through the following sections.
+
+## Before you start
+
+- Create an API Key in your Xendit Dashboard. You will need the API Key to make API calls.
+- Setup your webhook URL. Configure this to receive real-time notifications on payout status changes.
+- Check Payout Coverage for channel-specific information. You need to know what information needs to be collected to start sending payouts.
+
+## Create Sender and/or Recipient
+
+Call `Create Customer API` to create the sender and/or recipient of the cross border payout with their information.
+
+#### Example Request
+
+```javascript
+curl https://api.xendit.co/customers -X POST \
+   -u xnd_development_O46JfOtygef9kMNsK+ZPGT+ZZ9b3ooF4w3Dn+R1k+2fT/7GlCAN3jg==: \
+   -H 'Content-Type: application/json'
+   --data-raw '{
+     "reference_id": "demo_1475801962607",
+     "type": "INDIVIDUAL",
+     "individual_detail": {
+       "given_names": "John",
+       "surname": "Doe"
+     },
+     "email": "customer@website.com",
+     "mobile_number": "+628121234567890"
+     }'
+```
+
+#### Example Response
+
+```json
+{
+    "id": "cust-239c16f4-866d-43e8-9341-7badafbc019f",
+    "reference_id": "demo_1475801962607",
+    "type": "INDIVIDUAL",
+    "individual_detail": {
+        "given_names": "John",
+        "surname": "Doe",
+        "nationality": "ID",
+        "place_of_birth": "Jakarta",
+        "date_of_birth": "1980-01-01",
+        "gender": "MALE",
+        "employment": {
+            "employer_name": "Xendit",
+            "nature_of_business": "Payment Gateway",
+            "role_description": "Test dummy"
+        }
+    },
+    "business_detail": null,
+    "email": "customer@website.com",
+    "mobile_number": "+628121234567890",
+    "phone_number": "+628121234567890",
+    "hashed_phone_number": null,
+    "addresses": [{
+        "street_line1": "Panglima Polim IV",
+        "street_line2": "Ruko Grand Panglima Polim, Blok E",
+        "city": "Jakarta Selatan",
+        "province_state": "DKI Jakarta",
+        "postal_code": "993448",
+        "country": "ID",
+        "category": "HOME",
+        "is_primary": true
+    }],
+    "identity_accounts": [{
+        "type": "CREDIT_CARD",
+        "company": "OCBC",
+        "description": "My account",
+        "country": "ID",
+        "properties":{
+            "token_id": "586f0ba2ab70de5d2b409e0d"
+        }
+    }],
+    "kyc_documents": [{
+        "type": "IDENTITY_CARD",
+        "sub_type": "NATIONAL_ID",
+        "country": "ID",
+        "document_name": "KTP",
+        "document_number": "12356789012456",
+        "expires_at": null,
+        "holder_name": "John Doe",
+        "document_images": [
+            "file-ec700c1c-db17-4496-b1fb-04ebe551b412"
+        ]
+    }],
+    "description": "My first customer",
+    "date_of_registration": "2020-03-30",
+    "domicile_of_registration": "ID",
+    "metadata": {
+        "foo": "bar"
+    },
+    "created": "2020-03-30T06:12:47.212Z",
+    "updated": "2020-03-30T06:12:47.212Z"
+}
+```
+
+## Create a Cross-Border Payout
+
+Call `Create Cross Border Payout API` with the required sender and recipient information to create a cross border payout.
+
+#### Example Request
+
+```javascript
+curl --request POST \
+  --url https://api.xendit.co/remittance_payouts \
+  --header 'Authorization: {{base_64_of_your_secret_api_key}}' \
+  --header 'Accept: application/json' \
+  --header 'Content-Type: application/json' \
+  --header 'IDEMPOTENCY-KEY: ' \
+  --data '{
+  "reference_id": "49d056bd-21e5-4997-85f2-2127544c2196",
+  "destination_currency": "PHP",
+  "destination_amount": "35",
+  "sender_customer_id": "cust-239c16f4-866d-43e8-9341-7badafbc019f",
+  "recipient_customer_id": "cust-f71ffaa8-95a2-47ba-b486-cfe9e2c075d7",
+  "origin_currency": "IDR",
+  "origin_amount": "10000",
+  "source_of_fund": "OTHER",
+  "purpose_code": "OTHER",
+  "relationship": "CUSTOMER",
+  "description": "This is a sample Cross-border Payout transaction",
+  "metadata": {}
+}'
+```
+
+#### Example Response
+
+If successfully created, we will always return a return a payout object with `ACCEPTED` status.
+
+```javascript
+{
+  "id": "rpo_cde3dcb8-37d7-4ea1-a275-8f54af81feb0",
+  "created": "2024-05-01T07:15:22Z",
+  "updated": "2024-05-01T07:15:22Z",
+  "business_id": "5f27a14a9bf05c73dd040bc8",
+  "reference_id": "49d056bd-21e5-4997-85f2-2127544c2196",
+  "destination_currency": "PHP",
+  "destination_amount": 35,
+  "sender_customer_id": "cust-239c16f4-866d-43e8-9341-7badafbc019f",
+  "recipient_customer_id": "cust-f71ffaa8-95a2-47ba-b486-cfe9e2c075d7",
+  "status": "ACCEPTED",
+  "description": "This is a sample Cross-border Payout transaction",
+  "source_of_fund": "OTHER",
+  "origin_currency": "IDR",
+  "origin_amount": "10000",
+  "purpose_code": "OTHER",
+  "relationship": "CUSTOMER",
+  "failure_code": "string",
+  "metadata": {}
+}
+```
+
+### Avoid creating duplicate Payouts
+
+We use `idempotency-key` to achieve idempotency and avoid creating duplicate cross border payout transactions. If your first request fails due to error or timeout, you can retry safely by using the same `idempotency-key` value in the request header of your next retry. This will help us identify subsequent retry requests as retry attempts and will not create a duplicate cross border payout transaction.
+
+### Ensure your recipient identify your payouts
+
+We payout funds on your behalf from our bank accounts. To help your recipient identify funds from you, include your business name or any identifier in the `description` parameter - if the recipient's channel supports this field, the recipient will see this in their statement. In most cases, only a limited number of character is supported, so keep your identifier short and concise.
+
+Read [Payout Coverage](/send-money/payout-channels/overview-payouts-coverage) for more channel-specific details.
+
+## Retrieve a Cross-Border Payout
+
+Call `Get Cross Border Payout by ID API` to retrieve a cross border payout’s details. This is usually useful to get your payout’s status. In addition to this, we recommend you to subscribe to our webhook events for any updates to your payout’s statuses.
+
+For more information, see [Setting Up Webhooks](/send-money/integration-setup-2/payouts-set-up-webhooks#setup-your-webhook-url).
+
+#### Example Request
+
+```javascript
+curl https://api.xendit.co/remittance_payouts/rpo_cde3dcb8-37d7-4ea1-a275-8f54af81feb0 -X GET \
+  -u xnd_development_O46JfOtygef9kMNsK+ZPGT+ZZ9b3ooF4w3Dn+R1k+2fT/7GlCAN3jg==:
+```
+
+#### Example Response
+
+```javascript
+{
+  "id": "rpo_cde3dcb8-37d7-4ea1-a275-8f54af81feb0",
+  "created": "2024-05-01T07:15:22Z",
+  "updated": "2024-05-01T07:15:22Z",
+  "business_id": "5f27a14a9bf05c73dd040bc8",
+  "reference_id": "49d056bd-21e5-4997-85f2-2127544c2196",
+  "destination_currency": "PHP",
+  "destination_amount": 35,
+  "sender_customer_id": "cust-239c16f4-866d-43e8-9341-7badafbc019f",
+  "recipient_customer_id": "cust-f71ffaa8-95a2-47ba-b486-cfe9e2c075d7",
+  "status": "FAILED",
+  "description": "This is a sample Cross-border Payout transaction",
+  "source_of_fund": "OTHER",
+  "origin_currency": "IDR",
+  "origin_amount": "10000",
+  "purpose_code": "OTHER",
+  "relationship": "CUSTOMER",
+  "failure_code": "INVALID_DESTINATION",
+  "metadata": {}
+}
+```
+
+## Cancel a Cross-Border Payout
+
+Call `Cancel Cross Border Payout API` to cancel transactions that have not been processed by Xendit’s partners.
+
+Cross Border Payouts can only be cancelled if the status is `ACCEPTED` and `PENDING_COMPLIANCE_ASSESSMENT`. It is recommended to refer to the `Get Cross Border Payout API` to know if a cross border payout is still cancellable or not. Upon request of cancellation, we will return a response with a `CANCELLED` status. Your funds should be expected to be returned back to your available balance within 5 minutes.
+
+If the cancellation fails, we will be sending back the corresponding reason for failure where funds and fees will remain in your pending balance until it reaches its final status from the partner (`SUCCEEDED` or `FAILED`). The common reasons may be due to invalid requests of a payout that does not exist, or the payout is already being processed by the partner.
+
+#### Example Request
+
+```javascript
+curl https://api.xendit.co/remittance_payouts/rpo_cde3dcb8-37d7-4ea1-a275-8f54af81feb0/cancel -X POST \
+  -u xnd_development_O46JfOtygef9kMNsK+ZPGT+ZZ9b3ooF4w3Dn+R1k+2fT/7GlCAN3jg==:
+```
+
+#### Example Response
+
+```javascript
+{
+  "id": "rpo_cde3dcb8-37d7-4ea1-a275-8f54af81feb0",
+  "created": "2024-05-01T07:15:22Z",
+  "updated": "2024-05-01T07:15:22Z",
+  "business_id": "5f27a14a9bf05c73dd040bc8",
+  "reference_id": "49d056bd-21e5-4997-85f2-2127544c2196",
+  "destination_currency": "PHP",
+  "destination_amount": 35,
+  "sender_customer_id": "cust-239c16f4-866d-43e8-9341-7badafbc019f",
+  "recipient_customer_id": "cust-f71ffaa8-95a2-47ba-b486-cfe9e2c075d7",
+  "status": "CANCELLED",
+  "description": "This is a sample Cross-border Payout transaction",
+  "source_of_fund": "OTHER",
+  "origin_currency": "IDR",
+  "origin_amount": "10000",
+  "purpose_code": "OTHER",
+  "relationship": "CUSTOMER",
+  "failure_code": null,
+  "metadata": {}
+}
+```
+
+## Error Handling
+
+### Errors in creating the Cross-Border Payout
+
+All the possible errors while creating cross border payouts via our API endpoints are listed in this section.
+
+For errors generally, the response you receive will contain:
+
+- `error_code`: A semantic code specifying the error encountered;
+- `message`: A brief statement that explains the code.
+
+Example:
+
+```json
+{
+    "error_code": "DUPLICATE_ERROR",
+    "message": "A payout with this idempotency key already exists. If you meant to execute a different request, please use another idempotency key."
+}
+```
+
+If you receive an error in our API response, this means that there were issues creating the payout due to invalid inputs or issues with the server. For detailed handling instructions of each error, please see the table below:
+
+| Error Code | Explanation |
+| --- | --- |
+| `API_VALIDATION_ERROR`  `INVALID_JSON_FORMAT`  `AMOUNT_FORMAT_ERROR`  `PAYMENT_CHANNEL_DETAIL_ERROR` | Certain inputs do not meet our API validation requirements. |
+| `DUPLICATE_ERROR` | `Idempotency Key` has been used before. Use a unique `Idempotency Key` and try again if you meant to create a new transaction. |
+| `DESTINATION_CURRENCY_NOT_SUPPORTED` | Destination currency is not supported. Check that the currency is supported for your chosen channel before retrying. |
+| `MINIMUM_TRANSFER_LIMIT_ERROR`  `MAXIMUM_TRANSFER_LIMIT_ERROR` | Every channel has a minimum and maximum transaction amount. We will return an error response if the transfer amount requested does not conform to the prescribed limits. See Payout Coverage. |
+| `AMOUNT_INCREMENT_NOT_SUPPORTED` | Every channel has a different increment support. We will return an error response if the transfer amount requested does not conform to the prescribed increment support. |
+| `ACCOUNT_BLACKLISTED_ERROR` | The provided recipient bank account is blacklisted. |
+| `PAYMENT_CHANNEL_DETAIL_ERROR` | The provided recipient account type is invalid. Please use the valid values (`BANK_ACCOUNT` or `EWALLET`). |
+
+### Errors In Executing the Cross Border Payout
+
+After a cross border payout status is `REQUESTED`, it may fail our payout partner’s processing or be rejected by the recipient bank, at which point its status will transition to `FAILED`. Subscribe to `remittance_payout.failed` webhook events to receive real-time notifications of each transfer's failure and its reason.
+
+It is important that you understand each failure code in detail in order to decide on the appropriate action to take. Below is a comprehensive list of the possible failure codes that you may receive, what they mean and what our corresponding suggested action is:
+
+| Error Code | Description | Should you retry? |
+| --- | --- | --- |
+| `INSUFFICIENT_BALANCE` | Client has insufficient balance for the payout amount | Yes, retry the payout after ensuring that you have sufficient balance in your account |
+| `INVALID_DESTINATION` | The recipient account does not exist/is invalid | You are unlikely to succeed if you retry the payout request. Please confirm with the recipient whether their account is correct |
+| `DESTINATION_MAXIMUM_LIMIT` | The recipient is unable to receive the funds due to the payout amount exceeding the recipient’s ability to receive | You are unlikely to succeed if you retry the payout request. Please confirm with the recipient whether their account can receive the payout |
+| `REJECTED_BY_CHANNEL` | Payout failed due to an error from the destination channel. This is usually because of network issues associated with the destination bank or issues crediting funds into the destination bank account | Yes, retry the payout after validating that the destination bank account number is active and can receive funds in your chosen currency |
+| `TEMPORARY_TRANSFER_ERROR` | The channel networks are experiencing a temporary error | Yes, retry the payout in 1-3 hours |
+| `TRANSFER_ERROR` | We’ve encountered a fatal error while processing this payout. Normally, this means that certain API fields in your request are invalid | It is unlikely that the same disbursement request will succeed if you retry |
+
+Note: We could add new failure codes to the list above and your system should be able to handle the events even if the failure code is not recognized.
+
+## Cross-Border Payouts Events
+
+Learn more below for the different webhook events that you can subscribe to. For more information of different payout statuses, see [Payout Status Lifecycle](/send-money/payout-status-lifecycle).
+
+| Webhook Event | Payout Status |
+| --- | --- |
+| `remittance_payout.succeeded` | `SUCCEEDED` |
+| `remittance_payout.compliance_rejected` | `COMPLIANCE_REJECTED` |
+| `remittance_payout.pending_compliance_assessment` | `PENDING_COMPLIANCE_ASSESSMENT` |
+| `remittance_payout.failed` | `FAILED` |
+| `remittance_payout.reversed` | `REVERSED` |

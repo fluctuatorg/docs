@@ -1,0 +1,40 @@
+---
+title: "Delayed webhooks"
+---
+
+When using our payments products, you might face certain edge cases that manifests itself as a “delayed” webhook. Often, this meant that your end user paid for the goods and services but the payment confirmation came much later than the time the end user authenticated the payment. This might lead to discrepancies in payment statuses.
+
+In general, we recommend merchants to design automations to reduce operation burdens depending on your business model.
+
+- If your orders are time critical and you have already cancelled the order in your system, it is likely not possible anymore to fulfill the order. In such case, we would recommend to automatically trigger a refund for payment methods that support refunds via API. Or send a message to your customer including a Payout Link in case of payment methods that do not support native refunds.
+- In other cases, you might be able to keep the order open for a longer period and still be able to fulfill the order based on the delayed webhook.
+
+## Common delayed webhook scenarios
+
+## Payment method provider informs payment confirmation late
+
+This is the most common scenario where Xendit sees payments being delayed. In this particular case, the payment method provider might be facing disruptions or latency in confirming payments. Hence when the provider deliver the payment notification late, you will in turn receive a late webhook from Xendit. Often, this ends up as a operations ticket from the end user.
+
+Recommendations:
+
+- First and foremost, get the end user to save the payment receipt from their payment application. This payment receipt can be used as a medium for future escalation.
+- If the end user is able to provide payment receipt, you could hold the order for them and wait up to 24 hours (average Xendit reconciliation time) for the webhook from Xendit.
+- You could also terminate the order and inform the end user that you will refund/ payout the amount back to them after receiving the settlement from Xendit.
+
+## Xendit picks up discrepancies during reconciliation
+
+Another scenario where payment webhook might be delayed is from discrepancies being picking up in our settlement reports. In this case, the payment method provider did not inform Xendit of a payment or erroneously inform Xendit of a failure. However, when parsing the settlement statements, we detect that money had moved.
+
+Recommendations:
+
+- Often, when a payment is picked up only during reconciliation and there was no issues raised by the end user, there is a chance that the user might not have realised that payment when through.
+- You should contact and inform the end user of what happened before discussing options. Most merchants would choose to refund/ disburse the amount back to them after receiving the settlement from Xendit.
+
+## Payment request expired but you received a webhook for it
+
+Another scenario where payment webhook might be delayed is when you receive a webhook even after the payment request expired. Often, the cause is a race condition where the end user pays close to the timing of expiry and due to the asynchronous nature of expiry, both events happen at once. This is scenario is generally unavoidable as an edge case.
+
+Recommendations:
+
+- If your ordering system is not time-sensitive, you can choose to handle payments even after the payment request has expired. In this case, you can mark the payment as successful on your end and proceed to deliver the goods or services to the customer. However, it’s important to note that the payment request status will remain as "expired" in Xendit’s system.
+- You could also terminate the order and inform the end user that you will refund/ payout the amount back to them after receiving the settlement from Xendit.

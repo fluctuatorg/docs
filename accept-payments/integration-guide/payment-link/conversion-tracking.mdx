@@ -1,0 +1,59 @@
+---
+title: "Conversion Tracking"
+---
+
+Payment Links allow you to set up analytics tools to track your customer’s journey, from arriving at the checkout page to completing a payment. These tools include Google Analytics and Facebook Pixel, and you can track various events for better insights into customer behavior.
+
+## Trackable events and their triggers
+
+| Event Name | Payload | Trigger |
+| --- | --- | --- |
+| xendit\_begin\_checkout | None | When the checkout page loads. |
+| xendit\_add\_payment\_info | Channel name | When a customer clicks or selects a payment channel. *(Note:* [*QRIS*](https://xendit-docs.document360.io/docs/qris) *channel selection is not tracked.)* |
+| xendit\_checkout\_progress | None | - On clicking Pay Now (Card, Direct Debit, OVO) - On clicking Continue (PayLater) - When selecting channels without a Pay Now button (e.g., VA, eWallets, DD Mandiri) - *(QRIS confirmation is not tracked.)* |
+| xendit\_purchase | Currency, amount | When the payment success page is displayed. |
+| xendit\_view\_item | None | When a customer clicks the View More button on the V1 checkout web. |
+
+## Google Analytics
+
+1. Go to analytics.google.com
+2. Fill in your details: account name, property name, timezone, currency, business size, etc. (some details are not mandatory)
+
+![](/images/doc360/Screenshot_2025-07-22_at_15.00.30_1_.png)
+
+3. Accept the Terms & Conditions, then choose web platform
+
+![](/images/doc360/Screenshot_2025-07-22_at_15.03.30_1_.png)
+
+4. On the next pop-up, enter checkout.xendit.co as the page url as and give it a name
+
+![](/images/doc360/image-1753172130449.png)
+
+5. On the next page, your Google Analytics ID will be displayed
+
+![](/images/doc360/image-1753172086877.png)
+
+## Facebook Pixel
+
+1. Open business.facebook.com
+2. Click on Events Manager
+
+![](/images/doc360/Screenshot_2025-07-22_at_15.12.57_1_.png)
+
+3. Click Connect Data
+
+![](/images/doc360/Screenshot_2025-07-22_at_15.20.28.png)
+
+4. Select Web
+
+![](/images/doc360/Screenshot_2025-07-22_at_15.23.39.png)
+
+5. Enter a name for your analytics project
+
+![](/images/doc360/Screenshot_2025-07-22_at_15.27.47.png)
+
+6. You can ignore website name or simply enter checkout.xendit.co
+7. Click Close (no need to proceed to the next section since we just need the ID, and integration is already implemented)
+8. On the left panel, find the Pixel ID below the name of the project
+
+![](/images/doc360/Screenshot_2025-07-22_at_15.28.31.png)

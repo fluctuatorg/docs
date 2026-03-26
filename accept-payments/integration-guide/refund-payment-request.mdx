@@ -1,0 +1,37 @@
+---
+title: "Refund Payment"
+---
+
+Our refund feature supports various use cases in your payment operations such as correcting overcharges, handling cancelled orders, or addressing customer dissatisfaction.
+
+### Refund validity and channel specificity
+
+Refunds can be processed at any time, depending on the refund validity rules defined by the specific payment channel. Not all payment channels support refunds. You can find a [detailed list of channels that support refunds](/accept-payments/payment-channel-details/available-payment-channels) to understand any limitations on the refund window or other related policies.
+
+### Return to source requirement
+
+For security and compliance reasons, refunds can only be sent back to the original payment method used in the initial charge. You cannot send a refund to a different destination, such as another card or bank account. This ensures that funds are returned to the rightful owner and prevents potential fraud.
+
+### Reflecting changes in end user’s account statements
+
+While Xendit processes the refund request in real time, the refunded amount arriving in end user’s account will ultimately be dependent on the issuer or the payment channel partner. This means that while Xendit initiates the refund, the final processing time for the funds to reflect in your customer's account is outside of Xendit's direct control. The behaviour is subjected to the policies and processing times of the respective financial institutions.
+
+### Steps to request a refund:
+
+1. Create refund request: Initiate the refund by Xendit refund API and using the corresponding payment request ID attached to the payment you wish to refund. You can find the detailed refund API documentation [here](https://xendit-docs.document360.io/apidocs/refund-payment-request). Below is the example how the payload will be
+
+   ```json
+   {
+     "reference_id": "90392f42-d98a-49ef-a7f3-abcezas123",
+     "payment_request_id": "pr-90392f42-d98a-49ef-a7f3-abcezas123",
+     "currency": "IDR",
+     "amount": 10000,
+     "reason": "REQUESTED_BY_CUSTOMER"
+   }
+   ```
+2. Wait for webhook notification: After submitting your refund request, you will receive a webhook notification at your designated webhook URL. You will either receive a `refund.succeeded` or `refund.failed` webhook.
+
+   - A `refund.succeeded` webhook indicates that your refund request has been successfully processed by Xendit and sent to the respective payment channel for further processing.
+   - A `refund.failed` webhook indicates that your refund request encountered an issue and could not be processed.
+
+> Important Note: It is crucial to understand that the refund.succeeded or refund.failed webhook only indicates the status of your refund request with Xendit and our payment partners. It does not guarantee that the adjustments are already reflected in the end user’s account.

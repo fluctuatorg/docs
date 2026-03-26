@@ -1,0 +1,74 @@
+---
+title: "Address Verification Service (AVS)"
+---
+
+The Address Verification System (AVS) is a fraud prevention tool used in card-not-present (CNP) transactions. Its primary function is to verify that the billing address provided by a cardholder matches the address on file with their card issuer.
+
+## How it works
+
+The process for AVS involves a few steps:
+
+1. Submission of billing details: During a transaction, billing address details, such as street number and postal code, are securely transmitted through a payment gateway.
+2. Card issuer verification: These details are sent to the card issuer, which compares them against the address associated with the card.
+3. Response code generation: An AVS response code is then returned, indicating the level of match between the provided address and the issuer's records.
+
+## Integration Process
+
+Integrating AVS into payment processing typically involves:
+
+- Including billing address fields: Billing address fields must be included in the API request for payment processing.
+- Automated AVS check: The payment gateway automatically handles the AVS check.
+- Utilizing response codes: The AVS response code can be used to inform decisions regarding transaction risk.
+
+Example API Request snippet:
+
+```json
+"channel_properties": {
+  "card_details": {
+    "cvn": "246",
+    "card_number": "2222444466668888",
+    "expiry_year": "2027",
+    "expiry_month": "12",
+    "cardholder_name": "John Doe"
+  },
+  "billing_information": {
+    "city": "Austin",
+    "country": "US",
+    "postal_code": "78769",
+    "street_line1": "Texas Chain Suites",
+    "street_line2": "21-37",
+    "province_state": "Texas"
+  },
+  "failure_return_url": "https://xendit.co/failure",
+  "success_return_url": "https://xendit.co/success"
+}
+```
+
+### AVS response codes
+
+AVS response codes can differ depending on the card network and payment gateway. However, they generally communicate one of the following match statuses:
+
+- Full match: Both street and postal code are verified.
+- Partial match: Either the street or postal code matches, but not both.
+- No match: Neither the street nor the postal code matches.
+- Unavailable: The AVS service could not be accessed for the transaction.
+
+### Availability
+
+AVS is primarily utilized in specific regions:
+
+- The United States
+- Canada
+- The United Kingdom
+
+Its use is limited in many other countries.
+
+### Advantages of AVS
+
+Implementing AVS offers several advantages for fraud prevention:
+
+- Fraud Reduction: It assists in reducing instances of fraudulent transactions.
+- Enhanced Security: AVS contributes to improved transaction security.
+- Component of Layered Strategy: It serves as a valuable element within a broader, layered fraud prevention approach.
+
+> It is important to note that AVS is not entirely foolproof. Fraudsters may still be able to use stolen cards if they have access to the correct billing addresses. Therefore, AVS is most effective when used in conjunction with other fraud prevention tools.

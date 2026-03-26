@@ -1,0 +1,58 @@
+---
+title: "Create sub-accounts"
+---
+
+![](/images/doc360/xenplatform-step-1.webp)
+
+You can create sub-accounts using two methods:
+
+- Via your dashboard: Best if you manually onboard each merchant.
+- Via API: Best if you want to automate your merchant onboarding.
+
+> Global accounts
+>
+> If you have set up a Global account and have xenPlatform activated, please [follow this guide](https://docs.xendit.co/xenplatform-global-accounts-setup) instead. This guide only apply if:
+>
+> - You are incorporated in Indonesia, Philippines, Malaysia, Thailand or Vietnam
+> - or if you are using the [Create Account API (V2)](https://docs.xendit.co/apidocs/create-account) as a developer
+
+## How to create sub-accounts via dashboard
+
+Go to the `Accounts` tab and click `+Add an account`, then select a [sub-account type](/xenplatform/set-up-sub-accounts/sub-accounts).
+
+![](/images/doc360/Screenshot_2024-11-25_at_17.29.45.png)
+
+If you select a Managed account, there are two different options to invite your merchants to sign up:
+
+- Send invitation: We’ll send a unique link to the email entered to invite them to sign up.
+- Copy unique link: You can copy and share this unique link to your merchants, which will lead to the same sign up page. Upon registration, their account will be created as a sub-account under your Master account.
+
+![](/images/doc360/Screenshot_2024-11-25_at_17.34.21.png)
+
+## Creating sub-accounts via API
+
+You can create sub-accounts via API and define its type in the request body. It is mandatory to provide the following parameters:
+
+- `business_name`: To identify your sub-account. The business name you set will be the name shown to customers paying to your merchants using payment links.
+- `business_email`: The email address associated with the sub-account.
+
+  - You may reuse email addresses for Owned sub-accounts
+  - Xendit sends an invitation email only for Managed sub-accounts. Owned sub-accounts still require email addresses but will not receive any emails upon creation.
+
+Copy
+```shell
+curl --request POST \ --url https://api.xendit.co/v2/accounts \ --data '{"account_email":"user@example.com","type":"OWNED","public_profile":{"business_name":"Merchant1"}}' 
+```
+
+Once your accounts have been created, you’ll be able to view them on the xenPlatform Accounts page.
+
+## Webhook configurations
+
+Events in your sub-account are sent to different webhook URLs based on the sub-account’s type.
+
+- Owned: Sent to the master account’s webhook configurations. However, note that the webhook settings are only synchronized during the account creation. Any changes to the master account’s webhook configurations after a sub-account is created will not automatically apply to the Owned sub-accounts. Please [contact us](mailto:help@xendit.co) when you are updating webhook configurations so that we can synchronize the configurations for you.
+- Managed: Sent to the sub-account’s webhook configurations, which can be set in the sub-account’s dashboard or using the [Set Webhook URL API](/apidocs/set-webhook-url).
+
+## Testing
+
+Sub-accounts can be created while your master account is still in [Test Mode](/get-started/your-dashboard). Test sub-accounts allow you to create mock transactions using your test API key and see the transactions appear on your dashboard in Test Mode. You can delete sub-accounts on your dashboard only in Test mode.

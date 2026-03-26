@@ -1,0 +1,48 @@
+---
+title: "Network tokens"
+---
+
+> Xendit is a network token service provider. At the moment we create and leverage network tokens in Indonesia, ThePhilippines, Malaysia, Thailand and Vietnam.
+
+Network tokens, also referred to as card network tokens or payment network tokens, are secure, dynamically managed card credentials. These tokens are issued by major card networks (e.g., Visa, Mastercard, American Express) and serve as a replacement for traditional Primary Account Numbers (PANs), which are the 16-digit numbers on payment cards.
+
+## How it works
+
+1. When a card is tokenized, the card network (e.g., Visa, Mastercard) generates a unique token that replaces the actual card number.
+2. This token is linked to the specific merchant and cannot be used elsewhere.
+3. The card network manages the token lifecycle, automatically updating it when the original card is reissued (e.g., due to expiration or fraud).
+4. During a transaction, the token is used in place of the PAN but still routes through normal card processing channels.
+
+### Why does Xendit leverage Network Tokens?
+
+✅ Improved security – Reduces fraud risk since actual card details are never stored or exposed.  
+✅ Higher authorization rates – Since networks manage updates, merchants avoid declines due to expired/replaced cards.  
+✅ Frictionless customer experience – Customers don’t need to update their card details when they get a new card.  
+✅ Compliance & tokenization – Helps merchants reduce PCI DSS scope by not storing raw card data.
+
+### Difference between network tokens & vault tokens
+
+| Feature | Network Tokens | Vault Tokens (Merchant-Specific Tokens) |
+| --- | --- | --- |
+| Issued by | Card networks (Visa, MC) | Merchant or PSP (e.g., Xendit) |
+| Card Updater | Auto-updated by networks | Merchant must manually update |
+| Security Level | Higher (dynamic mapping) | Static, depends on implementation |
+| Use Case | Across multiple merchants | Merchant-specific transactions |
+
+## Real-world example
+
+- A customer saves their Visa card on for a subscription service.
+- Instead of storing the PAN, Visa or Mastercard issues a network token.
+- When the card expires, Visa or Mastercard automatically updates the token to reflect the new card.
+- The customer never has to update their payment details manually.
+
+## Availability on Xendit
+
+We support network tokens for merchants who tokenize their cards with Xendit. This ensures a secure, seamless, and up-to-date card-on-file experience for recurring payments, subscriptions, and stored payment methods.
+
+## Eligibility for Network Tokens
+
+Supported: Merchants who tokenize their cards with us.   
+Not Supported: Merchants using their own card vault or another PSP for storage.
+
+Note: If you [import](/accept-payments/integration-guide/card-payments-via-api/cards-token-migration) stored cards from another provider, you must re-tokenize them with us to benefit from network tokens.

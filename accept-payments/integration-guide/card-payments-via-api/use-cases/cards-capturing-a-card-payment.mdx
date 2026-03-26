@@ -1,0 +1,155 @@
+---
+title: "Authorize and capture a payment separately"
+description: "Authorize and capture separately"
+---
+
+Card payment capturing is the process of retrieving the money from a customers’ bank account for a purchase. By default, Xendit captures payments automatically. However, you can choose to capture payments manually or schedule them for a later time.
+
+## Reasons to perform (or delay) a capture
+
+- Physical Goods: Capture a payment only after shipping the product to the customer.
+- Services: For services that are rendered over time, you might want to capture payment only after the service has been completed. This could include things like consulting projects, home renovations, or ongoing subscriptions.
+- Custom Orders: If you sell custom-made products, you may want to capture payment only after the item has been produced and is ready to be shipped.
+- High-Value Items: For expensive items, you may want to delay capture to give yourself time to verify the customer's payment information and reduce the risk of fraud.
+- Pre-Orders: If you offer pre-orders for products that are not yet in stock, you can delay capture until the product is available for shipment.
+- Reservations: For businesses that take reservations, such as restaurants or hotels, you can authorize the card at the time of booking but only capture the payment when the customer arrives.
+
+To understand captures better, the authorization and capture flow are explained below.
+
+## Authorization:
+
+1. The customer initiates a purchase.
+2. You send a request to Xendit to authorize the transaction. The authorization flow is similar to a one-off transaction, except you define the `session_type` as `AUTHORIZATION` when creating the Payment Session.
+
+   Request - POST /sessions
+
+   ```json
+   {
+       "reference_id": "YOUR_PAYMENT_REFERENCE_ID",
+       "session_type": "PAY",
+       "capture_method": "MANUAL"
+       "mode": "COMPONENTS",
+       "amount": 100000,
+       "currency": "IDR",
+       "country": "ID",
+       "customer": {
+           "reference_id": "YOUR_CUSTOMER_REFERENCE",
+           "type": "INDIVIDUAL",
+           "email": "test@yourdomain.com",
+           "mobile_number": "+6212345678",
+           "individual_detail": {
+               "given_names": "Jaap",
+               "surname": "Stam"
+           }
+       },
+       "components_configuration": {
+           "origins": ["https://example.com"]
+       }
+   }
+   ```
+
+   Response - POST /sessions
+
+   ```json
+   {
+       "payment_session_id": "ps-6746c1006b7752b4d91725af",
+       "created": "2024-11-27T06:49:36.535Z",
+       "updated": "2024-11-27T06:49:36.535Z",
+       "status": "ACTIVE",
+       "reference_id": "YOUR_PAYMENT_REFERENCE_ID",
+       "currency": "IDR",
+       "amount": 10000,
+       "country": "ID",
+       "customer_id": "XENDIT_GENERATED_CUSTOMER_ID",
+       "expires_at": "2024-11-27T07:19:36.434Z",
+       "session_type": "PAY",
+       "capture_method": "MANUAL"
+       "mode": "COMPONENTS",
+       "locale": "en",
+       "business_id": "YOUR_BUSINESS_ID", 
+       "components_configuration": {
+           "origins": ["https://example.com"]
+       }
+   }
+   ```
+3. Once the customer completed the authorization process, we contact the customer's issuing bank to verify the card's validity and available funds.
+4. The issuing bank reserves the transaction amount on the customer's card.
+5. We receive a response from the issuing bank (approval or decline).
+6. Xendit sends the authorization status through the `payment.authorization` webhook. The status will include the `AUTHORIZED` state and details of the payment.
+
+   ```json
+   {
+       "created": "2024-12-18T05:46:35.109Z",
+       "business_id": "62440e322008e87fb29c1fd0",
+       "event": "payment.authorization",
+       "data": {
+           "type": "PAY",
+           "status": "AUTHORIZED",
+           "country": "ID",
+           "created": "2024-12-18T05:46:08.192Z",
+           "updated": "2024-12-18T05:46:30.627Z",
+           "currency": "IDR",
+           "payment_id": "py-3f57d678-2448-4c9f-a433-8468d366fb5c",
+           "business_id": "62440e322008e87fb29c1fd0",
+           "customer_id": "cust-7de9a9b4-37e8-40ad-b665-d97f42e538c5",
+           "channel_code": "CARDS",
+           "reference_id": "97ba0a32-b996-4abf-8a7b-6184a6644676_b8d18f2f-3",
+           "capture_method": "MANUAL",
+           "request_amount": 10000,
+           "payment_details": {
+               "authorization_data": {
+                   "reconciliation_id": "7345007929096981703954",
+                   "authorization_code": "831000",
+                   "acquirer_merchant_id": "xendit_ctv_agg",
+                   "network_response_code": "00",
+                   "network_transaction_id": "016153570198200",
+                   "cvn_verification_result": "M",
+                   "retrieval_reference_number": "435205253972",
+                   "address_verification_result": "M",
+                   "network_response_code_descriptor": "Approved and completed sucessfully"
+               },
+               "authentication_data": {
+                   "flow": "CHALLENGE",
+                   "a_res": {
+                       "eci": "05",
+                       "message_version": "2.1.0",
+                       "authentication_value": "AAIBBYNoEwAAACcKhAJkdQAAAAA=","directory_server_trans_id": "e537f539-d59f-4ebe-8d56-7fdc31a8e9b4"
+                   }
+               }
+           },
+           "payment_request_id": "pr-5593127f-8c7b-4d2f-b487-c785ffc21e2f"
+       },
+       "api_version": "v3"
+   }
+   ```
+7. You can save the `payment_id` and use it to [capture the funds later](https://docs.xendit.co/apidocs/capture-payment). At this stage, the funds are not yet transferred to the merchant; they are held or "reserved."
+
+## Capture:
+
+- Automatic Capture: This is the default setting for many payment gateways, including Xendit. The funds are captured (transferred to the merchant) shortly after authorization, often within a few minutes.
+- Manual Capture: The merchant can choose to delay capturing the funds. This is useful in scenarios like those mentioned earlier (shipping physical goods, completing services, etc.).
+- Capture Request: When you are ready to collect the payment, they send a capture request to the payment gateway.
+
+  To send a capture request, use the `payment_id` from your Authorization process and submit it to the following endpoint `/v3/payments/YOUR_PAYMENT_ID/capture` .
+- Settlement: The funds are typically settled to your balance within a few business days, depending on the country and form of payment.
+
+## Important considerations:
+
+Authorization holds: The authorization hold on the customer's card typically lasts for 7 days. If the funds are not captured within this timeframe, the hold is released, and the funds become available again.
+
+> Uncaptured authorizations are only valid for 7 days.
+
+Partial Capture: In some cases, you can capture a smaller amount than the original authorized amount. This might be used for situations like discounts or partial refunds.
+
+> Note
+>
+> Partial captures are not available in every country. Check our [Cards overview page](/accept-payments/integration-guide/card-payments-via-api/cards-api-overview) for details.
+
+#### Multiple partial captures
+
+Currently multiple partial captures are not supported by Xendit.  
+In case you are interested in this scenario, reach out to Xendit support, as we consider supporting this in the future.
+
+## Canceling / voiding
+
+If you decide not to capture the funds (e.g., the customer cancels the order), you can void the authorization. This cancels the transaction and releases the hold on the customer's card. Use our [Cancel a payment](/accept-payments/integration-guide/card-payments-via-api/use-cases/cards-cancel-a-payment) endpoint to cancel the authorization using the `payment_id` from the [Authorization](/accept-payments/integration-guide/card-payments-via-api/use-cases/cards-capturing-a-card-payment#authorization) process

@@ -1,0 +1,52 @@
+---
+title: "Shopify"
+---
+
+Shopify is a user-friendly e-commerce platform that helps businesses create, customize, and manage online stores. It offers templates for easy website creation and a range of features, including shopping cart, store management, marketing, and SEO tools, to support your selling needs.
+
+Follow this guideline to start integrating Xendit with your Shopify store.
+
+## Requirements
+
+Before integrating Xendit with Shopify, ensure the following:
+
+1. You have a Shopify store (no specific plan required).
+2. You are registered with Xendit and have your User ID and Key for Shopify integration.
+3. Remove any IP whitelist settings from your Xendit dashboard.
+
+## Installation
+
+Follow these easy steps to start accepting payments on your Shopify store using the [Xendit Payment's App](https://apps.shopify.com/payments-by-xendit)
+
+<iframe src="https://www.youtube.com/embed/7VW9dTvvOlc" title="YouTube video player" className="w-full rounded-xl" height="315"></iframe>
+
+1. Log in to your Xendit Dashboard, and on the tab menu, open [Integrations](https://dashboard.xendit.co/integrations)
+2. Open the Shopify app details, and click [‘Install’](https://dashboard.xendit.co/integrations) to open the Xendit Payments app
+3. You will be redirected to the Shopify App Store, click ‘Add app’
+4. The Xendit installation page will appear, follow the prompts to activate
+5. You will be redirected back to the Shopify Settings, Select your supported payment channels
+6. At the bottom of the page, click ‘Activate Xendit Payment Gateway’ in green
+7. Installation is done
+
+### Add Payment Method in Shopify
+
+When adding the payment provider, you just need to search for Xendit when you add the payment method in the provider list or payment method list
+
+Please search for and select the Xendit Payment Gateway (New) from the "Search by payment method" or "Search by provider" tabs. To ensure you select the correct full integration, kindly search only for the provider name (Xendit) rather than individual channel names (such as DANA) in the search bar.
+
+![](/images/doc360/image_169_.png)
+
+## Abandoned and Pending Checkout Configuration
+
+Unpaid orders can be set to go to pending or abandoned checkout status on the Shopify seller dashboard.
+
+1. Go to the Xendit Dashboard > Integrations tab > My Integrations tab > Shopify > Settings
+2. Change checkout flow to abandoned or pending
+3. Click save
+
+|  | Abandoned Checkout | Pending Checkouts |
+| --- | --- | --- |
+| Unpaid Order Location | Unpaid orders show up in the abandoned checkouts tab. | Unpaid orders show up in Orders tab with a “pending” status. |
+| Paid Order Location | Paid orders moved to Orders tab, order status “paid” | On Orders tab, Order status updates to “paid” |
+| Stock Removal | Removed only after the order is paid. Higher chance of overselling | Removed after order placed, before order is paid. Less chance of overselling. |
+| Shopify Customer Email Notification | Shopify confirmation Email sent to customer after order is paid. | Shopify confirmation sent to customers after order placed, but before order is paid. |

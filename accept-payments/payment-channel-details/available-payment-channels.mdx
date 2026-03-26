@@ -1,0 +1,4027 @@
+---
+title: "Available payment channels"
+seoTitle: "Available Payment Channels"
+---
+
+This table provides a high level overview on payment channels available via Xendit and their corresponding features. You can use filter or search to find information about specific payment channels.
+
+<iframe src="https://doc-widget.xendit.co/payment-channels/" title="" className="w-full rounded-xl" height="533"></iframe>
+
+*\*Please note that for E-Wallets, QR Payments, Direct Debit, and PayLater, settlement times are calculated in calendar days unless otherwise specified. If a settlement date falls on a weekend, the funds will be reflected on the next weekday.*
+
+### More information about columns and values
+
+| Column Name | Description |
+| --- | --- |
+| Channel code | Unique identifier for the payment channel, used in API integration. |
+| Display name | Branding name of the payment channel that end users will see during their payment journey. |
+| Currency | Currency supported by the payment channel (e.g., IDR, PHP, USD). |
+| Country | Country where the payment channel can be used. |
+| Type | Category or flow for payment channels (e.g., e-wallet, bank transfer, card, over-the-counter, etc.). This will be useful for grouping payment channel in checkout page. |
+| Min. amount | Floor value that can be collected via this payment channel. |
+| Max. amount | Ceiling value that can be collected via this payment channel. |
+| Settlement time | Business Days — Settlement happens on working days (Monday to Friday, excluding weekends and public holidays). Timeline: T+X means X working days after payment confirmation. Example: If a payment is confirmed on Friday with T+2, the settlement will arrive on Tuesday (assuming Monday is not a holiday).  Calendar Days — Settlement happens every day, including weekends and public holidays. Timeline: T+X means X days after payment confirmation. Example: If a payment is confirmed on Friday at 3 PM with T+2, the settlement will arrive on Sunday at 3 PM.  Instant — Settlement happens almost right away. Timeline: usually within 5 minutes of payment confirmation. Example: If a payment is confirmed on Friday at 3 PM, the settlement will arrive by around 3:05 PM the same day. |
+| Save | Feature for linking or tokenizing payment information for future use is available. |
+| Reusable payment code | Feature for collecting multiple payments via one payment code is available (e.g. a static QR code in physical stores). |
+| Display name | Business name that end users will see during their payment journey. |
+| User approval flow | Redirect — End users will be redirected on their device to log in and authenticate the transaction.  Present to customers — End users will be presented a payment code for them to take action on a separate device / application.  Skip — End users involvement are not required to complete payment. |
+| Merchant-initiated transactions | Feature for merchants to collect money without involving end users is available. |
+| Payment processing time | Time delay between end user completing payment step until the payment is confirmed by the payment method provider.  Business days — Payment result occurs approximately after 24 hours \* T+X from payment initiated, excludes weekend or public holidays.  Instant — Payment result occurs approximately a few minutes from payment initiated (most of payment channels’s behavior). |
+| Custom payment code | Feature to configure the payment code with specific values is available. |
+| Installments | Feature for end user to break down the payment is available and served by the payment method provider. |
+| Auth & capture | Two-step payment process: Auth (authorization) to reserve funds, followed by Capture to settle the funds. |
+| Partial capture | Ability to capture less than the authorized amount. |
+| Multiple partial capture | Ability to capture the authorized amount in several parts until fully captured. |
+| Desktop support | Payment channel is supported on desktop devices. |
+| Mobile support | Payment channel is supported on mobile devices. |
+| Display merchant name | Merchant’s business name shown to the end user during payment. |
+| Display user name | End user’s name shown during payment, if available. |
+| Payment request expiry (hours) | Duration in hours before a payment request expires if not completed. |
+| Payment token validity (years) | Maximum validity period of a saved payment token. |
+| Refund | Feature for returning full collected amount to user is available via the original payment route. |
+| Partial refund | Feature for returning a subset of collected money to user is available via the original payment route. |
+| Multiple partial refund | Feature for merchants to return funds in multiple partial refunds until the full collected amount is refunded. |
+| Refund validity (days) | Maximum number of days after the original transaction that a refund request can be made. |
+| Payment link | Whether the channel supports creation of a hosted payment page (payment link) for collection. |
+| Fund flow | The settlement funds routing from the end user to the merchant.  Aggregator - will be settle to Xendit’s account balance  Switcher - directly settle to merchant’s bank account |
+
+This paragraph is hidden from users but still visible to screen readers and SEO bots.
+
+ID
+
+AKULAKU
+
+IDR
+
+|  |  |
+| --- | --- |
+| Channel Code | AKULAKU |
+| Country | ID |
+| Currency | IDR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1,000.00 |
+| Max Amount | 25,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | INDEFINITE |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | ✓ |
+
+ALFAMART
+
+IDR
+
+|  |  |
+| --- | --- |
+| Channel Code | ALFAMART |
+| Country | ID |
+| Currency | IDR |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 10,000.00 |
+| Max Amount | 5,000,000.00 |
+| Settlement Time (hours) | T+5 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | ✓ |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+ASTRAPAY
+
+IDR
+
+|  |  |
+| --- | --- |
+| Channel Code | ASTRAPAY |
+| Country | ID |
+| Currency | IDR |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 100.00 |
+| Max Amount | 20,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+ATOME
+
+IDR
+
+|  |  |
+| --- | --- |
+| Channel Code | ATOME |
+| Country | ID |
+| Currency | IDR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 50,000.00 |
+| Max Amount | 6,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | INDEFINITE |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | ✓ |
+
+BCA\_VIRTUAL\_ACCOUNT
+
+IDR
+
+|  |  |
+| --- | --- |
+| Channel Code | BCA\_VIRTUAL\_ACCOUNT |
+| Country | ID |
+| Currency | IDR |
+| Display Merchant Name | XENDIT,MERCHANT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 10,000.00 |
+| Max Amount | 50,000,000.00 |
+| Settlement Time (hours) | T+1 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | ✓ |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+BJB\_VIRTUAL\_ACCOUNT
+
+IDR
+
+|  |  |
+| --- | --- |
+| Channel Code | BJB\_VIRTUAL\_ACCOUNT |
+| Country | ID |
+| Currency | IDR |
+| Display Merchant Name | XENDIT,MERCHANT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 1.00 |
+| Max Amount | 2,000,000,000.00 |
+| Settlement Time (hours) | INSTANT |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | ✓ |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+BNC\_VIRTUAL\_ACCOUNT
+
+IDR
+
+|  |  |
+| --- | --- |
+| Channel Code | BNC\_VIRTUAL\_ACCOUNT |
+| Country | ID |
+| Currency | IDR |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 1.00 |
+| Max Amount | 50,000,000,000.00 |
+| Settlement Time (hours) | INSTANT |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+BNI\_VIRTUAL\_ACCOUNT
+
+IDR
+
+|  |  |
+| --- | --- |
+| Channel Code | BNI\_VIRTUAL\_ACCOUNT |
+| Country | ID |
+| Currency | IDR |
+| Display Merchant Name | XENDIT,MERCHANT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 1.00 |
+| Max Amount | 50,000,000.00 |
+| Settlement Time (hours) | INSTANT |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | ✓ |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+BRI\_DIRECT\_DEBIT
+
+IDR
+
+|  |  |
+| --- | --- |
+| Channel Code | BRI\_DIRECT\_DEBIT |
+| Country | ID |
+| Currency | IDR |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | REDIRECT, SKIP |
+| Min Amount | 1.00 |
+| Max Amount | 50,000,000.00 |
+| Settlement Time (hours) | INSTANT |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | — |
+| Refund Validity (days) | 120 |
+| Save | ✓ |
+| Payment Token Validity (years) | CARD EXPIRY |
+| Merchant Initiated Transaction | ✓ |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+BRI\_VIRTUAL\_ACCOUNT
+
+IDR
+
+|  |  |
+| --- | --- |
+| Channel Code | BRI\_VIRTUAL\_ACCOUNT |
+| Country | ID |
+| Currency | IDR |
+| Display Merchant Name | XENDIT,MERCHANT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 1.00 |
+| Max Amount | 50,000,000,000.00 |
+| Settlement Time (hours) | INSTANT |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | ✓ |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+BSI\_VIRTUAL\_ACCOUNT
+
+IDR
+
+|  |  |
+| --- | --- |
+| Channel Code | BSI\_VIRTUAL\_ACCOUNT |
+| Country | ID |
+| Currency | IDR |
+| Display Merchant Name | XENDIT,MERCHANT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 1.00 |
+| Max Amount | 50,000,000,000.00 |
+| Settlement Time (hours) | INSTANT |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | ✓ |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+BSS\_VIRTUAL\_ACCOUNT
+
+IDR
+
+|  |  |
+| --- | --- |
+| Channel Code | BSS\_VIRTUAL\_ACCOUNT |
+| Country | ID |
+| Currency | IDR |
+| Display Merchant Name | XENDIT,MERCHANT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 1.00 |
+| Max Amount | 50,000,000,000.00 |
+| Settlement Time (hours) | INSTANT |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | ✓ |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+CARDS
+
+IDR
+
+|  |  |
+| --- | --- |
+| Channel Code | CARDS |
+| Country | ID |
+| Currency | IDR |
+| Display Merchant Name | XENDIT, MERCHANT |
+| User Approval Flow | REDIRECT, SKIP |
+| Min Amount | 5,000.00 |
+| Max Amount | 200,000,000.00 |
+| Settlement Time (hours) | T+5 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | 365 |
+| Save | ✓ |
+| Payment Token Validity (years) | CARD EXPIRY |
+| Merchant Initiated Transaction | ✓ |
+| Auth & Capture | ✓ |
+| Partial Capture | ✓ |
+| Installments | — |
+
+CIMB\_VIRTUAL\_ACCOUNT
+
+IDR
+
+|  |  |
+| --- | --- |
+| Channel Code | CIMB\_VIRTUAL\_ACCOUNT |
+| Country | ID |
+| Currency | IDR |
+| Display Merchant Name | XENDIT,MERCHANT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 1.00 |
+| Max Amount | 50,000,000.00 |
+| Settlement Time (hours) | INSTANT |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | ✓ |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+DANA
+
+IDR
+
+|  |  |
+| --- | --- |
+| Channel Code | DANA |
+| Country | ID |
+| Currency | IDR |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | REDIRECT, SKIP |
+| Min Amount | 100.00 |
+| Max Amount | 20,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | 30 |
+| Save | ✓ |
+| Payment Token Validity (years) | 10 |
+| Merchant Initiated Transaction | ✓ |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | ✓ |
+
+GOPAY
+
+IDR
+
+|  |  |
+| --- | --- |
+| Channel Code | GOPAY |
+| Country | ID |
+| Currency | IDR |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 50,000,000.00 |
+| Settlement Time (hours) | T+1 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | 45 |
+| Save | ✓ |
+| Payment Token Validity (years) | INDEFINITE |
+| Merchant Initiated Transaction | ✓ |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+GOPAY\_RECURRING
+
+IDR
+
+|  |  |
+| --- | --- |
+| Channel Code | GOPAY\_RECURRING |
+| Country | ID |
+| Currency | IDR |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | REDIRECT, SKIP |
+| Min Amount | 1.00 |
+| Max Amount | 50,000,000.00 |
+| Settlement Time (hours) | T+1 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | 45 |
+| Save | ✓ |
+| Payment Token Validity (years) | INDEFINITE |
+| Merchant Initiated Transaction | ✓ |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+HANA\_VIRTUAL\_ACCOUNT
+
+IDR
+
+|  |  |
+| --- | --- |
+| Channel Code | HANA\_VIRTUAL\_ACCOUNT |
+| Country | ID |
+| Currency | IDR |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 1.00 |
+| Max Amount | 50,000,000,000.00 |
+| Settlement Time (hours) | INSTANT |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+INDODANA
+
+IDR
+
+|  |  |
+| --- | --- |
+| Channel Code | INDODANA |
+| Country | ID |
+| Currency | IDR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 10,000.00 |
+| Max Amount | 25,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | 30 |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | ✓ |
+
+INDOMARET
+
+IDR
+
+|  |  |
+| --- | --- |
+| Channel Code | INDOMARET |
+| Country | ID |
+| Currency | IDR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 10,000.00 |
+| Max Amount | 2,500,000.00 |
+| Settlement Time (hours) | T+5 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | ✓ |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+JENIUSPAY
+
+IDR
+
+|  |  |
+| --- | --- |
+| Channel Code | JENIUSPAY |
+| Country | ID |
+| Currency | IDR |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1,000.00 |
+| Max Amount | 20,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | INDEFINITE |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+KREDIVO
+
+IDR
+
+|  |  |
+| --- | --- |
+| Channel Code | KREDIVO |
+| Country | ID |
+| Currency | IDR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1,000.00 |
+| Max Amount | 30,000,000.00 |
+| Settlement Time (hours) | T+4 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | 14 |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | ✓ |
+
+LINKAJA
+
+IDR
+
+|  |  |
+| --- | --- |
+| Channel Code | LINKAJA |
+| Country | ID |
+| Currency | IDR |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 20,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | — |
+| Refund Validity (days) | 30 |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+MANDIRI\_VIRTUAL\_ACCOUNT
+
+IDR
+
+|  |  |
+| --- | --- |
+| Channel Code | MANDIRI\_VIRTUAL\_ACCOUNT |
+| Country | ID |
+| Currency | IDR |
+| Display Merchant Name | XENDIT,MERCHANT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 1.00 |
+| Max Amount | 50,000,000,000.00 |
+| Settlement Time (hours) | INSTANT |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | ✓ |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+MUAMALAT\_VIRTUAL\_ACCOUNT
+
+IDR
+
+|  |  |
+| --- | --- |
+| Channel Code | MUAMALAT\_VIRTUAL\_ACCOUNT |
+| Country | ID |
+| Currency | IDR |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 1.00 |
+| Max Amount | 50,000,000,000.00 |
+| Settlement Time (hours) | INSTANT |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | ✓ |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+NEXCASH
+
+IDR
+
+|  |  |
+| --- | --- |
+| Channel Code | NEXCASH |
+| Country | ID |
+| Currency | IDR |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 20,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | ✓ |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+OVO
+
+IDR
+
+|  |  |
+| --- | --- |
+| Channel Code | OVO |
+| Country | ID |
+| Currency | IDR |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | REDIRECT, SKIP |
+| Min Amount | 100.00 |
+| Max Amount | 20,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | 14 |
+| Save | ✓ |
+| Payment Token Validity (years) | INDEFINITE |
+| Merchant Initiated Transaction | ✓ |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | ✓ |
+
+PERMATA\_VIRTUAL\_ACCOUNT
+
+IDR
+
+|  |  |
+| --- | --- |
+| Channel Code | PERMATA\_VIRTUAL\_ACCOUNT |
+| Country | ID |
+| Currency | IDR |
+| Display Merchant Name | XENDIT,MERCHANT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 1.00 |
+| Max Amount | 9,999,999,999.00 |
+| Settlement Time (hours) | INSTANT |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | ✓ |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+QRIS
+
+IDR
+
+|  |  |
+| --- | --- |
+| Channel Code | QRIS |
+| Country | ID |
+| Currency | IDR |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 1.00 |
+| Max Amount | 20,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | — |
+| Refund Validity (days) | 30 |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+SHOPEEPAY
+
+IDR
+
+|  |  |
+| --- | --- |
+| Channel Code | SHOPEEPAY |
+| Country | ID |
+| Currency | IDR |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | REDIRECT, SKIP |
+| Min Amount | 1.00 |
+| Max Amount | 20,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | 365 |
+| Save | ✓ |
+| Payment Token Validity (years) | 5 |
+| Merchant Initiated Transaction | ✓ |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | ✓ |
+
+MY
+
+AFFIN\_FPX
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | AFFIN\_FPX |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 30,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+AFFIN\_FPX\_BUSINESS
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | AFFIN\_FPX\_BUSINESS |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 1,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+AGRO\_FPX
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | AGRO\_FPX |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 30,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+AGRO\_FPX\_BUSINESS
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | AGRO\_FPX\_BUSINESS |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 1,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+ALLIANCE\_FPX
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | ALLIANCE\_FPX |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 30,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+ALLIANCE\_FPX\_BUSINESS
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | ALLIANCE\_FPX\_BUSINESS |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 1,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+AMBANK\_FPX
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | AMBANK\_FPX |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 30,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+AMBANK\_FPX\_BUSINESS
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | AMBANK\_FPX\_BUSINESS |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 1,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+AMBANK\_VIRTUAL\_ACCOUNT
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | AMBANK\_VIRTUAL\_ACCOUNT |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 1.00 |
+| Max Amount | - |
+| Settlement Time (hours) | T+1 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+BNP\_FPX\_BUSINESS
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | BNP\_FPX\_BUSINESS |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 1,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+BOC\_FPX
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | BOC\_FPX |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 30,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+BSN\_FPX
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | BSN\_FPX |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 30,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+CARDS
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | CARDS |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT, MERCHANT |
+| User Approval Flow | REDIRECT, SKIP |
+| Min Amount | 1.00 |
+| Max Amount | 5,000.00 |
+| Settlement Time (hours) | T+5 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | 365 |
+| Save | ✓ |
+| Payment Token Validity (years) | CARD EXPIRY |
+| Merchant Initiated Transaction | ✓ |
+| Auth & Capture | ✓ |
+| Partial Capture | ✓ |
+| Installments | — |
+
+CIMB\_FPX
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | CIMB\_FPX |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 30,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+CIMB\_FPX\_BUSINESS
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | CIMB\_FPX\_BUSINESS |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 1,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+CITIBANK\_FPX\_BUSINESS
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | CITIBANK\_FPX\_BUSINESS |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 1,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+DEUTSCHE\_FPX\_BUSINESS
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | DEUTSCHE\_FPX\_BUSINESS |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 1,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+GRABPAY
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | GRABPAY |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | REDIRECT, SKIP |
+| Min Amount | 1.00 |
+| Max Amount | 1,500.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | 365 |
+| Save | ✓ |
+| Payment Token Validity (years) | 10 |
+| Merchant Initiated Transaction | ✓ |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | ✓ |
+
+HLB\_FPX
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | HLB\_FPX |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 30,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+HLB\_FPX\_BUSINESS
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | HLB\_FPX\_BUSINESS |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 1,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+HSBC\_FPX
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | HSBC\_FPX |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 30,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+HSBC\_FPX\_BUSINESS
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | HSBC\_FPX\_BUSINESS |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 1,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+ISLAM\_FPX
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | ISLAM\_FPX |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 30,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+ISLAM\_FPX\_BUSINESS
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | ISLAM\_FPX\_BUSINESS |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 1,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+KFH\_FPX
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | KFH\_FPX |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 30,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+KFH\_FPX\_BUSINESS
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | KFH\_FPX\_BUSINESS |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 1,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+MAYB2E\_FPX
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | MAYB2E\_FPX |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 30,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+MAYB2E\_FPX\_BUSINESS
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | MAYB2E\_FPX\_BUSINESS |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 1,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+MAYB2U\_FPX
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | MAYB2U\_FPX |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 30,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+MUAMALAT\_FPX
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | MUAMALAT\_FPX |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 30,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+MUAMALAT\_FPX\_BUSINESS
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | MUAMALAT\_FPX\_BUSINESS |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 1,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+OCBC\_FPX
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | OCBC\_FPX |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 30,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+OCBC\_FPX\_BUSINESS
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | OCBC\_FPX\_BUSINESS |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 1,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+PUBLIC\_FPX
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | PUBLIC\_FPX |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 30,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+PUBLIC\_FPX\_BUSINESS
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | PUBLIC\_FPX\_BUSINESS |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 1,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+RAKYAT\_FPX
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | RAKYAT\_FPX |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 30,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+RAKYAT\_FPX\_BUSINESS
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | RAKYAT\_FPX\_BUSINESS |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 1,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+RHB\_FPX
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | RHB\_FPX |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 30,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+RHB\_FPX\_BUSINESS
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | RHB\_FPX\_BUSINESS |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 1,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+SCH\_FPX
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | SCH\_FPX |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 30,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+SCH\_FPX\_BUSINESS
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | SCH\_FPX\_BUSINESS |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 1,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+SHOPEEPAY
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | SHOPEEPAY |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | REDIRECT, SKIP |
+| Min Amount | 1.00 |
+| Max Amount | 4,999.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | 365 |
+| Save | ✓ |
+| Payment Token Validity (years) | 5 |
+| Merchant Initiated Transaction | ✓ |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | ✓ |
+
+TOUCHNGO
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | TOUCHNGO |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | REDIRECT, SKIP |
+| Min Amount | 1.00 |
+| Max Amount | 20,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | 30 |
+| Save | ✓ |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | ✓ |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+UOB\_FPX
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | UOB\_FPX |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 30,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+UOB\_FPX\_BUSINESS
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | UOB\_FPX\_BUSINESS |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 1,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+WECHATPAY
+
+MYR
+
+|  |  |
+| --- | --- |
+| Channel Code | WECHATPAY |
+| Country | MY |
+| Currency | MYR |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 4,999.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | — |
+| Refund Validity (days) | 365 |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+PH
+
+7ELEVEN
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | 7ELEVEN |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 50.00 |
+| Max Amount | 50,000.00 |
+| Settlement Time (hours) | T+5 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+7ELEVEN\_CLIQQ
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | 7ELEVEN\_CLIQQ |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 50.00 |
+| Max Amount | 50,000.00 |
+| Settlement Time (hours) | T+5 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | ✓ |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+BANK\_TRANSFER
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | BANK\_TRANSFER |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 1.00 |
+| Max Amount | 200,000,000.00 |
+| Settlement Time (hours) | T+3 BUSINESS DAYS |
+| Payment Processing Time (hours) | T+1 BUSINESS DAYS |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | ✓ |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+BDO\_ONLINE\_BANKING
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | BDO\_ONLINE\_BANKING |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 2,000,000.00 |
+| Settlement Time (hours) | T+1 BUSINESS DAYS |
+| Payment Processing Time (hours) | 0.5 |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+BILLEASE
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | BILLEASE |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 50.00 |
+| Max Amount | 150,000.00 |
+| Settlement Time (hours) | T+3 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | — |
+| Refund Validity (days) | INDEFINITE |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | ✓ |
+
+BOC\_ONLINE\_BANKING
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | BOC\_ONLINE\_BANKING |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 10.00 |
+| Max Amount | 1,000,000.00 |
+| Settlement Time (hours) | T+1 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+BPI\_DIRECT\_DEBIT
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | BPI\_DIRECT\_DEBIT |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 500,000.00 |
+| Settlement Time (hours) | T+1 CALENDAR DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | 30 |
+| Save | ✓ |
+| Payment Token Validity (years) | 0.25 |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+BPI\_ONLINE\_BANKING
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | BPI\_ONLINE\_BANKING |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 250,000.00 |
+| Settlement Time (hours) | T+1 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+BPI\_RECURRING
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | BPI\_RECURRING |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | REDIRECT, SKIP |
+| Min Amount | 1.00 |
+| Max Amount | 500,000.00 |
+| Settlement Time (hours) | T+1 CALENDAR DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | 30 |
+| Save | ✓ |
+| Payment Token Validity (years) | 0.25 |
+| Merchant Initiated Transaction | ✓ |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+CARDS
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | CARDS |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT, MERCHANT |
+| User Approval Flow | REDIRECT, SKIP |
+| Min Amount | 20.00 |
+| Max Amount | 700,000.00 |
+| Settlement Time (hours) | T+5 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | 365 |
+| Save | ✓ |
+| Payment Token Validity (years) | CARD EXPIRY |
+| Merchant Initiated Transaction | ✓ |
+| Auth & Capture | ✓ |
+| Partial Capture | ✓ |
+| Installments | — |
+
+CEBUANA
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | CEBUANA |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 50.00 |
+| Max Amount | 30,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | ✓ |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+CHINABANK\_DIRECT\_DEBIT
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | CHINABANK\_DIRECT\_DEBIT |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 50,000.00 |
+| Settlement Time (hours) | T+1 CALENDAR DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | 30 |
+| Save | ✓ |
+| Payment Token Validity (years) | 0.25 |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+CHINABANK\_ONLINE\_BANKING
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | CHINABANK\_ONLINE\_BANKING |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 1,000,000.00 |
+| Settlement Time (hours) | T+1 BUSINESS DAYS |
+| Payment Processing Time (hours) | 24 |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+CVM
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | CVM |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 50.00 |
+| Max Amount | 30,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | ✓ |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+ECPAY
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | ECPAY |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 1.00 |
+| Max Amount | 50,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | ✓ |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+ECPAY\_DRAGONLOAN
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | ECPAY\_DRAGONLOAN |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 50.00 |
+| Max Amount | 20,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | ✓ |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+ECPAY\_SCHOOL
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | ECPAY\_SCHOOL |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 50.00 |
+| Max Amount | 50,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | ✓ |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+GCASH
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | GCASH |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 100,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | 180 |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | ✓ |
+
+GRABPAY
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | GRABPAY |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT, SKIP |
+| Min Amount | 1.00 |
+| Max Amount | 100,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | 365 |
+| Save | ✓ |
+| Payment Token Validity (years) | 10 |
+| Merchant Initiated Transaction | ✓ |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+INSTAPAY\_ONLINE\_BANKING
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | INSTAPAY\_ONLINE\_BANKING |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 35,000.00 |
+| Settlement Time (hours) | T+1 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+LANDBANK\_ONLINE\_BANKING
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | LANDBANK\_ONLINE\_BANKING |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 250,000.00 |
+| Settlement Time (hours) | T+1 BUSINESS DAYS |
+| Payment Processing Time (hours) | 24 |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+LBC
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | LBC |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 50.00 |
+| Max Amount | 200,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | ✓ |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+MAYBANK\_ONLINE\_BANKING
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | MAYBANK\_ONLINE\_BANKING |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 1,000,000.00 |
+| Settlement Time (hours) | T+1 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+METROBANK\_ONLINE\_BANKING
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | METROBANK\_ONLINE\_BANKING |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 2,000,000.00 |
+| Settlement Time (hours) | T+1 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+MLHUILLIER
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | MLHUILLIER |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 50.00 |
+| Max Amount | 200,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | ✓ |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+PALAWAN
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | PALAWAN |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 50.00 |
+| Max Amount | 20,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | ✓ |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+PAYMAYA
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | PAYMAYA |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | REDIRECT, SKIP |
+| Min Amount | 1.00 |
+| Max Amount | 100,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | 365 |
+| Save | ✓ |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | ✓ |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+PESONET\_ONLINE\_BANKING
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | PESONET\_ONLINE\_BANKING |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 50,000.01 |
+| Max Amount | 20,000,000.00 |
+| Settlement Time (hours) | T+1 BUSINESS DAYS |
+| Payment Processing Time (hours) | 24 |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+PNB\_ONLINE\_BANKING
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | PNB\_ONLINE\_BANKING |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 1,000,000.00 |
+| Settlement Time (hours) | T+1 BUSINESS DAYS |
+| Payment Processing Time (hours) | 24 |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+PSBANK\_ONLINE\_BANKING
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | PSBANK\_ONLINE\_BANKING |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 10.00 |
+| Max Amount | 25,000.00 |
+| Settlement Time (hours) | T+1 BUSINESS DAYS |
+| Payment Processing Time (hours) | 24 |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+QRPH
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | QRPH |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 1.00 |
+| Max Amount | 50,000.00 |
+| Settlement Time (hours) | T+1 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+RCBC\_DIRECT\_DEBIT
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | RCBC\_DIRECT\_DEBIT |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 50,000.00 |
+| Settlement Time (hours) | T+1 CALENDAR DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | 30 |
+| Save | ✓ |
+| Payment Token Validity (years) | INDEFINITE |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+RCBC\_ONLINE\_BANKING
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | RCBC\_ONLINE\_BANKING |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 500.00 |
+| Max Amount | 1,000,000.00 |
+| Settlement Time (hours) | T+1 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+RD\_PAWNSHOP
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | RD\_PAWNSHOP |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 50.00 |
+| Max Amount | 20,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | ✓ |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+ROBINSONS\_BANK\_ONLINE\_BANKING
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | ROBINSONS\_BANK\_ONLINE\_BANKING |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 10.00 |
+| Max Amount | 1,000,000.00 |
+| Settlement Time (hours) | T+1 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+ROBINSONS\_BILLS\_PAYMENT
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | ROBINSONS\_BILLS\_PAYMENT |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 50.00 |
+| Max Amount | 200,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | ✓ |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+SECURITY\_BANK\_ONLINE\_BANKING
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | SECURITY\_BANK\_ONLINE\_BANKING |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 500,000.00 |
+| Settlement Time (hours) | T+1 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+SHOPEEPAY
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | SHOPEEPAY |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | REDIRECT, SKIP |
+| Min Amount | 1.00 |
+| Max Amount | 100,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | 90 |
+| Save | ✓ |
+| Payment Token Validity (years) | 5 |
+| Merchant Initiated Transaction | ✓ |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | ✓ |
+
+SM\_BILLS\_PAYMENT
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | SM\_BILLS\_PAYMENT |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 50.00 |
+| Max Amount | 200,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | ✓ |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+UBP\_DIRECT\_DEBIT
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | UBP\_DIRECT\_DEBIT |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 100,000.00 |
+| Settlement Time (hours) | T+1 CALENDAR DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | 30 |
+| Save | ✓ |
+| Payment Token Validity (years) | 1 |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+UBP\_EADA
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | UBP\_EADA |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | REDIRECT, SKIP |
+| Min Amount | 1.00 |
+| Max Amount | 100,000.00 |
+| Settlement Time (hours) | T+1 CALENDAR DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | 30 |
+| Save | ✓ |
+| Payment Token Validity (years) | 1 |
+| Merchant Initiated Transaction | ✓ |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+UNIONBANK\_ONLINE\_BANKING
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | UNIONBANK\_ONLINE\_BANKING |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 100,000.00 |
+| Settlement Time (hours) | T+1 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+USSC
+
+PHP
+
+|  |  |
+| --- | --- |
+| Channel Code | USSC |
+| Country | PH |
+| Currency | PHP |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 50.00 |
+| Max Amount | 20,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | ✓ |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+TH
+
+BBL\_DIRECT\_DEBIT
+
+THB
+
+|  |  |
+| --- | --- |
+| Channel Code | BBL\_DIRECT\_DEBIT |
+| Country | TH |
+| Currency | THB |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT, SKIP |
+| Min Amount | 20.00 |
+| Max Amount | 700,000.00 |
+| Settlement Time (hours) | INSTANT |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | ✓ |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | ✓ |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+BBL\_MOBILE\_BANKING
+
+THB
+
+|  |  |
+| --- | --- |
+| Channel Code | BBL\_MOBILE\_BANKING |
+| Country | TH |
+| Currency | THB |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 20.00 |
+| Max Amount | 700,000.00 |
+| Settlement Time (hours) | INSTANT |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+CARDS
+
+THB
+
+|  |  |
+| --- | --- |
+| Channel Code | CARDS |
+| Country | TH |
+| Currency | THB |
+| Display Merchant Name | XENDIT, MERCHANT |
+| User Approval Flow | REDIRECT, SKIP |
+| Min Amount | 1.00 |
+| Max Amount | 700,000.00 |
+| Settlement Time (hours) | T+5 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | 365 |
+| Save | ✓ |
+| Payment Token Validity (years) | CARD EXPIRY |
+| Merchant Initiated Transaction | ✓ |
+| Auth & Capture | ✓ |
+| Partial Capture | ✓ |
+| Installments | — |
+
+KBANK\_MOBILE\_BANKING
+
+THB
+
+|  |  |
+| --- | --- |
+| Channel Code | KBANK\_MOBILE\_BANKING |
+| Country | TH |
+| Currency | THB |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 20.00 |
+| Max Amount | 700,000.00 |
+| Settlement Time (hours) | INSTANT |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+KRUNGSRI\_DIRECT\_DEBIT
+
+THB
+
+|  |  |
+| --- | --- |
+| Channel Code | KRUNGSRI\_DIRECT\_DEBIT |
+| Country | TH |
+| Currency | THB |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT, SKIP |
+| Min Amount | 20.00 |
+| Max Amount | 700,000.00 |
+| Settlement Time (hours) | INSTANT |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | ✓ |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | ✓ |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+KRUNGSRI\_MOBILE\_BANKING
+
+THB
+
+|  |  |
+| --- | --- |
+| Channel Code | KRUNGSRI\_MOBILE\_BANKING |
+| Country | TH |
+| Currency | THB |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 20.00 |
+| Max Amount | 700,000.00 |
+| Settlement Time (hours) | INSTANT |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+KTB\_DIRECT\_DEBIT
+
+THB
+
+|  |  |
+| --- | --- |
+| Channel Code | KTB\_DIRECT\_DEBIT |
+| Country | TH |
+| Currency | THB |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT, SKIP |
+| Min Amount | 20.00 |
+| Max Amount | 700,000.00 |
+| Settlement Time (hours) | INSTANT |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | ✓ |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | ✓ |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+KTB\_MOBILE\_BANKING
+
+THB
+
+|  |  |
+| --- | --- |
+| Channel Code | KTB\_MOBILE\_BANKING |
+| Country | TH |
+| Currency | THB |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 20.00 |
+| Max Amount | 700,000.00 |
+| Settlement Time (hours) | INSTANT |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+LINEPAY
+
+THB
+
+|  |  |
+| --- | --- |
+| Channel Code | LINEPAY |
+| Country | TH |
+| Currency | THB |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 50,000.00 |
+| Settlement Time (hours) | T+1 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | Coming soon |
+| Partial Refund | Coming soon |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+PROMPTPAY
+
+THB
+
+|  |  |
+| --- | --- |
+| Channel Code | PROMPTPAY |
+| Country | TH |
+| Currency | THB |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 1.00 |
+| Max Amount | 700,000.00 |
+| Settlement Time (hours) | INSTANT |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+SCB\_DIRECT\_DEBIT
+
+THB
+
+|  |  |
+| --- | --- |
+| Channel Code | SCB\_DIRECT\_DEBIT |
+| Country | TH |
+| Currency | THB |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT, SKIP |
+| Min Amount | 20.00 |
+| Max Amount | 700,000.00 |
+| Settlement Time (hours) | INSTANT |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | ✓ |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | ✓ |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+SCB\_MOBILE\_BANKING
+
+THB
+
+|  |  |
+| --- | --- |
+| Channel Code | SCB\_MOBILE\_BANKING |
+| Country | TH |
+| Currency | THB |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 20.00 |
+| Max Amount | 700,000.00 |
+| Settlement Time (hours) | INSTANT |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+SHOPEEPAY
+
+THB
+
+|  |  |
+| --- | --- |
+| Channel Code | SHOPEEPAY |
+| Country | TH |
+| Currency | THB |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 200,000.00 |
+| Settlement Time (hours) | INSTANT |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | Coming soon |
+| Partial Refund | Coming soon |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | 5 |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+STANDARD\_CHARTERED\_VIRTUAL\_ACCOUNT
+
+THB
+
+|  |  |
+| --- | --- |
+| Channel Code | STANDARD\_CHARTERED\_VIRTUAL\_ACCOUNT |
+| Country | TH |
+| Currency | THB |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 20.00 |
+| Max Amount | 700,000.00 |
+| Settlement Time (hours) | INSTANT |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+TRUEMONEY
+
+THB
+
+|  |  |
+| --- | --- |
+| Channel Code | TRUEMONEY |
+| Country | TH |
+| Currency | THB |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 50,000.00 |
+| Settlement Time (hours) | INSTANT |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | Coming soon |
+| Partial Refund | Coming soon |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+WECHATPAY
+
+THB
+
+|  |  |
+| --- | --- |
+| Channel Code | WECHATPAY |
+| Country | TH |
+| Currency | THB |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 70,000.00 |
+| Settlement Time (hours) | INSTANT |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | Coming soon |
+| Partial Refund | Coming soon |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+VN
+
+APPOTA
+
+VND
+
+|  |  |
+| --- | --- |
+| Channel Code | APPOTA |
+| Country | VN |
+| Currency | VND |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 50,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | — |
+| Refund Validity (days) | INDEFINITE |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+BIDV\_VIRTUAL\_ACCOUNT
+
+VND
+
+|  |  |
+| --- | --- |
+| Channel Code | BIDV\_VIRTUAL\_ACCOUNT |
+| Country | VN |
+| Currency | VND |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 10,000.00 |
+| Max Amount | 499,999,999.00 |
+| Settlement Time (hours) | T+1 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+CARDS
+
+VND
+
+|  |  |
+| --- | --- |
+| Channel Code | CARDS |
+| Country | VN |
+| Currency | VND |
+| Display Merchant Name | XENDIT, MERCHANT |
+| User Approval Flow | REDIRECT, SKIP |
+| Min Amount | 1,000.00 |
+| Max Amount | 100,000.00 |
+| Settlement Time (hours) | T+5 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | 365 |
+| Save | ✓ |
+| Payment Token Validity (years) | CARD EXPIRY |
+| Merchant Initiated Transaction | ✓ |
+| Auth & Capture | ✓ |
+| Partial Capture | ✓ |
+| Installments | — |
+
+MOMO
+
+VND
+
+|  |  |
+| --- | --- |
+| Channel Code | MOMO |
+| Country | VN |
+| Currency | VND |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 50,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | INDEFINITE |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+MSB\_VIRTUAL\_ACCOUNT
+
+VND
+
+|  |  |
+| --- | --- |
+| Channel Code | MSB\_VIRTUAL\_ACCOUNT |
+| Country | VN |
+| Currency | VND |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 10,000.00 |
+| Max Amount | 499,999,999.00 |
+| Settlement Time (hours) | T+1 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | ✓ |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+PV\_VIRTUAL\_ACCOUNT
+
+VND
+
+|  |  |
+| --- | --- |
+| Channel Code | PV\_VIRTUAL\_ACCOUNT |
+| Country | VN |
+| Currency | VND |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 10,000.00 |
+| Max Amount | 499,999,999.00 |
+| Settlement Time (hours) | T+1 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | ✓ |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+SHOPEEPAY
+
+VND
+
+|  |  |
+| --- | --- |
+| Channel Code | SHOPEEPAY |
+| Country | VN |
+| Currency | VND |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 50,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | 90 |
+| Save | — |
+| Payment Token Validity (years) | 5 |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+VIETCAPITAL\_VIRTUAL\_ACCOUNT
+
+VND
+
+|  |  |
+| --- | --- |
+| Channel Code | VIETCAPITAL\_VIRTUAL\_ACCOUNT |
+| Country | VN |
+| Currency | VND |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 10,000.00 |
+| Max Amount | 499,999,999.00 |
+| Settlement Time (hours) | T+1 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+VNPTWALLET
+
+VND
+
+|  |  |
+| --- | --- |
+| Channel Code | VNPTWALLET |
+| Country | VN |
+| Currency | VND |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 50,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | — |
+| Refund Validity (days) | INDEFINITE |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+VPB\_VIRTUAL\_ACCOUNT
+
+VND
+
+|  |  |
+| --- | --- |
+| Channel Code | VPB\_VIRTUAL\_ACCOUNT |
+| Country | VN |
+| Currency | VND |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 10,000.00 |
+| Max Amount | 499,999,999.00 |
+| Settlement Time (hours) | T+1 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+WOORI\_VIRTUAL\_ACCOUNT
+
+VND
+
+|  |  |
+| --- | --- |
+| Channel Code | WOORI\_VIRTUAL\_ACCOUNT |
+| Country | VN |
+| Currency | VND |
+| Display Merchant Name | MERCHANT |
+| User Approval Flow | PRESENT TO CUSTOMER |
+| Min Amount | 10,000.00 |
+| Max Amount | 499,999,999.00 |
+| Settlement Time (hours) | T+1 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | ✓ |
+| Custom Payment Code | — |
+| Refund | — |
+| Partial Refund | — |
+| Refund Validity (days) | - |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |
+
+ZALOPAY
+
+VND
+
+|  |  |
+| --- | --- |
+| Channel Code | ZALOPAY |
+| Country | VN |
+| Currency | VND |
+| Display Merchant Name | XENDIT |
+| User Approval Flow | REDIRECT |
+| Min Amount | 1.00 |
+| Max Amount | 50,000,000.00 |
+| Settlement Time (hours) | T+2 BUSINESS DAYS |
+| Payment Processing Time (hours) | INSTANT |
+| Reusable Payment Code | — |
+| Custom Payment Code | — |
+| Refund | ✓ |
+| Partial Refund | ✓ |
+| Refund Validity (days) | 180 |
+| Save | — |
+| Payment Token Validity (years) | - |
+| Merchant Initiated Transaction | — |
+| Auth & Capture | — |
+| Partial Capture | — |
+| Installments | — |

@@ -1,0 +1,84 @@
+---
+title: "Cancel a payment"
+description: "Cancel a card transaction before it has been captured."
+---
+
+Canceling an authorization, also known as a void, is the process of releasing a temporary hold on a customer's funds before the transaction is finalized (captured). This effectively reverses the authorization, preventing the charge from being processed.
+
+#### This is relevant in the following situations:
+
+- Customer cancelation: The customer changes their mind and cancels the order before you capture the payment.
+- The item is out of stock: The merchant discovers that the item the customer ordered is out of stock and is unable to fulfill the order.
+- Pricing error: You realize that there was a pricing error on the product or service and does not want to charge the customer the incorrect amount.
+- Fraud Suspicion: You suspect that the transaction may be fraudulent and want to investigate further before capturing the payment.
+- Duplicate Transaction: You accidentally processed the same transaction twice and want to cancel one of them.
+
+> Note
+>
+> Canceling of authorizations is not available for every card in each country. Check our [cards overview page](/accept-payments/integration-guide/card-payments-via-api/cards-api-overview) for more details. In situations where cancellations are not supported, [refunds](/accept-payments/integration-guide/card-payments-via-api/use-cases/cards-refund-a-card-payment) can be used.
+
+## Cancel an authorized payment
+
+Create a `POST` request to [/v3/payments/&#123;payment\_id&#125;/cancel](https://xendit-docs.document360.io/apidocs/cancel-payment)
+
+```plaintext
+/v3/payments/py-1402feb0-bb79-47ae-9d1e-e69394d3949c/cancel
+```
+
+Response - from [/v3/payments/&#123;payment\_id&#125;/cancel](https://xendit-docs.document360.io/apidocs/cancel-payment)
+
+```json
+{
+  "payment_id": "py-1402feb0-bb79-47ae-9d1e-e69394d3949c",
+  "business_id": "5f27a14a9bf05c73dd040bc8",
+  "reference_id": "90392f42-d98a-49ef-a7f3-abcezas123",
+  "payment_request_id": "pr-1102feb0-bb79-47ae-9d1e-e69394d3949c",
+  "payment_token_id": "pt-cc3938dc-c2a5-43c4-89d7-7570793348c2",
+  "customer_id": "cust-b98d6f63-d240-44ec-9bd5-aa42954c4f48",
+  "type": "PAY",
+  "country": "ID",
+  "currency": "IDR",
+  "request_amount": 1999.01,
+  "capture_method": "AUTOMATIC",
+  "channel_code": "CARDS",
+  "channel_properties": {
+    "mid_label": "mid_label_acquirer_1",
+    "card_details": {
+      "type": "CREDIT",
+      "issuer": "BRI",
+      "country": "ID",
+      "network": "VISA",
+      "fingerprint": "61f632879e9e27001a8165b9",
+      "masked_card_number": "2222XXXXXXXX8888",
+      "expiry_year": "2027",
+      "expiry_month": "12",
+      "cardholder_first_name": "John",
+      "cardholder_last_name": "Doe",
+      "cardholder_email": "example@xendit.co",
+      "cardholder_phone_number": "+628000000000008"
+    },
+    "skip_three_ds": false,
+    "card_on_file_type": "CUSTOMER_UNSCHEDULED",
+    "failure_return_url": "https://xendit.co/failure",
+    "success_return_url": "https://xendit.co/success",
+  "status": "CANCELED",
+  "payment_details": {
+    "authorization_data": {
+      "authorization_code": "A1B2C3",
+      "cvn_verification_result": "M",
+      "address_verification_result": "M",
+      "retrieval_reference_number": "akjsdiuh132127y9sacsdjn",
+      "network_response_code": "00",
+      "network_response_code_descriptor": "testing",
+      "network_transaction_id": "dahskjdhiquh341",
+      "acquirer_merchant_id": "alskdnuoqh341",
+      "reconciliation_id": "oiajsdo1823938yrh2"
+    }
+  },
+  "metadata": {
+    "metametadata": "metametametadata"
+  },
+  "created": "2029-12-31T23:59:59Z",
+  "updated": "2029-12-31T23:59:59Z"
+}
+```

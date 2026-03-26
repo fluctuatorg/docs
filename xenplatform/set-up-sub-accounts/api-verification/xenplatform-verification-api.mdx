@@ -1,0 +1,25 @@
+---
+title: "Overview"
+---
+
+With your Master account, you can submit your merchant’s information for verification via API. Doing so enables you to control the collection of data on your Platform’s interface before passing the data to Xendit.
+
+> Region & Account Type Support
+>
+> For Global accounts:
+>
+> - You may use the Account Verification API for both `Owned` accounts created using `/v2/accounts` API, or for sub-accounts created in the Dashboard
+> - For sub-accounts created in the Dashboard, click “Verify Business” and fill in the Name and Country of Incorporation for the business and proceed first before you can use the API to submit the rest of the KYC information. Ensure that the `country_of_incorporation` in the API parameter matches the country selected in the interface.
+>
+> For Master accounts whose country of operation is in `ID`, `PH`, `TH`, `MY`, or `VN`:
+>
+> - When submitting for `MANAGED` sub-accounts, ensure that the sub-account status has changed to `REGISTERED` by accepting the initial email invitation before submitting KYC information. You can subscribe to the Account Updated webhook to listen for the event.
+> - `OWNED` sub-accounts will still go Live and can transact after being created. The verification information can still be submitted at any point after creation.
+
+### Flow and Implementation
+
+After creating the sub-account, follow the steps below to get your sub-account verified:
+
+1. [Upload Required Files](https://developers.xendit.co/api-reference/#upload-file)
+2. [Submit Account Verification](/xenplatform/set-up-sub-accounts/api-verification/submit-account-verification)
+3. [Handle Webhook Events](/xenplatform/set-up-sub-accounts/api-verification/verification-webhook)

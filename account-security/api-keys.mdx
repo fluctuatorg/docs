@@ -1,0 +1,106 @@
+---
+title: "API keys"
+---
+
+Xendit authenticates your API requests using your account's API keys. If you do not include your key when making an API request, or use one that is incorrect or deleted, Xendit returns an error.
+
+Every account is provided with separate keys for testing and for running live transactions. All API requests exist in either test or live mode.
+
+## Secret vs public API key
+
+- Secret API key: Secret key can perform any API request to Xendit on behalf of your account. Your secret keys should be kept confidential and only stored on your own servers.
+- Public API key: Public key are meant to identify your account with Xendit. In other words, they can safely be published in places like your javascript code or in an Android or iPhone app. Public key only have the power to tokenize Cards.
+
+Each account has a total of two keys after registration process: a pair of public key for test and live mode. You'll have zero secret key when you start. This default setup is to prevent secret key being compromised for customers who are not integrating with Xendit using API. You can create or delete keys according to your needs in Dashboard.
+
+<Warning>
+##### INFO
+
+Note: Use only your test API keys for testing or development. This ensures that you don't accidentally create or modify live transactions
+</Warning>
+
+## API key permissions
+
+Each API key has permission of a product that you can configure. There are three types of API key permission
+
+- `None`: No access granted to this particular product, meaning you forbid your API key to perform any action.
+- `Read`: Granting the ability to read-only access or fetch data using API of a specific product. You'll grant Read access if you only need to, for example, get your account balance or get payment detail.
+- `Write`: Granting the ability to read and write data using API. You'll grant Write access if you want to perform actions such as create payments or payouts.
+
+## How to generate API keys
+
+Generate API keys can easily be done with the following steps:
+
+1. Go to Settings > API Keys
+2. Click Generate Secret Key
+3. Select the API key permission
+4. Enter your password to authenticate yourself
+5. Save the API key securely and apply the new API key to your system
+
+## ![](/images/doc360/image_11_.png)
+
+## How to delete API keys
+
+When you want to delete unused API keys or suspect your API key is compromised, you can delete your API keys by following these steps:
+
+1. Visit API Key page
+2. Click Delete for the specific API key
+3. Enter your password to authenticate yourself
+4. Key is successfully deleted
+
+<Warning>
+##### INFO
+
+You can use `Last Used` information to determine unused API key
+</Warning>
+
+## Securing API Keys
+
+### Never commit your key to your repository
+
+Committing an API key to source code is a common vector for credential compromise. For those with public repositories, this is a common way that you can unknowingly share your key with the internet.
+
+Private repositories are more secure, but a data breach can also result in your keys being leaked. For these reasons we strongly recommend the use of the environment variables as a proactive key safety measure (for example by using dotenv package in a Node app or using the os.getenv() method in Python)
+
+### Use a Key Management Service
+
+There are a variety of products available for safely managing secret API keys. These tools allow you to control access to your keys and improve your overall data security. In the event of a data breach to your application, your key(s) would not be compromised, as they would be encrypted and managed in a completely separate location.
+
+One solution for convenience and peace of mind is to use a secret management service like AWS Secret Manager. This will not only protect your keys but help you retrieve and manage the credentials of your entire team.
+
+### Restrict API key permissions
+
+A restricted API key allows only the minimum level of access that you specify. Restricted keys cannot interact with many parts of Xendit's API and are intended to reduce risk when using or building microservices.
+
+Use restricted API keys if you’re working with microservices that interact with the Xendit API on your behalf. You can create restricted API keys that limit access to, and permissions to specific account data. For example, you can create a restricted key that grants write-only access to Money-in to access money in APIs, like Credit Card, QR, Virtual Accounts, etc.
+
+<Warning>
+##### INFO
+
+If you are only using Money-in products and need Balance access, grant your API key `Write` permission for Money-in and `Read` permission for Money-out
+</Warning>
+
+### Do not share your API key or Authorization header to anyone
+
+API key leaks can happen when API key owner accidentally expose API key value to other parties, for example during issue escalation to Xendit CS team. Use `Request-ID` information for secure escalation and faster resolution. Read more about `Request-ID` information here.
+
+### Redact API key from your log
+
+Regularly examine your logs to ensure they're storing all the information you may need and they are not storing anything of a sensitive nature (e.g., API key value, personally identifiable information, etc). Make sure to redact / hash / encrypt the API key value to secure the API key.
+
+### Delete unused API keys and service accounts
+
+As a standard practice of your security strategy, you should regularly review and clean up your existing API keys and service accounts. To better understand the which API keys are being used, you can use `Last Used` information in API Key page and remove unused API key safely.
+
+### Generate a new key if you suspect a breach
+
+If you think your API credentials have been compromised, keep calm and simply revoke your key. This can easily be done in Xendit Dashboard by following these steps:
+
+1. Visit API Key page
+2. Generate a new API key
+3. Apply the new API key to your system
+4. Delete the compromised API key from Xendit Dashboard
+
+### Regenerate your API keys periodically
+
+The older a key is, the higher the probability it could have been compromised. You can regenerate your API key periodically, like every 6 or 12 months, to ensure the highest security measures for your API keys

@@ -1,0 +1,51 @@
+---
+title: "Payouts"
+---
+
+Before taking your integration live, we recommend you to test your integration thoroughly in development mode. Use our Test Mode simulation to simulate various positive and negative scenarios and ensure the flows in your integration are handled correctly.
+
+*Note: We recommend using Postman collections for testing. Please see our postman integrations page for more details on how to set up your collections.*
+
+## Before you start
+
+> Important Note
+>
+> Simulation is only available in Test Mode. Ensure you are using a Development API Key to test.
+
+- Ensure that you have the right API Key for the currency you want to test
+
+  - One currency = One dashboard account = One API key
+  - If you want to payout to currency: PHP, then you must create a dashboard where country of operation: Philippines and create an API Key with Money Out Read and Write permission from that dashboard
+  - If you would also like to payout to currency: IDR, then you must create another dashboard account where country of operation: Indonesia and similarly create an API Key using that dashboard account
+
+## Test Guideline
+
+- Test calling all Payouts endpoints that you are implementing
+- Test as much simulation scenarios as possible according to your use case
+- Ensure your subscribed webhook events are received and handled in your integration
+
+## Simulation Scenarios
+
+Call `Create Payouts API` using any of the following test details to simulate the scenario you’re testing.
+
+### Positive Scenarios
+
+| Scenario | Criteria | Expected Result |
+| --- | --- | --- |
+| Successful Payout | Send valid Create Payout request, with any `account_holder_name` and `account_number` | Payout will be `SUCCEEDED` |
+| Successful Cancel Payout | Send valid Create Payout request with a bank channel, and `account_number = 131313` | Payout status will remain `ACCEPTED`. You can then try a Cancel Payout request. |
+| Successful Cancel Payout - Cash Payout | Send valid Create Payout request with a cash payout channel, and `account_number = 141414` | Payout status will remain `REQUESTED`. You can then try a Cancel Payout request. |
+
+### Negative Scenarios
+
+| Scenario | Criteria | Expected Result |
+| --- | --- | --- |
+| Failed Payout due to request containing duplicate idempotency key but same payload | Try a payout with a duplicate idempotency key and the exact same payload. | Will return the same payout as the original request. |
+| Failed Payout due to request containing duplicate idempotency key but different payload | Try a payout with an active duplicate idempotency key and a different payload. | `DUPLICATE_ERROR` |
+| Failed Payout due to switching network experiencing downtime | account\_number: 123456 | Payout will be `FAILED` with `failure_code = TEMPORARY_TRANSFER_ERROR` |
+| Failed Payout due to rejection from recipient channel | account\_number: 999999 | Payout will be `FAILED` with `failure_code = REJECTED_BY_CHANNEL` |
+| Failed Payout due to invalid destination account | account\_number: 121212 | Payout will be `FAILED` with `failure_code = INVALID_DESTINATION` |
+| Failed Cash Payout due to expiration | channel\_properties.recipient\_given\_names: “Justin Baby” expires\_at: any future time | Payout will be `EXPIRED` after 2 minutes |
+| Failed Payout due to insufficient balance | Initiate a payout greater than the balance you have. | Payout will be `FAILED` with `failure_code = INSUFFICIENT_BALANCE` |
+| Failed Payout due to forbidden request | Try an API key without the right permissions to perform the request. | `REQUEST_FORBIDDEN_ERROR` |
+| Failed Payout due to reversal from recipient channel | Send valid Create Payout request with a bank channel, and account\_number: 654321 | Payout status will be `SUCCEEDED` then `REVERSED` within 5 minutes |

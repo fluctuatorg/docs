@@ -1,0 +1,7 @@
+business_id,masked_card_number,card_expiry_month,card_expiry_year,reference_id,status,error_code,error_message
+Xendit business id. Will be provided even if it's not provided in the input.,Masked card number. Echoed back for convenience,Card expiry month. Echoed back for convenience,Card expiry year. Echoed back for convenience,The same reference_id as the input.,Will always be FAILED in this error file.,Error code identifying the problem when migrating the token.,Human-readable error.
+5e61664b3dba955c203d232e,40000000XXXX1092,02,2028,ref-id-3,FAILED,INVALID_CARD,Please input a valid card data
+5e61664b3dba955c203d232e,40000000XXXX1091,02,2028,ref-id,FAILED,EXTERNAL_ID_ALREADY_USED_ERROR,External ID for tokenization is already used
+5e61664b3dba955c203d232e,40000000XXXX1091,02,2028,,FAILED,MISSING_DATA,Columns reference_id are required
+5e61664b3dba955c203d232e,40000000XXXX1091,,,ref-id-4,FAILED,MISSING_DATA,"Columns card_expiry_month,card_expiry_year are required"
+abcdefabcdefabcdefabcdef,40000000XXXX1091,02,2028,ref-id-5,FAILED,BUSINESS_NOT_FOUND,Business not found

@@ -1,0 +1,70 @@
+---
+title: "Philippines"
+---
+
+| Payout Rail | InstaPay | PESONet |
+| --- | --- | --- |
+| Supported Currencies | PHP | PHP |
+| Estimated Time of Arrival | 15 minutes | Same day |
+| Cut-off Time | N/A | 14:00 GMT+8 |
+| Transaction Limit | 50,000 | Unlimited |
+| Description Support | No | No |
+| Supported Use Case | Payout, Cross Border Payout, Payout Link | Payout, Cross Border Payout, Payout Link |
+
+## Channel codes
+
+Learn the different payout destinations that we support along with its destination-specific information in the table below:
+
+<iframe src="https://airtable.com/embed/appYc7UnQq5CmKe0G/shrn3a47iSWGMnUez?viewControls=on" title="" className="w-full rounded-xl" height="533"></iframe>
+
+## Required Values for Cross-Border Payouts
+
+As a prerequisite to creating a Cross-Border Payout, you are required to send us the ultimate sender and recipient’s information. Learn the required information for the region to start sending payouts:
+
+### Sender
+
+| Field Parameter | Type | Description |
+| --- | --- | --- |
+| `first_name` | `INDIVIDUAL` | First name of sender |
+| `last_name` | `INDIVIDUAL` | Last name of sender |
+| `business_name` | `BUSINESS` | Full registered name of sender |
+
+### Recipient
+
+| Field Parameter | Type | Description |
+| --- | --- | --- |
+| `first_name` | `INDIVIDUAL` | First name of recipient |
+| `last_name` | `INDIVIDUAL` | Last name of recipient |
+| `business_name` | `BUSINESS` | Full registered name of recipient |
+| `company` | Any | Channel code of the recipient’s account |
+| `account_number` | Any | Account number of the recipient’s account detail |
+| `account_holder_name` | Any | Account holder name of the recipient’s account detail |
+| `address` | Any | Address of recipient |
+
+## Payout Identifier
+
+When creating a payout, you can also include a unique identifier (e.g. Order ID, your business name, etc.) in the `description` field. If your recipient's bank supports it, they'll see this in their transaction history. Otherwise, they’ll see Xendit’s sender name. Note that character limits vary by bank, so keep your identifier short.
+
+| Destination Channel | Amount | Max. Characters |
+| --- | --- | --- |
+| `PH_UBP` | Any amount | 50 characters |
+| Other banks | Any amount | Description may not be supported |
+
+## Recipient Interface
+
+### Bank Channels
+
+See below for examples of what is shown in your recipient’s bank statement. If supported, the bank statement will display Xendit as sender and the `description` you input.
+
+| Channel | Sample of line on bank statement |
+| --- | --- |
+| `PH_GCASH` | You have received GCash from xendit-fds |
+| `PH_BPI` | PARTNER Transfer FROM:XENDIT PHILIPPINES INC |
+| `PH_BDO` | 00083650008365 9 IBTD 801695801695 |
+| `PH_SEC` | ONLINE TRANSFER |
+
+### E-Wallet Channels
+
+See below for examples of what is shown in your recipient's e-wallet apps. If supported, the app will display Xendit as the sender and the `description` you input.
+
+![](/images/doc360/image_129_.png)

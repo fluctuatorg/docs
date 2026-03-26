@@ -1,0 +1,125 @@
+---
+title: "Transactions report"
+---
+
+The Transactions report provides detailed insights into all transaction activities within Xendit, facilitating effective monitoring and management of financial operations.
+
+- Monitor and Retrieve Data: Track detailed information on the status of transactions, whether they are successful, failed, or refunded.
+- Comprehensive Reporting: Each transaction is displayed with all key information such as fees and taxes on a single line, simplifying reconciliation and reporting.
+
+The transaction report includes:
+
+- Payments, Incoming Transfers, Top-ups, Remittance payments: Incoming transactions appear on the Transactions report once the money has been successfully paid to you, even if they have not yet settled.
+- Disbursements, Outgoing Transfers, Withdrawals, Remittance payouts: Outgoing transactions are shown on the Transactions report once the transaction has been successfully created. When these transactions are successfully debited from your balance, they will also be displayed on the Balances page and report.
+
+## Download Transactions Reports
+
+- On-Demand export: Download the Transactions Report directly from your dashboard [Transactions](https://dashboard.xendit.co/transactions-new) page on the Transaction tab.
+- Scheduled Delivery: [Schedule automated report](/reports/scheduling-reports) deliveries to your email or SFTP servers, ensuring you receive up-to-date information without manual effort.
+- Via API: Automate report generation and export via the [report endpoint](https://developers.xendit.co/api-reference/#report-object).
+
+### Available Columns (Report version 2)
+
+| Field name | Description |
+| --- | --- |
+| Status | The status of the transaction.  Available statuses:   - PENDING: The transaction is still pending to be processed. This refers to money-out transactions when the amount is still on hold. - SUCCESS: The transaction is successfully sent for money-out or has already arrived for money-in. - FAILED: The transaction failed to send or receive. - VOIDED: The money-in transaction is voided by the customer. - REVERSED: The transaction is reversed by Xendit. |
+| Type | The type of the transaction.  Available types:   - ADJUSTMENT\_ADD: An adjustment transaction that adds to the balance. - ADJUSTMENT\_DEDUCT: An adjustment transaction that deducts from the balance. - BNPL\_PARTNER\_SETTLEMENT\_CREDIT: Buy Now Pay Later partner settlement credit transaction. - BNPL\_PARTNER\_SETTLEMENT\_DEBIT: Buy Now Pay Later partner settlement debit transaction. - CASHBACK\_FEE: Cashback fee transaction. - CASHBACK\_VAT: Cashback VAT transaction. - CHARGEBACK: A chargeback transaction for disputed charges. - CONVERSION: Balance conversion transactions between different currencies. - DISBURSEMENT: The disbursement of money-out transaction. - FOREX\_DEDUCTION: Foreign exchange deduction transaction. - FOREX\_DEPOSIT: Foreign exchange deposit transaction. - IN\_PERSON\_PAYMENT: In-person payment transaction. - LOAN\_REPAYMENT: Loan repayment transaction. - OTHER: Other transaction types not covered by specific categories. - PAYMENT: The payment that includes all variation of money-in transaction. - REFUND: A refund transaction created to refund amount from money-in transaction. - REMITTANCE: A remittance transaction. - REMITTANCE\_COLLECTION\_PAYMENT: Remittance collection payment transaction. - REMITTANCE\_PAYOUT: The remittance pay-out transaction. - RESERVES\_HOLD: Transaction for holding reserves. - RESERVES\_RELEASE: Transaction for releasing held reserves. - TOPUP: A top-up transaction for adding money to account balance. - TRANSFER\_IN: Transfer into the account from another Xendit account. - TRANSFER\_OUT: Transfer out of the account to another Xendit account. - WITHDRAWAL: A withdrawal transaction for money-out operation |
+| Channel | The channel category of the transaction to identify the source of the transaction.  Available channels per type:   - DISBURSEMENT and REMITTANCE\_PAYOUT: BANK and CASH - PAYMENT: CARDS, CARDLESS\_CREDIT, DIRECT\_DEBIT, EWALLET, PAYLATER, QR\_CODE, RETAIL\_OUTLET, VIRTUAL\_ACCOUNT - TRANSFER: XENPLATFORM |
+| Channel Name | The channel used to identify the source of the transaction. |
+| Account Number | Account number field is only valid for the following products:   - Receiver's Bank Account Number: Disbursement, Batch Disbursement, Remittance Payout, Remittance, Remittance Collection - Sender's Bank Account Number: Virtual Account Payment, Direct Bank Transfer - Sender's eWallet Account Number: eWallet Payment (only for tokenization) |
+| Currency | Transaction currency |
+| Amount | Nominal amount for the transaction. |
+| Total Fee | Amount of the Xendit fee for this transaction. |
+| Total VAT | Amount of the Value Added Tax (VAT) for this transaction. |
+| Net Amount | The net amount of the transaction after it is deducted by fees and VAT. |
+| Reference | The reference of the transaction.  On some products, the term reference is the same as external\_id. This is the ID that you generate and can be used for reconciliation. |
+| Transaction ID | Unique transaction identifier |
+| Invoice ID | The invoice ID (if applicable) |
+| Batch ID | The Batch ID for Batch Disbursements |
+| Product ID | Xendit generated ID sent to you via API callback/response:   - Credit Card: id - Virtual Account: id - eWallet: data.id (remove ewc\_ from callback value if present) - QR Code: data.id (remove qrpy\_ from callback value if present) - Direct Debit: id - Retail Outlets (OTC): payment\_id - PayLater: data.id (remove plc\_ from callback value if present) - Disbursements: data.id   For merchants using Payment API v3 endpoints, report Product ID corresponds to API callback/response payment\_id |
+| Payment Date | The date the end-user made the payment |
+| Timestamp - Created | The timestamp when the transaction is created. |
+| Timestamp - Updated | The timestamp when the transaction is updated. |
+| Estimated Settlement Time | Estimated settlement time for a particular transaction before settlement is completed. |
+| Actual Settlement Time | Estimated settlement time for a particular transaction before settlement is completed. |
+| Timezone | The timezone will always be +0000 UTC when the report is generated via API. When exported from the dashboard, the report will use the user's configured timezone. |
+| Description | The description of the transaction. |
+| Channel Reference | The reference that is generated by our channel partner. This can be used to reconcile data between your side, Xendit, and our partner:  payment\_channel\_transaction\_id: Direct Debit   - bank\_reference: Disbursement, Batch Disbursement, Remittance Payout, Remittance, Remittance Collection |
+| Settlement Status | Settlement status of a transaction:   - Pending: Transaction amount has not been settled to the merchant's balance. - Settled: Transaction has been settled to the merchant's balance. - Early settled: Transaction has been settled to the merchant's balance via early settlement. - Empty (Failed Disbursements & Chargeback Deduction) |
+
+### Additional columns
+
+When exporting a report, you can include additional columns for more information:
+
+| Field name | Description |
+| --- | --- |
+| Is Switcher Payment | This is only applicable for Virtual Account or Cards transactions. |
+| Remittance Collection VA ID | The ID of Remittance Collection VA. This is only applicable for Remittance Collection transactions. |
+| Batch Disbursement ID | The ID of Batch Disbursement. This is only available for disbursement that’s created using the Batch Disbursement feature. |
+| Batch Disbursement Reference | The Reference of Batch Disbursement. This is only available for disbursement that’s created using the Batch Disbursement feature. |
+| Remittance ID | The ID of Remittance. This is only applicable for remittance transactions. |
+| Plan ID | Xendit unique ID to identify a subscriptions plan. Returned on the create plan API response. This is only available for subscriptions payment. |
+| Cycle ID | Xendit unique ID to identify a cycle of subscriptions to refer one specific instance of subscriptions plan's action. Cycle object is generated from the subscriptions plan object where the subscriptions behavior is defined. This is only available for subscriptions payment. |
+| Transaction Fee Deduction Type | An identifier whether the fee of this transaction is DIRECT or INDIRECT. |
+| Transaction Fee | Amount of the payment fee for this transaction |
+| Transaction VAT | Amount of payment VAT related to transaction fee. |
+| Xendit WHT | Amount of withholding tax retained by Xendit for this transaction. |
+| Early Settlement Fee Deduction Type | An identifier whether the early settlement fee of this transaction is DIRECT or INDIRECT. |
+| Early Settlement Fee | Amount of the early settlement fee for this transaction. |
+| Early Settlement VAT | Amount of the early settlement VAT for this transaction. |
+| Legacy Callback ID | The ID of legacy callback. This is only applicable for VA transactions. |
+| Account Name | Recipient Account holder name inputted in the Disbursement or Payout request. |
+| Transaction Label | Additional identifier of a transaction. Available value:  Shopee: E-Wallet or QR |
+| Transfer Remark | A remark or a note that is inputted by the payer when they are about to make a payment. |
+| Net Amount Currency | Currency used for the net amount after fees. This reflects to which balance currency the transaction is settled. |
+| Converted Currency | Currency that the transaction amount is converted into when FX conversion happens. |
+| Converted Amount | Amount after currency conversion, expressed in the converted currency. |
+| Settlement Currency | Expected currency used to settle funds to or from your account for the transaction. Available for unsettled transactions. |
+| Failure reason | Payout failure reason  *Only available via on-demand report* |
+| Payment Request ID | ID of the payment request you can find in the callback of your payment request (v2 and v3). |
+| Capture ID | Capture ID from payment transaction using v3 endpoints. |
+| Reusable Payment Link ID | ID of Reusable Payment Link |
+| Payment Session ID | ID of Payment session |
+| Metadata | Metadata from payment transaction using v3 endpoints. |
+| Forex Rate | Forex rate applicable to the transaction *Only available via on-demand report* |
+| Destination Amount | Destination amount for overseas withdrawals *Only available via on-demand report* |
+| Destination currency | Destination currency for overseas withdrawals *Only available via on-demand report* |
+
+### Transactions report versions
+
+Below is a table detailing different versions of the Transactions report. While you have the option to select from three versions depending on your business needs, it is recommended to use the latest version to ensure you are accessing the most current features and data.
+
+View transaction report versions comparison
+
+| Column | Ver. 0 | Ver. 1 | Ver. 2 |
+| --- | --- | --- | --- |
+| Status | ✅ | ✅ | ✅ |
+| Type | ✅ | ✅ | ✅ |
+| Channel | ✅ | ✅ | ✅ |
+| Channel Name | ✅ | ✅ | ✅ |
+| Account Number | ✅ | ✅ | ✅ |
+| Currency | ✅ | ✅ | ✅ |
+| Amount | ✅ | ✅ | ✅ |
+| Fee | ✅ | ✅ | ❌ |
+| VAT | ✅ | ✅ | ❌ |
+| 3rd Party WHT | ✅ | ✅ | ❌ |
+| Xendit WHT | ✅ | ✅ | ❌ |
+| Net Amount | ✅ | ✅ | ✅ |
+| Reference | ✅ | ✅ | ✅ |
+| Transaction ID | ✅ | ✅ | ✅ |
+| Invoice ID | ✅ | ✅ | ✅ |
+| Batch ID | ✅ | ✅ | ✅ |
+| Payment ID | ✅ | ✅ | ❌ |
+| Payment Date | ✅ | ✅ | ✅ |
+| Timestamp - Created | ✅ | ✅ | ✅ |
+| Timestamp - Updated | ✅ | ✅ | ✅ |
+| Timestamp - Settled | ✅ | ✅ | ❌ |
+| Timezone | ✅ | ✅ | ✅ |
+| Description | ✅ | ✅ | ✅ |
+| Channel Reference | ✅ | ✅ | ✅ |
+| Settlement Status | ❌ | ✅ | ✅ |
+| Actual Settlement Time | ❌ | ✅ | ✅ |
+| Estimated Settlement Time | ❌ | ✅ | ✅ |
+| Product ID | ❌ | ❌ | ✅ |
+| Total Fee | ❌ | ❌ | ✅ |
+| Total VAT | ❌ | ❌ | ✅ |

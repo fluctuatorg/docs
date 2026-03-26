@@ -1,0 +1,78 @@
+---
+title: "Scheduling reports"
+---
+
+The Reporting Schedule feature allows you to schedule your transaction report or balance history report to be delivered to your desired destination—either via email or SFTP server.
+
+## How to set up a reporting schedule
+
+1. Navigate to [Reporting](https://dashboard.xendit.co/reporting)
+2. Click on Add Schedule
+3. Fill in the required fields in the pop-up:
+
+   1. Schedule Name: A name to identify your schedule. This name will appear in the email subject you receive.
+   2. Report Type: The type of report you want to schedule. Currently, you can schedule transaction reports and balance history reports from the transaction and balance tabs. Only XenPlatform Master Accounts can obtain consolidated reports.
+   3. Filter By (only applicable to Transaction Reports):
+
+      1. Create Time: When the transaction was created, in pending settlement or pending status.
+      2. Settlement Time: When the transaction moves to completed from pending settlement or pending status.
+      3. Update Time: When the transaction was last updated.
+   4. Daily Reporting Hour: The hour when the report will be delivered to your chosen destination.
+   5. Report Destination: Your preferred report delivery option (email or SFTP).
+
+After successfully creating the report schedule, the reports will be delivered to you at the configured time and destination starting the next day.
+
+## How to set up a new SFTP configuration
+
+This automated process ensures you can easily add your SFTP server as a report delivery destination. We perform several checks to facilitate self-configuration.
+
+To set up a new SFTP configuration:
+
+1. Navigate to [Reporting](https://dashboard.xendit.co/reporting)
+2. Click on Add Schedule
+3. In the Add Schedule modal, select SFTP Server then click on Add New SFTP
+
+Follow these two steps in the automatic SFTP validation:
+
+#### Step 1: Register and Whitelist IP Address
+
+Provide the following information:
+
+- Whitelist Xendit IP Addresses on Your Server: A list of IP addresses used by Xendit’s system to send out reports. This step is only necessary if you have enabled IP whitelisting on your SFTP server.
+- Your IP Address or Website Domain: The IP address or domain of your SFTP server where you want Xendit to deliver the reports. Examples include an IP address like 127.0.0.1 or a domain like [mangoshop.com](http://mangoshop.com).
+- Your Port Number: The default port is 22. If you use a different port number, specify it here.
+- Authentication Type: Choose between password or public key authentication methods based on your preference for accessing your SFTP server.
+
+After clicking Next, we will attempt to reach your IP address from our system. If the ping fails, it may indicate that you have enabled IP whitelisting without whitelisting our IP addresses. Please request your team to whitelist Xendit’s IP addresses to proceed.
+
+#### Step 2: Authenticate
+
+Provide the following details:
+
+- Your IP Address or Website Domain: This is carried over from the previous step and cannot be edited here.
+- Your Server Username: The username for your SFTP server account. You'll need to create this account to allow us to deliver the report to your server.
+- Your Server Password/Public Key: Depending on the authentication type selected earlier:
+
+  - If password authentication, enter the account password.
+  - If public key authentication, whitelist the provided public key to enable login using this username and private key signature.
+- SFTP Path: The folder path where you want us to send the report. If left blank, the root folder will be used. Ensure that the folder exists and that the account provided has write permissions to this path.
+
+At this stage, we perform three checks:
+
+1. Valid Credentials Check
+2. Existence of SFTP Path Folder
+3. Permission to Write to SFTP Folder
+
+If any of these checks fail, you will remain on the Step 2: Authenticate page to correct the information.
+
+Once you have successfully added the SFTP configuration, we can log in to your SFTP server with the provided account and deliver files to the specified folder. You can then proceed to create a schedule to deliver reports to this SFTP destination.
+
+## View your scheduled reports history
+
+To access the Reporting History, follow these steps:
+
+1. Navigate to the Xendit dashboard [Reporting Schedules](https://dashboard.xendit.co/reporting/schedules) page.
+2. Open the Reporting History tab.
+3. Here, you can view the status of all reports and have the option to resend them as needed.
+
+This section allows you to manage and review the delivery status of your scheduled reports efficiently.

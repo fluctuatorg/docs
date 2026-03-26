@@ -1,0 +1,106 @@
+---
+title: "Simulate card scenarios (test cards)"
+description: "Test card numbers, use test cards to test the integration"
+---
+
+To facilitate testing of card transactions, we provide a range of test card numbers. These numbers vary based on the country of operation and your live connection. For specific guidance on which test card numbers to use for your integration, please contact Xendit Customer Support.
+
+## Test card numbers
+
+The following tables detail the available test card numbers, their brands, applicable countries, and simulated scenarios.
+
+For any card, use any CVV and make sure the expiry date is in the future.
+
+For example:
+
+Card number: 4000000000002503
+
+CVV: 123
+
+Expiry date: 02/30
+
+| Card Number | Brand | Scenario |
+| --- | --- | --- |
+| 4000000000002503 | VISA | 3DS Challenge, authentication is successful if OTP is correct. |
+| 4000000000001000 | VISA | 3DS Frictionless, authentication is successful. |
+| 5200000000002151 | MASTERCARD | 3DS Challenge, authentication is successful if OTP is correct. |
+| 5200000000001005 | MASTERCARD | 3DS Frictionless, authentication is successful. |
+| 4440000009900010 | VISA | 3DS Challenge, see list of simulated options on the next table. |
+| 4440000042200014 | VISA | 3DS Frictionless, authentication is successful. |
+| 5123450000000008 | MASTERCARD | 3DS Challenge, see list of simulated options on the next table. |
+| 5123456789012346 | MASTERCARD | 3DS Frictionless, authentication is successful. |
+| 4200350000000801 | VISA | 3DS Challenge, authentication is successful if OTP is correct.  For frictionless flow, use amount < THB 20. |
+| 5413530000000501 | MASTERCARD | 3DS Challenge, authentication is successful if OTP is correct.  For frictionless flow, use amount < THB 20. |
+| 4000000000002503 | VISA | Failing transaction |
+| 5200000000002151 | MASTERCARD | Failing transaction |
+| 3337000000000008 | JCB | 3DS Challenge |
+| 378282246310005 | AMEX | 3DS Frictionless, authentication successful (use a 4 digit CVN) |
+| 340000000002708 | AMEX | 3DS Frictionless, authentication successful (use a 4 digit CVN) |
+| 340000000002534 | AMEX | 3DS Challenge (use a 4 digit CVN) |
+
+## Simulating failed charge payments by amount
+
+You can simulate specific failed charge payment scenarios using these amounts. Simulated numbers are applicable for all countries except [Vietnam](/accept-payments/integration-guide/card-payments-via-api/cards-simulate-card-scenarios#vietnam-failure-simulation).
+
+| Amount | Simulated code |
+| --- | --- |
+| 10051 | EXPIRED\_CARD |
+| 10052 | SUSPECTED\_FRAUDULENT |
+| 10053 | DECLINED\_BY\_PROCESSOR |
+| 10054 | INSUFFICIENT\_BALANCE |
+| 10055 | STOLEN\_CARD |
+| 10056 | INACTIVE\_OR\_UNAUTHORIZED\_CARD |
+| 10057 | PROCESSOR\_ERROR |
+| 10058 | INVALID\_CVV |
+| 10059 | DECLINED\_BY\_ISSUER |
+
+## Simulate a 3DS challenge authentication flow result
+
+To test different outcomes for 3DS challenge flows:
+
+1. Create a payment request with `should_authenticate = true`.
+2. Navigate to the URL provided by `payer_authentication_url`.
+3. On the MPGS ACS Simulator page, select one of the following options:
+
+| Authentication option | Status |
+| --- | --- |
+| AUTHENTICATED | SUCCESS |
+| UNAUTHENTICATED | FAILED |
+| CANCELLED\_AUTHENTICATION | FAILED |
+| AUTHENTICATION\_NOT\_AVAILABLE | FAILED |
+| AUTHENTICATION\_REJECTED | FAILED |
+| AUTHENTICATION\_SERVER\_ERROR | FAILED |
+| API\_GW\_ASM\_POLICY\_ERROR | FAILED |
+
+## Simulate a FAILED Charge Payment
+
+| Amount | Simulated code | Scenario |
+| --- | --- | --- |
+| 10.05 | DECLINED\_BY\_ISSUER | 05 - Do Not Honor |
+| 10.14 | INVALID\_CARD | 14 - Invalid card number |
+| 10.30 | PROCESSOR\_ERROR | 30 - Format Error |
+| 10.51 | INSUFFICIENT\_BALANCE | 51 - Insufficient Balance |
+| 10.65 | DECLINED\_BY\_ISSUER | 65 - Exceeds Withdrawal. Only applicable for VISA Cards only. |
+
+## BCA payment gateway test cards
+
+For testing BCA payment gateway integrations:
+
+| Card Number | Brand | Scenario |
+| --- | --- | --- |
+| 1889800000000171 | BCA | 3DS Challenge, authentication is successful if OTP is correct. |
+
+Note: BCA does not support the testing of failing transactions.
+
+## Vietnam failure simulation
+
+| Amount | Error code | Description |
+| --- | --- | --- |
+| VND 405400 | EXPIRED\_CARD | The card you are trying to capture has expired. |
+| VND 405900 | SUSPECTED\_FRAUDULENT | The card you are trying to capture has been declined by the issuing bank due to potential fraud suspicion. |
+| VND 405100 | INSUFFICIENT\_BALANCE | The card you are trying to capture does not have enough balance to complete the capture. |
+| VND 400700 | STOLEN\_CARD | The card you are trying to capture has been marked as stolen. |
+| VND 405500 | INACTIVE\_OR\_UNAUTHORIZED\_CARD | The card you are trying to capture is inactive or unauthorized to perform the transaction. |
+| VND 402500 | PROCESSOR\_ERROR | The charge failed because there's an integration issue between the card processor and the bank. |
+| VND 403900 | INVALID\_CVV | The card you are trying to capture is declined due to unmatched CVV |
+| VND 400300 | DECLINED\_BY\_ISSUER | The card you are trying to capture is declined by the issuing bank |

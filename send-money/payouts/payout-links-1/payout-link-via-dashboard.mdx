@@ -1,0 +1,36 @@
+---
+title: "Payout Link via Dashboard"
+---
+
+> Only available out-of-the-box in Indonesia
+>
+> If you are not in Indonesia but are interested in Payout links via dashboard, please contact help@xendit.co for activation.
+
+## Create a Payout Link via Xendit Dashboard
+
+Follow these steps to create a Payout Link via Xendit dashboard:
+
+1. Log in to your Xendit dashboard
+2. Go to Send Payments > Payout Links
+3. Click Create Payout Link and use the information below as your guide
+
+Important: To create a payout link via dashboard, you should have at least `Edit` permission.
+
+| Field | Description | Note |
+| --- | --- | --- |
+| External ID | Unique identifier for your created Payout Link | Alphanumeric characters supported (no space allowed). Ensure your external ID is unique to allow easy reconciliation. |
+| Amount | The payout amount | Numeric characters supported |
+| Email | Email address of the payout link recipient | Used as the recipient of the Payout Link URL along with the password to claim |
+
+After you create a payout link, an email will be generated and sent to the recipient's email. This email contains instructions, a secret password, and a URL to the Payout Link UI.
+
+![](https://archive.docs.xendit.co/_next/image?url=https%3A%2F%2Fstatic.xendit.co%2Fxendit-docs%2Fa9125230-562d-4205-9c43-c427d85f3ee6%2F2021%2F7%2F23%2F38257320-3b1e-427d-8afa-75aec0cac809%2FCreate%2520Payout.gif&w=1200&q=75)
+
+### Track your Payout Link
+
+After you’ve created the Payout Link successfully, all you need to do is wait for your recipient to claim it, as we’ll send the link directly on your behalf. When your recipient has submitted their account detail and verified the claim using a secret key, the payout will be initiated.
+
+Track your Payout Link’s status through the [Payout Link page](https://dashboard.xendit.co/payouts). As for your recipient, they can track the payout progress directly in the payout link UI.
+
+- When the payout is completed, we will send a receipt notification to the recipient’s email
+- When the payout is failed, you have to recreate the new payout link for your recipient and inform them to try again. Payout link can fail due to insufficient balance on your Xendit account or destination account is invalid. See [Payout Lifecycle](/send-money/payout-status-lifecycle) for more detail.

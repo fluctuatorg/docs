@@ -1,0 +1,119 @@
+---
+title: "Authorize and capture"
+---
+
+Card payment capturing is the process of retrieving the money from a customers’ bank account for a purchase. By default, Xendit captures payments automatically. However, you can choose to capture payments manually or schedule them for a later time.
+
+## Reasons to perform (or delay) a capture
+
+- Physical Goods: Capture a payment only after shipping the product to the customer.
+- Services: For services that are rendered over time, you might want to capture payment only after the service has been completed. This could include things like consulting projects, home renovations, or ongoing subscriptions.
+- Custom Orders: If you sell custom-made products, you may want to capture payment only after the item has been produced and is ready to be shipped.
+- High-Value Items: For expensive items, you may want to delay capture to give yourself time to verify the customer's payment information and reduce the risk of fraud.
+- Pre-Orders: If you offer pre-orders for products that are not yet in stock, you can delay capture until the product is available for shipment.
+- Reservations: For businesses that take reservations, such as restaurants or hotels, you can authorize the card at the time of booking but only capture the payment when the customer arrives.
+
+To understand captures better, the authorization and capture flow are explained below.
+
+## Authorization:
+
+1. The customer initiates a purchase.
+2. You send a request to Xendit to authorize the transaction. The authorization flow is similar to a one-off transaction, except you define the `capture_method` as `MANUAL` when creating the payment
+
+1. Initiate the payment request
+
+Request - POST `/v3/payment_requests`
+
+```json
+{
+  "reference_id": "{{$randomUUID}}",
+  "type": "PAY",
+  "country": "ID",
+  "currency": "IDR",
+  "request_amount": 10000,
+  "capture_method": "MANUAL", // This field is defining the manual capture
+  "channel_code": "CARDS",
+  "channel_properties": {
+    "card_details": {
+            "card_number": "4000000000001091",
+            "cardholder_first_name": "Shopper",
+            "cardholder_last_name": "Name",
+            "cardholder_email": "shopper@sample.com",
+            "expiry_month": "12",
+            "expiry_year": "2029"
+        },
+    "failure_return_url": "https://xendit.co/failure",
+    "success_return_url": "https://xendit.co/success",
+    "statement_descriptor": "Goods"
+  },
+  "description": "Description examples",
+  "metadata": {
+    "metametadata": "metametametadata"
+  }
+}
+```
+
+2. Retrieve the payment ID
+
+   To retrieve the payment ID, follow how to [retrieve authorization data](/accept-payments/integration-guide/card-payments-via-api/retrieving-authorization-and-decline-details) for card payments.
+3. Store the payment ID and capture the transaction
+
+   The authorization data will contain the capture method:
+
+   ```json
+   {
+       "payment_id": "py-YOUR_UNIQUE_PAYMENT_ID",
+       "business_id": "YOUR_BUSINESS_ID",
+       "reference_id": "YOUR_REFERENCE",
+       "payment_request_id": "pr-UNIQUE_PAYMENT_REQUEST_ID",
+       "type": "PAY",
+       "country": "ID",
+       "currency": "IDR",
+       "request_amount": 10000,
+       "capture_method": "MANUAL", // Indicates a manual capture
+       "channel_code": "CARDS",
+       "status": "AUTHORIZED"
+   }
+   ```
+
+## Capture request
+
+To capture the transaction, make a POST request to `/v3/payments/YOUR_PAYMENT_ID/capture`
+
+```json
+{
+ // Make sure the amount is lower than or equal to the amount authorized
+ "capture_amount": 10000, 
+ "final_capture": true
+}
+```
+
+In case of a succesful requet there will be `captures` object in the response
+
+```json
+{
+    "payment_id": "py-YOUR_PAYMENT_ID",
+    "business_id": "YOUR_BUSINESS_ID",
+    "reference_id": "YOUR_REFERENCE_ID",
+    "payment_request_id": "pr-YOUR_PAYMENT_REQUEST_ID",
+    "type": "PAY",
+    "country": "ID",
+    "currency": "IDR",
+    "request_amount": 10000,
+    "capture_method": "MANUAL",
+    "channel_code": "CARDS",
+    "status": "SUCCEEDED",
+    // The following block will show the completed capture requests
+    "captures": [
+        {
+            "capture_id": "cptr-UNIQUE_CAPTURE_ID",
+            "capture_timestamp": "2025-09-12T06:29:50.328Z",
+            "capture_amount": 10000
+        }
+    ],
+}
+```
+
+> Multiple partial captures
+>
+> Xendit does not yet support multiple partial captures, reach out to support in case you have a use case or query regarding multiple partial captures.
