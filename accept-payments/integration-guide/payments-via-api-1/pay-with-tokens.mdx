@@ -2,13 +2,35 @@
 title: "Pay with tokens"
 ---
 
+import CreatePrPayWithToken from '/snippets/payments-api/create-pr-pay-with-token.mdx'
+import PaymentRequestWebhookPayAndSave from '/snippets/payments-api/payment-request-webhook-pay-and-save.mdx'
+
 With a previously saved payment token, you can create a payment request that requires less authentication actions from your user.
 
 In this article, we will walk through a basic integration with our payments API for payments using a previously saved payment token under the `PAY` flow type of `/payment_requests`. Before you start, be sure to complete your integration environment set up.
 
 ## Integration Flow
 
-![](/images/doc360/pay_w_token.png)
+```mermaid
+sequenceDiagram
+  actor EndUser as End User
+  participant Client as Client App
+  participant Server as Client Server
+  participant XenditServer as Xendit Server
+  Client ->> EndUser: Initiate checkout
+  EndUser ->> Client: Picks previously saved <br> payment channel
+  Client ->> Client: Collects required data (channel properties)
+  Client ->> Server: Sends data
+  Server ->> XenditServer: Create Payment Request <br> with a payment token
+  XenditServer ->> Server: Return Payment Request
+  Server ->> Client: Informs required action
+  Client ->> EndUser: Orchestrate required action
+  EndUser ->> Client: Completes payment step
+  Client ->> Client: Handle end user wait time
+  XenditServer ->> Server: Send payment webhook
+  Server ->> Client: Informs result
+  Client ->> EndUser: Present results
+```
 
 ## How to integrate
 
@@ -20,7 +42,7 @@ In this article, we will walk through a basic integration with our payments API 
 3. Create a payment request   
    Construct an [API request body](https://xendit-docs.document360.io/apidocs/create-payment-request) for `PAY` with token and with information required by your selected channel. In this payment flow, you do not need to pass in `channel_code` or `customer_id` since they are already saved in the token.
 
-   &#123;&#123;snippet.create\_pr\_paywtoken&#125;&#125;
+   <CreatePrPayWithToken />
 
    Additional features can be configured if the payment channel allows it. For example, you will be able to set statement descriptions if the channel properties fields accepts a `statement_descriptor` parameter.
 4. Handle the required actions
@@ -34,7 +56,7 @@ In this article, we will walk through a basic integration with our payments API 
 5. Receive a payment event webhook for payment confirmation  
    Once the end user has completed their payment authentication step and the payment method provider notifies Xendit of an update, Xendit will proceed to send a webhook to the webhook url you configured in your Xendit dashboard settings page.
 
-   &#123;&#123;snippet.payment\_request\_web\_hook\_token&#125;&#125;
+   <PaymentRequestWebhookPayAndSave />
 6. Display payment status to user
 
    With the webhook status, you should be able to complete the payment journey for the end user by successfully completing the transaction or directing them back for a retry if it had failed.   
@@ -45,7 +67,14 @@ In this article, we will walk through a basic integration with our payments API 
 
 #### User action required
 
-![](/images/doc360/Payment_API_v3-PR_w_PT.drawio.png)
+```mermaid
+stateDiagram-v2
+    [*] --> REQUIRES_ACTION: Request created
+    REQUIRES_ACTION --> SUCCEEDED: User completes required action
+    REQUIRES_ACTION --> FAILED: Payment fails
+    REQUIRES_ACTION --> CANCELED: Merchant cancels request
+    REQUIRES_ACTION --> EXPIRED: Request reaches expiry
+```
 
 Here’s the status lifecycle for a payment request that requires user action:
 
@@ -61,7 +90,14 @@ Here’s the status lifecycle for a payment request that requires user action:
 
 #### No action required
 
-![](/images/doc360/Payment_API_v3-PR_w_PT_auto_debit.drawio.png)
+```mermaid
+stateDiagram-v2
+    [*] --> SUCCEEDED: Immediate success
+    [*] --> FAILED: Immediate failure
+    [*] --> PENDING: Waiting for partner result
+    PENDING --> SUCCEEDED: payment.capture webhook
+    PENDING --> FAILED: payment.failure webhook
+```
 
 Here’s the status lifecycle for a payment request that has no action required:
 

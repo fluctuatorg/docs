@@ -1,12 +1,19 @@
 ---
-title: "Overview"
+title: "Subscriptions overview"
+sidebarTitle: "Subscriptions overview"
 ---
 
 Subscription is a solution for managing recurring payments using Xendit's scheduler. It offers an easy and flexible integration, allowing you to configure and automate recurring payment cycles based on your setup. By using the Subscriptions product, you eliminate the need to build your own scheduling system, including handling failed payment recovery. Xendit optimizes the success rate of payments through features designed specifically for subscription management.
 
 ## High level data objects
 
-![](/images/doc360/Untitled_diagram-2024-11-29-033229.png)
+```mermaid
+flowchart LR
+    Plan[Plan] -->|contains timing rules| Schedule[Schedule]
+    Plan -->|generates many| Cycle[Cycle]
+    Cycle -->|contains many| Attempt[Attempt]
+    Attempt -->|may include many| ActionID[action_id]
+```
 
 | Data object name | Description | Created by |
 | --- | --- | --- |
@@ -17,7 +24,24 @@ Subscription is a solution for managing recurring payments using Xendit's schedu
 
 ## Integration flow
 
-![](/images/doc360/Untitled_diagram-2024-11-29-051755.png)
+```mermaid
+sequenceDiagram
+    participant Merchant as Your system
+    participant Xendit
+    participant Customer
+
+    Merchant->>Xendit: Create plan (customer_id, schedule, config)
+    alt No payment_method_id
+        Xendit-->>Merchant: Plan REQUIRES_ACTION + action.url
+        Merchant-->>Customer: Redirect to action.url
+        Customer->>Xendit: Link payment method
+        Xendit-->>Merchant: recurring.plan_activation
+    else payment_method_id provided
+        Xendit-->>Merchant: Plan created in PENDING
+        Xendit-->>Merchant: recurring.plan.activated
+    end
+    Xendit-->>Merchant: Cycle webhooks (created, retrying, failed, succeeded)
+```
 
 Example of integration flow if you are about to set up Subscriptions payment for your end user
 
@@ -38,7 +62,14 @@ Example of integration flow if you are about to set up Subscriptions payment for
 
 ## Plan lifecycle
 
-![](/images/doc360/Untitled_diagram-2024-12-05-045031.png)
+```mermaid
+stateDiagram-v2
+    [*] --> REQUIRES_ACTION: No payment_method_id
+    [*] --> PENDING: payment_method_id provided
+    REQUIRES_ACTION --> ACTIVE: Customer links method and plan is activated
+    PENDING --> ACTIVE: recurring.plan.activated
+    ACTIVE --> INACTIVE: All cycles complete or manual deactivation
+```
 
 | Status | Description | Webhook event |
 | --- | --- | --- |
@@ -49,7 +80,15 @@ Example of integration flow if you are about to set up Subscriptions payment for
 
 ## Cycle lifecycle
 
-![](/images/doc360/Untitled_diagram-2024-12-08-125117.png)
+```mermaid
+stateDiagram-v2
+    [*] --> CREATED: Cycle generated
+    CREATED --> SUCCEEDED: Payment succeeds
+    CREATED --> RETRYING: Attempt fails and retry is configured
+    CREATED --> FAILED: Attempt fails with no retries left
+    RETRYING --> SUCCEEDED: Retry succeeds
+    RETRYING --> FAILED: All retries exhausted
+```
 
 | Status | Description | Webhook event |
 | --- | --- | --- |

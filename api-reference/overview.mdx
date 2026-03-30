@@ -1,0 +1,71 @@
+---
+title: "Quick Setup"
+description: "Get started with the Xendit API — authentication, base URL, and key concepts"
+---
+
+The Xendit API is organized around REST. It uses standard HTTP methods, returns JSON-encoded responses, and uses standard HTTP response codes to indicate success or failure.
+
+## Base URL
+
+All API requests are made to:
+
+```
+https://api.xendit.co
+```
+
+## Authentication
+
+Xendit uses [HTTP Basic Auth](https://en.wikipedia.org/wiki/Basic_access_authentication). Provide your API key as the **username** and leave the **password** empty.
+
+```bash
+curl https://api.xendit.co/balance \
+  -u xnd_development_your_api_key:
+```
+
+<Warning>
+  Never expose your secret API key in client-side code or public repositories. All API calls must be made from your server.
+</Warning>
+
+You can generate API keys from the [Xendit Dashboard](https://dashboard.xendit.co/settings/developers#api-keys). For details, see [Create an API key](/accept-payments/integration-setup/create-an-api-key).
+
+### Test and Live modes
+
+Xendit provides separate API keys for test and live environments:
+
+- **Test mode** keys start with `xnd_development_`
+- **Live mode** keys start with `xnd_production_`
+
+Use test mode keys during development to simulate transactions without moving real money.
+
+## API specs
+
+The Xendit API is documented across the following specs:
+
+| Spec | Description |
+|------|-------------|
+| **Payments** | Payment Requests, Refunds, Payment Tokens, Subscriptions, Payment Sessions |
+| **Payouts** | Payouts, Payout Links, Cross-Border Payouts |
+| **Balance & Transactions** | Account Balance, Transaction History, Reports |
+| **xenPlatform** | Sub-accounts, Transfers, Split Rules |
+| **Others** | Customers, Files, Bill Payments |
+
+## Request headers
+
+| Header | Description |
+|--------|-------------|
+| `Authorization` | Required. Basic Auth with your API key. |
+| `Content-Type` | `application/json` for request bodies. |
+| `Idempotency-Key` | Recommended for `POST` requests. Prevents duplicate operations. |
+| `for-user-id` | Required for xenPlatform — specifies the sub-account to act on behalf of. |
+| `api-version` | Optional. Pin a specific API version (e.g., `2022-07-31`). |
+
+## Response format
+
+All responses are JSON. Successful responses return `2xx` status codes. Error responses include an `error_code` and `message`:
+
+```json
+{
+  "error_code": "API_VALIDATION_ERROR",
+  "message": "The request body is invalid. Check the API reference for the correct schema."
+}
+```

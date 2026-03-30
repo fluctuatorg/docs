@@ -129,17 +129,18 @@ For each sub-account, split fees will be conveniently shown in their consolidate
 
 ---
 
-### FAQ
+## FAQ
 
-#### Why did my split payment fail even when the payment itself was successful?
+<AccordionGroup>
+  <Accordion title="Why did my split payment fail even when the payment itself was successful?">
+    When a payment succeeds, but only the split fee fails to be processed, then the amount settled will still remain in the balance of the account that receives the funds. There are several possibilities on why this happens:
 
-When a payment succeeds, but only the split fee fails to be processed, then the amount settled will still remain in the balance of the account that receives the funds. There are several possibilities on why this happens:
+    1. The amount that is split exceeds the remaining funds after deducting fees and VAT
+    2. The destination account cannot receive transfers
 
-1. The amount that is split exceeds the remaining funds after deducting fees and VAT
-2. The destination account cannot receive transfers
-
-To resolve this, you may reconcile and execute a [Transfer](/xenplatform/xenplatform-route-payments/transfer-balances).
-
-What happens to the split payment when the original payment is refunded?
-
-Upon issuing refunds, your split fees will *not* be returned to the source account automatically. It is advised to plan on how split fees are handled in case of refunds and chargebacks.
+    To resolve this, you may reconcile and execute a [Transfer](/xenplatform/xenplatform-route-payments/transfer-balances).
+  </Accordion>
+  <Accordion title="What happens to the split payment when the original payment is refunded?">
+    Upon issuing refunds, your split fees will *not* be returned to the source account automatically. It is advised to plan on how split fees are handled in case of refunds and chargebacks.
+  </Accordion>
+</AccordionGroup>

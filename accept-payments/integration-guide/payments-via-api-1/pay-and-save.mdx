@@ -2,13 +2,36 @@
 title: "Pay and save"
 ---
 
+import CreatePrPayAndSave from '/snippets/payments-api/create-pr-pay-and-save.mdx'
+import PaymentRequestWebhookPayAndSave from '/snippets/payments-api/payment-request-webhook-pay-and-save.mdx'
+
 Making a payment and saving the end user’s payment information at the same time is a simplified bundled flow we term as “Pay and Save”. This flow features collecting payment and saving payment information in one API call. This flow is often used by merchants with high number of repeat users and with strong brand trust for users to agree to saving their payment information.
 
 In this article, we will walk through a basic integration with our payments API for paying and saving payment information under the `PAY_AND_SAVE` flow type of `/payment_requests`. Before you start, be sure to complete your integration environment setup.
 
 ## Integration Flow
 
-![](/images/doc360/payandsave_1.png)
+```mermaid
+sequenceDiagram
+  actor EndUser as End User
+  participant Client as Client App
+  participant Server as Client Server
+  participant XenditServer as Xendit Server
+  Client ->> EndUser: Initiate checkout
+  EndUser ->> EndUser: Picks desired <br> payment channel
+  EndUser ->> Client: Agrees to save payment <br> information for future use
+  Client ->> Client: Collects required data (channel properties)
+  Client ->> Server: Sends data with user identifier
+  Server ->> XenditServer: Create Payment Request <br> with customer object
+  XenditServer ->> Server: Return Payment Request
+  Server ->> Client: Informs required action
+  Client ->> EndUser: Orchestrate required action
+  EndUser ->> Client: Completes authentication step
+  Client ->> Client: Handle end user wait time
+  XenditServer ->> Server: Send payment webhook <br> includes a payment token <br> if payment was successful
+  Server ->> Client: Informs Client App
+  Client ->> EndUser: Present results
+```
 
 ## How to integrate
 
@@ -20,7 +43,7 @@ In this article, we will walk through a basic integration with our payments API 
 3. Create a payment request   
    Construct an [API request body](https://xendit-docs.document360.io/apidocs/create-payment-request) for `PAY_AND_SAVE` with information required by your selected channel. In this payment flow, you would also need to pass in either a `customer_id` or a customer object as an identifier for the end user.
 
-   &#123;&#123;snippet.create\_pr\_payandsave&#125;&#125;
+   <CreatePrPayAndSave />
 
    Additional features can be configured if the payment channel allows it. For example, you will be able to set statement descriptions if the channel properties fields accepts an statement\_descriptor parameter.
 4. Handle the required actions
@@ -36,7 +59,7 @@ In this article, we will walk through a basic integration with our payments API 
      
    In `PAY_AND_SAVE` flow, a `payment_token_id` will be included in the webhook payment if the payment was successfully collected.
 
-   &#123;&#123;snippet.payment\_request\_web\_hook\_token&#125;&#125;
+   <PaymentRequestWebhookPayAndSave />
 6. Save the payment token for future use
 
    In your system, save the `payment_token_id` to the associated user. For future payments, you can pass the `payment_token_id` into payment requests for a more frictionless payment.
@@ -50,7 +73,14 @@ In this article, we will walk through a basic integration with our payments API 
 
 #### User action required
 
-![](/images/doc360/Untitled_Diagram-PAY_AND_SAVE.drawio.png)
+```mermaid
+stateDiagram-v2
+    [*] --> REQUIRES_ACTION: Request created
+    REQUIRES_ACTION --> SUCCEEDED: User completes required action
+    REQUIRES_ACTION --> FAILED: Payment fails
+    REQUIRES_ACTION --> CANCELED: Merchant cancels request
+    REQUIRES_ACTION --> EXPIRED: Request reaches expiry
+```
 
 Here’s the status lifecycle for a payment request that requires user action:
 
@@ -66,7 +96,14 @@ Here’s the status lifecycle for a payment request that requires user action:
 
 #### No action required
 
-![](/images/doc360/Untitled_Diagram-PAY_AND_SAVE_auto_debit.drawio.png)
+```mermaid
+stateDiagram-v2
+    [*] --> SUCCEEDED: Immediate success
+    [*] --> FAILED: Immediate failure
+    [*] --> PENDING: Waiting for partner result
+    PENDING --> SUCCEEDED: payment.capture webhook
+    PENDING --> FAILED: payment.failure webhook
+```
 
 Here’s the status lifecycle for a payment request that has no action required:
 

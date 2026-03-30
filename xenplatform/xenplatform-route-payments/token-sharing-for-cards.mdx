@@ -4,7 +4,19 @@ title: "Token sharing for cards"
 
 If you are integrating with our legacy [Cards Charge API](https://archive.developers.xendit.co/api-reference/#create-charge), you can also request to have Token Sharing enabled so that you can tokenize and create charges with different accounts, whether it’s the master account or one of your sub-accounts. Without this feature activated, only the account that tokenizes the card can create the charge.
 
-![](/images/doc360/xp-cards-token-sharing.drawio.png)
+```mermaid
+sequenceDiagram
+    participant Customer
+    participant AccountA as Tokenizing account (master or sub-account)
+    participant AccountB as Charging account (master or sub-account)
+    participant Xendit
+
+    Customer->>AccountA: Submit card details
+    AccountA->>Xendit: Create token (is_multiple_use=true)
+    Xendit-->>AccountA: Return credit_card_token_id
+    AccountB->>Xendit: Authenticate/charge with shared token
+    Xendit-->>AccountB: Charge result
+```
 
 xenPlatform Token Sharing Illustration
 

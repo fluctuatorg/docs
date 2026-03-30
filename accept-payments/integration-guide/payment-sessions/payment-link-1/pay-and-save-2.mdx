@@ -16,7 +16,41 @@ There are two main options for enabling the Pay and Save feature on Payment Sess
 
 ## How to integrate
 
-![](/images/doc360/Untitled_diagram-2025-11-04-151034.png)
+```mermaid
+sequenceDiagram
+    participant Customer
+    participant ClientApp as Client App
+    participant ClientServer as Client Server
+    participant XenditServer as Xendit Server
+    participant XenditPage as Xendit Hosted Page
+
+    %% Step 1 - Initiate Checkout
+    Customer ->> ClientApp: Initiates checkout for payment with save payment method allowed
+    ClientApp ->> ClientServer: Request to create Payment Session
+    ClientServer ->> XenditServer: POST /sessions (session_type = PAY and allow_save_payment_method = OPTIONAL or FORCED)
+    XenditServer -->> ClientServer: Returns payment_link_url
+    ClientServer -->> ClientApp: Send payment_link_url
+    ClientApp -->> Customer: Redirect to payment_link_url
+
+    %% Step 2 - Hosted Checkout
+    Customer ->> XenditPage: Opens Xendit-hosted checkout page
+    Customer ->> XenditPage: Enters payment details and confirms payment
+    XenditPage ->> XenditServer: Processes payment
+
+    %% Step 3 - Payment Result
+    alt Payment successful
+        XenditServer -->> ClientServer: Sends webhook (payment.capture)
+        XenditServer -->> ClientServer: Sends webhook (payment_session.completed)
+        XenditServer -->> ClientServer: Sends webhook (payment_token.activated)
+        ClientServer ->> ClientApp: Update order status = success
+        ClientServer -->> ClientServer: Save payment_token_id against user identifier
+        ClientApp -->> Customer: Display payment success
+    else Payment failed
+        XenditServer -->> ClientServer: Sends webhook (payment.failure)
+        XenditPage -->> Customer: Display failure message on hosted page
+        Customer ->> XenditPage: Retry another payment attempt
+    end
+```
 
 1. During checkout or whenever your customer is ready to make a payment, your system should Create a Payment Session with Xendit using the example payload provided below.
 

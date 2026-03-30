@@ -8,7 +8,33 @@ Including the Card Verification Number (CVN) is crucial for successful card tran
 
 [Once a card is stored](/v1/docs/store-a-card-for-one-click), you can use the payment\_token\_id for future payments. For added security, your customers may be required to re-enter their CVN during one-click payments, ensuring compliance and reducing fraud risk.
 
-![](/images/doc360/Untitled_diagram-2025-01-02-151639.png)
+```mermaid
+sequenceDiagram
+ actor EndUser as End User
+ participant Client as Client App
+ participant Server as Client Server
+ participant cardsessionjs as Xendit card_session.js
+ participant XenditServer as Xendit Server
+ participant Authentication Page as Authentication Page
+ EndUser ->> Client: Choose stored card for payment
+ Client ->> Server: Checkout using stored card
+ Server ->> XenditServer: Create Payment Session with the Payment Token ID
+ XenditServer ->> Server: Return Payment Session
+ Server ->> Client: Send Payment Session ID
+ Client ->> Client : Initiate card_session.js using Payment Session ID
+ EndUser ->> Client: Input CVV
+ Client ->> cardsessionjs: Send CVV
+ cardsessionjs ->> Client: Return authentication url and the payment_request_id
+ Client ->> Authentication Page: Redirect to issuer authentication page
+ Authentication Page ->> Authentication Page: User completes payment process
+ Client ->> Server: Send payment_request_id
+ Server ->> Server: Store payment_request_id
+ Authentication Page ->> Client: Redirect back to your app
+ XenditServer -->> Server: Send payment webhook
+ Server ->> Server: Match payment webhook with the payment_request_id
+ Server ->> Server: Store payment_id for the payment_request_id
+ Server -->> Client: Send payment result
+```
 
 ## How to Implement
 
@@ -72,7 +98,7 @@ Including the Card Verification Number (CVN) is crucial for successful card tran
 
 2. Collect the CVN
 
-Implement &#123;&#123;variable.card\_session\_js&#125;&#125; in the head element of your payment page
+Implement `card_session.js` in the head element of your payment page.
 
 ```xml
 &lt;head&gt;

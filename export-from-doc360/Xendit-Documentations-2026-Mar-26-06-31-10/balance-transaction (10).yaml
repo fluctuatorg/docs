@@ -1,0 +1,1253 @@
+openapi: 3.0.0
+info:
+  title: Balance & Transactions
+  version: 3.0.0
+  description: |
+    Balance & Transactions API provides merchants with information about their account balance, transaction history, and reporting capabilities.
+    
+    This API covers:
+    - Account balance retrieval
+    - Transaction history and details
+    - Report generation and retrieval
+  contact:
+    name: Xendit API Support
+    email: help@xendit.co
+    url: https://www.xendit.co/support
+  license:
+    name: Proprietary
+    url: https://www.xendit.co/terms-and-conditions/
+servers:
+  - url: 'https://api.xendit.co'
+    description: Xendit API
+tags:
+  - name: Balance
+    description: Operations for retrieving account balance information
+  - name: Reports
+    description: Operations for generating and retrieving account reports
+  - name: Transaction
+    description: Operations for retrieving transaction history and details
+paths:
+  # Balance
+  /balance:
+    get:
+      operationId: GetBalance
+      security:
+        - BasicAuth: []
+      tags:
+        - Balance
+      summary: Get balance
+      description: |
+        Balance is like your wallet since it will tell you how much money is available to you on Xendit. You can retrieve it to see the current balance on your Xendit cash account. Your balance is debited on any money out transaction, e.g. when performing disbursements or Xendit fees are charged. Your balance is credited when money comes into your account.
+      parameters:
+        - $ref: '#/components/parameters/AccountTypeQueryParam'
+        - $ref: '#/components/parameters/AtTimestampQueryParam'
+        - $ref: '#/components/parameters/ForUserIdHeader'
+        - $ref: '#/components/parameters/BalanceCurrencyParam'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                required:
+                  - balance
+                type: object
+                properties:
+                  balance:
+                    type: integer
+                    format: float
+                    example: 1241231
+        '400':
+          $ref: '#/components/responses/ErrorStatusCode400Response'
+
+  # Reports
+  '/reports':
+    post:
+      operationId: GenerateReport
+      security:
+        - BasicAuth: []
+      tags:
+        - Reports
+      summary: Generate Report
+      description: |
+        Request this endpoint to generate the report. You can specify the type and filter the content of the report. The flow of this endpoint is asynchronous. Xendit will send callbacks to you after the report is done.
+
+        **Currency parameter usage:**
+        - If `type` is `BALANCE_HISTORY`, the `currency` field in the request body must be one of: IDR, PHP, USD, VND, THB, MYR, SGD, EUR, GBP, HKD, AUD.
+        - For all other report types, the `currency` field in the request body may be any applicable ISO 4217 currency code (e.g., IDR, PHP, USD, EUR, etc.).
+
+        Once the report is generated, you can use the get report endpoint to download the report file.
+      parameters:
+        - $ref: '#/components/parameters/ForUserIdHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportRequest'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportObject'
+              examples:
+                Basic Transaction Report:
+                  value:
+                    type: TRANSACTIONS
+                    filter:
+                      from: '2025-07-01T00:00:00.000Z'
+                      to: '2025-07-31T23:59:59.000Z'
+                Complete Request:
+                  value:
+                    type: DETAILED_TRANSACTIONS
+                    filter:
+                      from: '2025-07-01T00:00:00.000Z'
+                      to: '2025-07-15T23:59:59.000Z'
+                    format: CSV
+                    currency: USD
+                    report_version: VERSION_2
+        '404':
+          $ref: '#/components/responses/ErrorStatusCode404Response'
+
+  # Get Reports by Report ID
+  '/reports/{report_id}':
+    get:
+      operationId: GetReportById
+      security:
+        - BasicAuth: []
+      tags:
+        - Reports
+      summary: Get Report by ID
+      description: Request this endpoint to get single specific report details by report id. You can use this endpoint as alternative compared to using the report callback.
+      parameters:
+        - $ref: '#/components/parameters/ReportIdPathParam'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportObjectWithURL'
+              examples:
+                getReport:
+                  value:
+                    id: report_5c1b34a2-6ceb-4c24-aba9-c836bac82b28
+                    type: BALANCE_HISTORY
+                    filter:
+                      from: '2021-06-23T04:01:55.574Z'
+                      to: '2021-06-24T04:01:55.574Z'
+                    format: CSV
+                    url: https://transaction-report-files.s3-us-west-2.amazonaws.com/{report_name}
+                    currency: IDR
+                    business_id: 5f34f60535ba7c1c0eed846a
+                    created: '2021-06-24T04:01:55.570Z'
+                    updated: '2021-06-24T04:01:55.570Z'
+        '400':
+          $ref: '#/components/responses/ErrorStatusCode400Response'
+        '404':
+          $ref: '#/components/responses/ErrorStatusCode404Response'
+
+  # Transaction by Transaction ID
+  '/transactions/{transaction_id}':
+    get:
+      operationId: GetTransactionById
+      security:
+        - BasicAuth: []
+      tags:
+        - Transaction
+      summary: Get Transaction by ID
+      description: Request this endpoint to get single specific transaction details by transaction id. If you need to search by other parameters or to get multiple results, see list transactions.
+      parameters:
+        - $ref: '#/components/parameters/TransactionIdPathParam'
+        - $ref: '#/components/parameters/ForUserIdHeader'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionObject'
+              examples:
+                # Example for a PAYMENT transaction (main use case)
+                getTransaction:
+                  value:
+                    id: txn_pay_1234567890abcdef
+                    product_id: py-123e4567-e89b-12d3-a456-426614174000
+                    type: PAYMENT
+                    status: SUCCESS
+                    channel_category: EWALLET
+                    channel_code: ID_SHOPEEPAY
+                    reference_id: payref-123456
+                    account_identifier: null
+                    currency: IDR
+                    amount: 100000
+                    net_amount: 99000
+                    net_amount_currency: IDR
+                    cashflow: MONEY_IN
+                    settlement_status: SETTLED
+                    estimated_settlement_time: "2025-06-01T10:00:00.000Z"
+                    business_id: 1234567890abcdef
+                    created: "2025-06-01T09:59:00.000Z"
+                    updated: "2025-06-01T10:01:00.000Z"
+                    fee:
+                      xendit_fee: 1000
+                      value_added_tax: 0
+                      xendit_withholding_tax: 0
+                      third_party_withholding_tax: 0
+                      status: COMPLETED
+                    product_data:
+                      capture_id: cap-e1a8b3e8-5b4a-4b1a-8b0e-4e8b1a8b0e4e
+                      payment_request_id: pr-e1a8b3e8-5b4a-4b1a-8b0e-4e8b1a8b0e4f
+                # Example for a CONVERSION transaction (secondary use case)
+                getConversionTransaction:
+                  value:
+                    id: txn_3365895e-3cc1-490a-b48c-2757ce8ab0e5
+                    product_id: cmanl0vtp000101u9lqbvn7im
+                    type: CONVERSION
+                    status: SUCCESS
+                    channel_category: OTHER
+                    channel_code: DEFAULT
+                    reference_id: cmanl0vtp000101u9lqbvn7im
+                    account_identifier: null
+                    currency: SGD
+                    amount: 6.55
+                    net_amount: 5.2
+                    net_amount_currency: USD
+                    cashflow: MONEY_IN
+                    settlement_status: SETTLED
+                    estimated_settlement_time: "2025-05-14T06:51:08.999Z"
+                    business_id: 675bdaf542c2f448122e71d5
+                    created: "2025-05-14T06:51:08.998Z"
+                    updated: "2025-05-14T06:52:34.196Z"
+                    fee:
+                      xendit_fee: 0
+                      value_added_tax: 0
+                      xendit_withholding_tax: 0
+                      third_party_withholding_tax: 0
+                      status: NOT_APPLICABLE
+                # Example for a Virtual Account payment transaction
+                getVirtualAccountTransaction:
+                  value:
+                    id: txn_79cb0a16-3753-404e-a959-421a0cd02a9a
+                    product_id: py-b6c2b04d-d15e-4cc4-89c7-0ea1008d4afd
+                    type: PAYMENT
+                    status: SUCCESS
+                    channel_category: VIRTUAL_ACCOUNT
+                    channel_code: BNI
+                    reference_id: test-1751865004
+                    account_identifier: '8930999960136500'
+                    currency: IDR
+                    amount: 13000
+                    net_amount: 13000
+                    net_amount_currency: IDR
+                    cashflow: MONEY_IN
+                    settlement_status: SETTLED
+                    estimated_settlement_time: "2025-07-07T05:12:03.000Z"
+                    business_id: 67bd3c2936e9d7ed9e91728b
+                    created: "2025-07-07T05:12:04.315Z"
+                    updated: "2025-07-07T05:12:04.806Z"
+                    fee:
+                      xendit_fee: 0
+                      value_added_tax: 0
+                      xendit_withholding_tax: 0
+                      third_party_withholding_tax: 0
+                      status: COMPLETED
+                    product_data:
+                      capture_id: cap-123e4567-e89b-12d3-a456-426614174000
+                      payment_request_id: pr-123e4567-e89b-12d3-a456-426614174001
+        '400':
+          $ref: '#/components/responses/ErrorStatusCode400Response'
+        '404':
+          $ref: '#/components/responses/ErrorStatusCode404Response'
+
+  # Transactions List
+  '/transactions':
+    get:
+      operationId: ListTransactions
+      security:
+        - BasicAuth: []
+      summary: List Transactions
+      tags:
+        - Transaction
+      description: |
+        Request this endpoint to get all transactions or select specific filter and search parameters. You can filter by date, type, or status. And you can search by reference, product id, or account identifier. The returned result will be paginated and ordered by the created date.
+
+        Use API key permission `Transaction Read` to perform this request
+
+        Sample curl Request:
+        ```
+        curl https://api.xendit.co/transactions?types=PAYMENT&statuses=SUCCESS&channel_categories=EWALLET&channel_categories=RETAIL_OUTLET&limit=2 -X GET \
+        -u xnd_development_O46JfOtygef9kMNsK+ZPGT+ZZ9b3ooF4w3Dn+R1k+2fT/7GlCAN3jg==:
+        ```
+      parameters:
+        - $ref: '#/components/parameters/ForUserIdHeader'
+        - $ref: '#/components/parameters/TransactionTypeQueryParam'
+        - $ref: '#/components/parameters/TransactionStatusQueryParam'
+        - $ref: '#/components/parameters/ChannelCategoryQueryParam'
+        - $ref: '#/components/parameters/TransactionReferenceIdQueryParam'
+        - $ref: '#/components/parameters/ProductIdQueryParam'
+        - $ref: '#/components/parameters/AccountIdentifierQueryParam'
+        - $ref: '#/components/parameters/TransactionCurrencyParam'
+        - $ref: '#/components/parameters/AmountQueryParam'
+        - $ref: '#/components/parameters/CreatedGteQueryParam'
+        - $ref: '#/components/parameters/CreatedLteQueryParam'
+        - $ref: '#/components/parameters/UpdatedGteQueryParam'
+        - $ref: '#/components/parameters/UpdatedLteQueryParam'
+        - $ref: '#/components/parameters/LimitQueryParam'
+        - $ref: '#/components/parameters/AfterIdQueryParam'
+        - $ref: '#/components/parameters/BeforeIdQueryParam'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  has_more:
+                    type: boolean
+                    description: |
+                      Indicates whether there are more items to be queried with after_id of the last item from the current result.
+                      When true, use the HATEOAS links for pagination.
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TransactionObject'
+                  links:
+                    type: array
+                    description: HATEOAS links for pagination. Contains navigation links when more results are available.
+                    items:
+                      type: object
+                      properties:
+                        href:
+                          type: string
+                          description: URI for the next page of results.
+                        rel:
+                          type: string
+                          description: Link relationship type. Value will be 'next' for pagination.
+                        method:
+                          type: string
+                          description: HTTP method to use. Value will be 'GET'.
+              example:
+                has_more: false
+                data:
+                  - id: txn_3365895e-3cc1-490a-b48c-2757ce8ab0e5
+                    product_id: cmanl0vtp000101u9lqbvn7im
+                    type: CONVERSION
+                    status: SUCCESS
+                    channel_category: OTHER
+                    channel_code: DEFAULT
+                    reference_id: cmanl0vtp000101u9lqbvn7im
+                    account_identifier: null
+                    currency: SGD
+                    amount: 6.55
+                    net_amount: 6.55
+                    net_amount_currency: SGD
+                    cashflow: MONEY_IN
+                    settlement_status: SETTLED
+                    estimated_settlement_time: "2025-05-14T06:51:08.999Z"
+                    business_id: 675bdaf542c2f448122e71d5
+                    created: "2025-05-14T06:51:08.998Z"
+                    updated: "2025-05-14T06:52:34.196Z"
+                    fee:
+                      xendit_fee: 0
+                      value_added_tax: 0
+                      xendit_withholding_tax: 0
+                      third_party_withholding_tax: 0
+                      status: NOT_APPLICABLE
+                  - id: txn_c3d31125-1a06-4563-b7aa-b574beb7e2f9
+                    product_id: cm99a3by9000x01qu51tf1t85
+                    type: CONVERSION
+                    status: FAILED
+                    channel_category: OTHER
+                    channel_code: DEFAULT
+                    reference_id: cm99a3by9000x01qu51tf1t85
+                    account_identifier: null
+                    currency: SGD
+                    amount: 6.8
+                    net_amount: 5.1
+                    net_amount_currency: USD
+                    cashflow: MONEY_IN
+                    settlement_status: PENDING
+                    estimated_settlement_time: "2025-04-09T01:56:38.519Z"
+                    business_id: 675bdaf542c2f448122e71d5
+                    created: "2025-04-09T01:56:38.517Z"
+                    updated: "2025-04-09T01:58:05.027Z"
+                    fee:
+                      xendit_fee: 0
+                      value_added_tax: 0
+                      xendit_withholding_tax: 0
+                      third_party_withholding_tax: 0
+                      status: NOT_APPLICABLE
+                  - id: txn_8c36b107-a52e-478a-8dde-59bfa7212bc6
+                    product_id: d2845324-50d1-41bc-8583-0b888456ebfe
+                    type: PAYMENT
+                    status: SUCCESS
+                    channel_category: EWALLET
+                    channel_code: MY_SHOPEEPAY
+                    reference_id: mylitt-aa7650f9b1364433-a7e7c4809b379e4e-1742983783200
+                    account_identifier: null
+                    currency: MYR
+                    amount: 2.22
+                    net_amount: 2.2
+                    net_amount_currency: MYR
+                    cashflow: MONEY_IN
+                    settlement_status: SETTLED
+                    estimated_settlement_time: "2025-03-28T10:09:54.915Z"
+                    business_id: 668643d45f3fffd3c0d3b1ef
+                    created: "2025-03-26T10:09:55.171Z"
+                    updated: "2025-03-28T10:10:53.276Z"
+                    fee:
+                      xendit_fee: 0.02
+                      value_added_tax: 0
+                      xendit_withholding_tax: 0
+                      third_party_withholding_tax: 0
+                      status: NOT_APPLICABLE
+                  - id: txn_pay_1234567890abcdef
+                    product_id: py-123e4567-e89b-12d3-a456-426614174000
+                    type: PAYMENT
+                    status: SUCCESS
+                    channel_category: EWALLET
+                    channel_code: ID_SHOPEEPAY
+                    reference_id: payref-123456
+                    account_identifier: null
+                    currency: IDR
+                    amount: 100000
+                    net_amount: 99000
+                    net_amount_currency: IDR
+                    cashflow: MONEY_IN
+                    settlement_status: SETTLED
+                    estimated_settlement_time: "2025-06-01T10:00:00.000Z"
+                    business_id: 1234567890abcdef
+                    created: "2025-06-01T09:59:00.000Z"
+                    updated: "2025-06-01T10:01:00.000Z"
+                    fee:
+                      xendit_fee: 1000
+                      value_added_tax: 0
+                      xendit_withholding_tax: 0
+                      third_party_withholding_tax: 0
+                      status: COMPLETED
+                    product_data:
+                      capture_id: cap-123e4567-e89b-12d3-a456-426614174002
+                      payment_request_id: pr-123e4567-e89b-12d3-a456-426614174003
+                links: []
+        '400':
+          $ref: '#/components/responses/ErrorStatusCode400Response'
+
+  # Report Webhook
+  /your_report_webhook_url:
+    post:
+      operationId: ReportWebhook
+      summary: Report webhook notification
+      description: >
+        Webhook notification that will be sent to your defined webhook url for
+        updates to report generation status.
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/XCallbackToken'
+      tags:
+        - Reports
+      requestBody:
+        description: Report generation status callback
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportObjectWebhook'
+            examples:
+              Report Generation Completed:
+                value:
+                  id: report_068581fd-ff7c-447f-8b16-a2ac00ebf98c
+                  url: https://transaction-report-files.s3.us-west-2.amazonaws.com/675bdaf542c2f448122e71d5/LIVE_TRANSACTIONS_REPORT_068581fd-ff7c-447f-8b16-a2ac00ebf98c_20250423040155_20250627040155.csv?AWSAccessKeyId=AKIAWDX4EPHWLBHIQYEQ&Expires=1751548921&Signature=nng1ZrXLGtVc7xSJbIigUXabPWs%3D
+                  type: TRANSACTIONS
+                  filter:
+                    from: '2025-04-23T04:01:55.574Z'
+                    to: '2025-06-27T04:01:55.574Z'
+                  format: CSV
+                  status: COMPLETED
+                  created: '2025-07-02T13:21:31.355Z'
+                  updated: '2025-07-02T13:22:01.630Z'
+                  currency: MYR
+                  business_id: 675bdaf542c2f448122e71d5
+              Report Generation Failed:
+                value:
+                  id: report_5c1b34a2-6ceb-4c24-aba9-c836bac82b28
+                  type: BALANCE_HISTORY
+                  filter:
+                    from: '2021-06-23T04:01:55.574Z'
+                    to: '2021-06-24T04:01:55.574Z'
+                  format: CSV
+                  status: FAILED
+                  created: '2021-06-24T04:01:55.570Z'
+                  updated: '2021-06-24T04:01:55.570Z'
+                  currency: IDR
+                  business_id: 5f34f60535ba7c1c0eed846a
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request - Invalid webhook payload
+
+components:
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+      description: |
+        API Key authentication using HTTPS Basic Auth. 
+        Use your API key as the username. The password field can be left empty.
+        Note: In the API documentation "Try it" section, password is required, you may include any value.
+
+  parameters:
+    AccountTypeQueryParam:
+      in: query
+      name: account_type
+      description: The selected balance type
+      required: false
+      schema:
+        type: string
+        default: CASH
+        enum:
+          - CASH
+          - HOLDING
+    AtTimestampQueryParam:
+      in: query
+      name: at_timestamp
+      description:  | 
+            ISO 8601 date-time format (URI encoded)
+            
+            Balance returned in the response will be based on the timestamp provided.
+            The timestamp value must be URI encoded when passed as a query parameter.
+      required: false
+      schema:
+        type: string
+        format: date-time
+        example: 2024-01-01T00:00:00.000Z
+    ForUserIdHeader:
+      in: header
+      name: for-user-id
+      description: |
+            The sub-account user-id that you want to make this transaction for.
+            
+            This header is only used if you have access to xenPlatform. See xenPlatform for more information
+      required: false
+      schema:
+        type: string
+    XCallbackToken:
+      in: header
+      name: x-callback-token
+      description: Verification token that can be used to validate webhook requests
+      required: false
+      schema:
+        type: string
+    ReportIdPathParam:
+      in: path
+      name: report_id
+      description: Unique ID generated by Xendit for the particular report
+      required: true
+      schema:
+        $ref: '#/components/schemas/ReportId'
+    TransactionIdPathParam:
+      in: path
+      name: transaction_id
+      description: Unique ID generated by Xendit for the particular transaction
+      required: true
+      schema:
+        $ref: '#/components/schemas/TransactionId'
+    TransactionTypeQueryParam:
+      in: query
+      name: types
+      description: The type of the transaction
+      required: false
+      schema:
+        $ref: '#/components/schemas/TransactionType'
+    TransactionStatusQueryParam:
+      in: query
+      name: statuses
+      description: The status of the transaction
+      required: false
+      schema:
+        $ref: '#/components/schemas/TransactionStatus'
+    ChannelCategoryQueryParam:
+      in: query
+      name: channel_categories
+      description: The channel of the transactions that will be filtered. If not specified, all transaction channel will be returned.
+      required: false
+      schema:
+        $ref: '#/components/schemas/ChannelCategory'
+    TransactionReferenceIdQueryParam:
+      in: query
+      name: reference_id
+      description: Reference that will be searched. Search by reference is case sensitive and requires exact match. Contact support to enable partial match functionality for your account.
+      required: false
+      schema: 
+        $ref: '#/components/schemas/ReferenceId' 
+    ProductIdQueryParam:
+      in: query
+      name: product_id
+      description: Product_id that will be searched. Product_id search is an exact match and case sensitive.
+      required: false
+      schema:
+        $ref: '#/components/schemas/ProductId'
+    AccountIdentifierQueryParam:
+      in: query
+      name: account_identifier
+      description: Account identifier that will be searched. Account identifier search is exact match case sensitive.
+      required: false
+      schema:
+        $ref: '#/components/schemas/AccountIdentifier'
+    AmountQueryParam:
+      in: query
+      name: amount
+      description: Transaction amount to search. This will be exact match.
+      required: false
+      schema:
+        $ref: '#/components/schemas/TransactionAmount'
+    CreatedGteQueryParam:
+      in: query
+      name: created[gte]
+      description: Start time of transaction by created date. If not specified, will list all dates.
+      required: false
+      schema:
+        $ref: '#/components/schemas/TransactionCreatedGte'
+    CreatedLteQueryParam:
+      in: query
+      name: created[lte]
+      description: End time of transaction by created date. If not specified, will list all dates.
+      required: false
+      schema:
+        $ref: '#/components/schemas/TransactionCreatedLte'
+    UpdatedGteQueryParam:
+      in: query
+      name: updated[gte]
+      description: Start time of transaction by updated date. If not specified, will list all dates.
+      required: false
+      schema:
+        $ref: '#/components/schemas/TransactionUpdatedGte'
+    UpdatedLteQueryParam:
+      in: query
+      name: updated[lte]
+      description: End time of transaction by updated date. If not specified, will list all dates.
+      required: false
+      schema:
+        $ref: '#/components/schemas/TransactionUpdatedLte'
+    LimitQueryParam:
+      in: query
+      name: limit
+      description: A limit on the number of transactions to be returned for each request.
+      required: false
+      schema:
+        $ref: '#/components/schemas/TransactionLimit'
+    AfterIdQueryParam:
+      in: query
+      name: after_id
+      description: Id of the immediately previous item. Use this with `links` on the response for pagination.
+      required: false
+      schema:
+        $ref: '#/components/schemas/TransactionAfterId'
+    BeforeIdQueryParam:
+      in: query
+      name: before_id
+      description: ID of the immediately following item.
+      required: false
+      schema:
+        $ref: '#/components/schemas/TransactionBeforeId'
+    BalanceCurrencyParam:
+      in: query
+      name: currency
+      description: |
+        Currency filter for customers with multi-currency accounts. Only the following currencies are supported for balance and balance history:
+        - IDR, PHP, USD, VND, THB, MYR, SGD, EUR, GBP, HKD, AUD
+      required: false
+      schema:
+        type: string
+        enum:
+          - IDR
+          - PHP
+          - USD
+          - VND
+          - THB
+          - MYR
+          - SGD
+          - EUR
+          - GBP
+          - HKD
+          - AUD
+    TransactionCurrencyParam:
+      in: query
+      name: currency
+      description: |
+        Currency filter for transaction-related endpoints and reports. The following currencies are commonly supported:
+        - IDR, PHP, USD, VND, THB, MYR, SGD, EUR, GBP, HKD, AUD
+        However, any applicable ISO 4217 currency code may be used depending on your account and transaction type. This parameter is optional; if omitted, all currencies will be included.
+      required: false
+      schema:
+        type: string
+        enum:
+          - IDR
+          - PHP
+          - USD
+          - VND
+          - THB
+          - MYR
+          - SGD
+          - EUR
+          - GBP
+          - HKD
+          - AUD
+
+  responses:
+    #Error Responses
+    ErrorStatusCode400Response:
+      description: 'Inputs are failing validation. The errors field contains details about which fields are violating validation.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error400Schema'
+    ErrorStatusCode403Response:
+      description: 'API key in use does not have necessary permissions to perform the request. Please assign proper permissions for the key.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error403Schema'
+    ErrorStatusCode404Response:
+      description: 'The provided `id` does not exist. Please review the `id` and try again'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error403Schema'
+    ErrorStatusCode409Response:
+      description: 'Conflict'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error409Schema'
+
+  schemas:
+    ReportRequest:
+      type: object
+      required:
+        - type
+        - filter
+      properties:
+        type:
+            $ref: '#/components/schemas/ReportType'
+        filter:
+            $ref: '#/components/schemas/ReportFilter'
+        format:
+            $ref: '#/components/schemas/ReportFormat'
+        currency:
+            $ref: '#/components/schemas/ReportCurrency'
+        report_version:
+            $ref: '#/components/schemas/ReportVersion'
+    ReportObject:
+      type: object
+      properties:
+        id:
+            $ref: '#/components/schemas/ReportId'
+        type:
+            $ref: '#/components/schemas/ReportType'
+        status:
+          type: string
+          enum:
+            - PENDING
+            - COMPLETED
+            - FAILED
+        filter:
+            $ref: '#/components/schemas/ReportFilter' 
+        format:
+            $ref: '#/components/schemas/ReportFormat'
+        currency:
+            $ref: '#/components/schemas/ReportCurrency'
+        business_id:
+            $ref: '#/components/schemas/BusinessId'
+        created:
+            $ref: '#/components/schemas/ReportCreated'
+        updated:
+            $ref: '#/components/schemas/ReportUpdated'
+        report_version:
+            $ref: '#/components/schemas/ReportVersion'
+    ReportObjectWithURL:
+      type: object
+      properties:
+        id:
+            $ref: '#/components/schemas/ReportId'
+        type:
+            $ref: '#/components/schemas/ReportType'
+        filter:
+            $ref: '#/components/schemas/ReportFilter' 
+        format:
+            $ref: '#/components/schemas/ReportFormat'
+        url:
+            $ref: '#/components/schemas/ReportURL'
+        currency:
+            $ref: '#/components/schemas/ReportCurrency'
+        business_id:
+            $ref: '#/components/schemas/BusinessId'
+        created:
+            $ref: '#/components/schemas/ReportCreated'
+        updated:
+            $ref: '#/components/schemas/ReportUpdated'
+    ReportObjectWebhook:
+      type: object
+      properties:
+        id:
+            $ref: '#/components/schemas/ReportId'
+        url:
+            $ref: '#/components/schemas/ReportURL'
+        type:
+            $ref: '#/components/schemas/ReportType'
+        filter:
+            $ref: '#/components/schemas/ReportFilter' 
+        format:
+            $ref: '#/components/schemas/ReportFormat'
+        status:
+          type: string
+          enum:
+            - PENDING
+            - COMPLETED
+            - FAILED
+        created:
+            $ref: '#/components/schemas/ReportCreated'
+        updated:
+            $ref: '#/components/schemas/ReportUpdated'
+        currency:
+            $ref: '#/components/schemas/ReportCurrency'
+        business_id:
+            $ref: '#/components/schemas/BusinessId'
+    FeeObject:
+      type: object
+      required:
+        - xendit_fee
+        - value_added_tax
+        - xendit_withholding_tax
+        - third_party_withholding_tax
+        - status
+      properties:
+        xendit_fee:
+            $ref: '#/components/schemas/XenditFee'
+        value_added_tax:
+            $ref: '#/components/schemas/ValueAddedTax' 
+        xendit_withholding_tax:
+            $ref: '#/components/schemas/XenditWithholdingTax'
+        third_party_withholding_tax:
+            $ref: '#/components/schemas/ThirdPartyWithholdingTax'
+        status:
+            $ref: '#/components/schemas/FeeStatus' 
+    ProductData:
+      type: object
+      description: |
+        Additional metadata for payment V3 transactions. This object contains product-specific identifiers and is only included when at least one field has a value. All fields are nullable and conditionally populated based on the transaction type and payment flow.
+      nullable: true
+      properties:
+        capture_id:
+          type: string
+          description: The capture ID for payment V3 transactions. Present for captured payments.
+          nullable: true
+          example: cptr-123e4567-e89b-12d3-a456-426614174000
+        payment_request_id:
+          type: string
+          description: The payment request ID for payment V3 transactions. Present for payments created via payment V3 payment requests.
+          nullable: true
+          example: pr-123e4567-e89b-12d3-a456-426614174001
+        reusable_payment_link_id:
+          type: string
+          description: The reusable payment link ID. Present for payments made through reusable payment links.
+          nullable: true
+          example: rpl-123e4567-e89b-12d3-a456-426614174002
+        payment_link_id:
+          type: string
+          description: The invoice/payment link ID. Present for payments associated with payment links.
+          nullable: true
+          example: inv-123e4567-e89b-12d3-a456-426614174003
+    TransactionObject:
+      type: object
+      properties:
+        id:
+            $ref: '#/components/schemas/Id'
+        product_id:
+            $ref: '#/components/schemas/ProductId'
+        type:
+            $ref: '#/components/schemas/TransactionType'
+        channel_code:
+            $ref: '#/components/schemas/ChannelCode'
+        reference_id:
+            $ref: '#/components/schemas/ReferenceId'
+        account_identifier:
+            $ref: '#/components/schemas/AccountIdentifier'
+        currency:
+            $ref: '#/components/schemas/ReportCurrency'
+        amount:
+            $ref: '#/components/schemas/TransactionAmount'
+        net_amount:
+            $ref: '#/components/schemas/NetAmount'
+        net_amount_currency:
+            $ref: '#/components/schemas/NetAmountCurrency'
+        cashflow:
+            $ref: '#/components/schemas/Cashflow'
+        status:
+            $ref: '#/components/schemas/TransactionStatus'
+        channel_category:
+            $ref: '#/components/schemas/ChannelCategory'
+        business_id:
+            $ref: '#/components/schemas/BusinessId'
+        created:
+            $ref: '#/components/schemas/TransactionCreated'
+        updated:
+            $ref: '#/components/schemas/TransactionUpdated'
+        fee:
+            $ref: '#/components/schemas/FeeObject'
+        settlement_status:
+            $ref: '#/components/schemas/SettlementStatus'
+        estimated_settlement_time:
+            $ref: '#/components/schemas/EstimatedSettlementTime'
+        product_data:
+            $ref: '#/components/schemas/ProductData'
+    ReferenceId:
+      type: string
+      minLength: 1
+      maxLength: 255
+      description: 'A Reference ID from merchants to identify their request.'
+    Id:
+      type: string
+      description: 'Unique ID generated by Xendit for the particular file'
+    BusinessId:
+      type: string
+      description: 'Unique ID generated by Xendit for the particular file'
+    ReportURL:
+      type: string
+      description: |
+        URL to download after report is completed.
+        The file to download will only be accessible for 24 hours. When the url is expired, you will need to send a new request to generate the report.
+    ReportType:
+      type: string
+      description: The type of report that will be generated
+      enum:
+        - BALANCE_HISTORY
+        - TRANSACTIONS
+        - UPCOMING_TRANSACTIONS
+        - DETAILED_TRANSACTIONS
+    ReportFilter:
+      type: object
+      required:
+        - from
+        - to
+      description: |
+        Filtering that are applied to report
+
+        The combination of `from` and `to` must be less than 92 days.
+      properties:
+        from:
+          type: string
+          format: date-time
+          description: The start time of the transaction to be filtered (ISO 8601)
+          example: "2025-07-01T00:00:00.000Z"
+        to:
+          type: string
+          format: date-time
+          description: The end time of the transaction to be filtered (ISO 8601)
+          example: "2025-07-31T23:59:59.000Z"
+    ReportCreated:
+      type: string
+      description: 'The time when the report request is created at UTC+0.'
+    ReportUpdated:
+      type: string
+      description: 'The time when the report is updated at UTC+0.'
+    ReportFormat:
+      type: string
+      description: The format of the report. Available format is `CSV`.
+      default: CSV
+      enum:
+        - CSV
+    ReportCurrency:
+      type: string
+      description: The currency to filter.
+      default: IDR
+      enum:
+        - IDR
+        - PHP
+        - USD
+        - VND
+        - THB
+        - MYR
+        - SGD
+        - EUR
+        - GBP
+        - HKD
+        - AUD
+    ReportVersion:
+      type: string
+      description: |  
+        Report version indicates which version of report you need. This parameter is only applicable to Transaction Report and is request-only (not returned in response).
+        
+        Version value <> changelog:
+        VERSION_0: Original version
+        VERSION_1: Includes Settlement Status, Actual Settlement Time, and Estimated Settlement Time
+        VERSION_2: Includes Early Settlement Fee Columns, swapped Payment ID with Product ID
+      default: 'VERSION_0'
+      enum:
+        - VERSION_0
+        - VERSION_1
+        - VERSION_2
+    ReportId:
+      type: string
+      description: 'Report ID'
+    TransactionUpdated:
+      type: string
+      description: 'Transaction updated timestamp on UTC+0'
+    TransactionId:
+      type: string
+      description: The unique id of transaction. It will have `txn_` as prefix   
+    ProductId:
+      type: string
+      description: The product_id of transaction. Product id will have different prefix for each different product. You can use this id to match the transaction from this API to each product API.
+    TransactionType:
+      type: string
+      description: |
+        The type of the transactions. Here are the descriptions:
+        - `ADJUSTMENT_ADD`: An adjustment transaction that adds to the balance.
+        - `ADJUSTMENT_DEDUCT`: An adjustment transaction that deducts from the balance.
+        - `BNPL_PARTNER_SETTLEMENT_CREDIT`: Buy Now Pay Later partner settlement credit transaction.
+        - `BNPL_PARTNER_SETTLEMENT_DEBIT`: Buy Now Pay Later partner settlement debit transaction.
+        - `CASHBACK_FEE`: Cashback fee transaction.
+        - `CASHBACK_VAT`: Cashback VAT transaction.
+        - `CHARGEBACK`: A chargeback transaction for disputed charges.
+        - `CONVERSION`: Balance conversion transactions between different currencies.
+        - `DISBURSEMENT`: The disbursement of money-out transaction.
+        - `FOREX_DEDUCTION`: Foreign exchange deduction transaction.
+        - `FOREX_DEPOSIT`: Foreign exchange deposit transaction.
+        - `IN_PERSON_PAYMENT`: In-person payment transaction.
+        - `LOAN_REPAYMENT`: Loan repayment transaction.
+        - `OTHER`: Other transaction types not covered by specific categories.
+        - `PAYMENT`: The payment that includes all variation of money-in transaction.
+        - `REFUND`: A refund transaction created to refund amount from money-in transaction.
+        - `REMITTANCE`: A remittance transaction.
+        - `REMITTANCE_COLLECTION_PAYMENT`: Remittance collection payment transaction.
+        - `REMITTANCE_PAYOUT`: The remittance pay-out transaction.
+        - `RESERVES_HOLD`: Transaction for holding reserves.
+        - `RESERVES_RELEASE`: Transaction for releasing held reserves.
+        - `TOPUP`: A top-up transaction for adding money to account balance.
+        - `TRANSFER_IN`: Transfer into the account from another Xendit account.
+        - `TRANSFER_OUT`: Transfer out of the account to another Xendit account.
+        - `WITHDRAWAL`: A withdrawal transaction for money-out operations.
+      enum:
+        - ADJUSTMENT_ADD
+        - ADJUSTMENT_DEDUCT
+        - BNPL_PARTNER_SETTLEMENT_CREDIT
+        - BNPL_PARTNER_SETTLEMENT_DEBIT
+        - CASHBACK_FEE
+        - CASHBACK_VAT
+        - CHARGEBACK
+        - CONVERSION
+        - DISBURSEMENT
+        - FOREX_DEDUCTION
+        - FOREX_DEPOSIT
+        - IN_PERSON_PAYMENT
+        - LOAN_REPAYMENT
+        - OTHER
+        - PAYMENT
+        - REFUND
+        - REMITTANCE
+        - REMITTANCE_COLLECTION_PAYMENT
+        - REMITTANCE_PAYOUT
+        - RESERVES_HOLD
+        - RESERVES_RELEASE
+        - TOPUP
+        - TRANSFER_IN
+        - TRANSFER_OUT
+        - WITHDRAWAL
+
+    ChannelCode:
+      type: string
+      description: The channel of the transaction that is used. See [channel codes](https://xendit-docs.document360.io/docs/available-payment-channels) for the list of available per channel categories.
+    AccountIdentifier:
+      type: string
+      nullable: true
+      description: Account identifier of transaction. The format will be different from each channel. For example, on `BANK` channel it will be account number and on `CARD` it will be masked card number.
+    TransactionAmount:
+      type: number
+      description: The amount of transaction. The number of decimal place will be different for each currency according to ISO 4217.
+      example: 9989
+    NetAmount:
+      type: number
+      description: The net amount of transaction after it deducted with fee/vat.
+      example: 9989
+    NetAmountCurrency:
+      type: string
+      description: The currency of the net amount after fees and taxes are applied.
+      enum:
+        - IDR
+        - PHP
+        - USD
+        - VND
+        - THB
+        - MYR
+        - SGD
+        - EUR
+        - GBP
+        - HKD
+        - AUD
+    TransactionCreated:
+      type: string
+      description: 'Transaction created timestamp on UTC+0'
+    Cashflow:
+      type: string
+      description: |
+        Representing whether the transaction is money in or money out For transfer, the transfer out side it will shows up as money out and on transfer in side in will shows up as money-in.
+      
+        Available values are `MONEY_IN` for money in and `MONEY_OUT` for money out.
+    TransactionStatus:
+      type: string
+      description: |
+        The status of the transaction. Here's the description:
+        - `PENDING`: The transaction is still pending to be processed. This refers to money out-transaction when the amount is still on hold.
+        - `SUCCESS`: The transaction is successfully sent for money-out or already arrives on money-in.
+        - `FAILED`: The transaction failed to send/receive.
+        - `VOIDED`: The money-in transaction is voided by customer.
+        - `REVERSED`:The transaction is reversed by Xendit.
+      enum:
+        - PENDING
+        - SUCCESS
+        - FAILED
+        - VOIDED
+        - REVERSED
+    ChannelCategory:
+      type: string
+      description: |
+        The channel category of the transaction to identify the source of the transaction. Here's the description:
+        - `DISBURSEMENT` and `REMITTANCE_PAYOUT`:  `BANK` and `CASH`
+        - `PAYMENT`: `CARDS`, `CARDLESS_CREDIT`, `DIRECT_DEBIT`, `EWALLET`, `PAYLATER`, `QR_CODE`, `RETAIL_OUTLET`, `VIRTUAL_ACCOUNT`
+        - `TRANSFER`: `XENPLATFORM`
+        - `CONVERSION`: `OTHER`
+      enum:
+        - BANK
+        - CARDS
+        - CARDLESS_CREDIT
+        - CASH
+        - DIRECT_DEBIT
+        - EWALLET
+        - PAYLATER
+        - QR_CODE
+        - RETAIL_OUTLET
+        - VIRTUAL_ACCOUNT
+        - XENPLATFORM
+        - OTHER
+
+    XenditFee:
+      type: number
+      description: Amount of the Xendit fee for this transaction.
+    ValueAddedTax:
+      type: number
+      description: Amount of the VAT for this transaction.
+    XenditWithholdingTax:
+      type: number
+      description: Amount of the Xendit Withholding Tax for this transaction if applicable. See Tax Documentation for more information.
+    ThirdPartyWithholdingTax:
+      type: number
+      description: Amount of the 3rd Party Withholding Tax for this transaction if applicable.
+    FeeStatus:
+      type: string
+      description: Status of the fee processing. NOT_APPLICABLE means no fees are applicable for this transaction.
+      enum:
+        - PENDING
+        - COMPLETED
+        - CANCELED
+        - REVERSED
+        - NOT_APPLICABLE
+    EstimatedSettlementTime:
+      type: string
+      description: |
+          Estimated settlement time will only apply to money-in transactions.
+          For money-out transaction, value will be `NULL`
+          Estimated settlement time in which transaction amount will be settled to merchant's balance.
+    SettlementStatus:
+      type: string
+      enum:
+        - PENDING
+        - EARLY_SETTLED
+        - SETTLED
+      nullable: true
+      description: |
+        Status of the settlement.
+        - `null`: Settlement status is not applicable or not yet determined
+        - `PENDING`: Transaction amount has not been settled to merchant's balance
+        - `EARLY_SETTLED`: Transaction has been settled early to merchant's balance
+        - `SETTLED`: Transaction has been settled to merchant's balance
+    TransactionCreatedGte:
+      type: string
+      description: Start time of transaction by created date. If not specified will list all dates.
+    TransactionCreatedLte:
+      type: string
+      description: End time of transaction by created date. If not specified will list all dates.
+    TransactionUpdatedGte:
+      type: string
+      description: End time of transaction by updated date. If not specified will list all dates.
+    TransactionUpdatedLte:
+      type: string
+      description: Start time of transaction by updated date. If not specified will list all dates.
+    TransactionLimit:
+      type: number
+      default: 10
+      description: |
+        A limit on the number of transactions to be returned for each request. 
+        Limit can range between 1 and 50.
+    TransactionAfterId:
+      type: string
+      description: Id of the immediately previous item. Use this with `links` on the response for pagination.
+    TransactionBeforeId:
+      type: string
+      description: Id of the immediately following item.
+
+    #API Response Schema
+    Error400Schema:
+      type: object
+      required:
+        - error_code
+        - message
+      properties:
+        error_code:
+          type: string
+          enum:
+            - API_VALIDATION_ERROR
+            - FEATURE_NOT_AVAILABLE
+        message: 
+          type: string
+        errors:
+            $ref: '#/components/schemas/XenditArrayOfErrors'
+    Error403Schema:
+      type: object
+      required:
+        - error_code
+        - message
+      properties:
+        error_code:
+          type: string
+          enum:
+            - RATE_LIMIT_EXCEEDED
+        message: 
+          type: string
+        errors:
+            $ref: '#/components/schemas/XenditArrayOfErrors'
+    Error409Schema:
+      type: object
+      required:
+        - error_code
+        - message
+      properties:
+        error_code:
+          type: string
+          enum:
+            - DUPLICATE_ERROR
+            - IDEMPOTENCY_ERROR
+        message: 
+          type: string
+        errors:
+            $ref: '#/components/schemas/XenditArrayOfErrors'
+    XenditArrayOfErrors:
+      nullable: true
+      type: array
+      items:
+        oneOf:
+          - type: string
+          - type: object 

@@ -1,5 +1,6 @@
 ---
-title: "Overview"
+title: "Payment sessions overview"
+sidebarTitle: "Payment sessions overview"
 ---
 
 This guide introduces the technical architecture, session model, and integration options for Xendit Payment Session.
@@ -59,7 +60,40 @@ Integration mode defines how the payment UI is delivered.
 
 ### `PAYMENT_LINK` Mode (Xendit-Hosted)
 
-![](/images/doc360/Seq_Diagram_for_Refund_Lifecycle-2025-12-23-085538.png)
+```mermaid
+sequenceDiagram
+    participant Customer
+    participant ClientApp as Client App
+    participant ClientServer as Client Server
+    participant XenditServer as Xendit Server
+    participant XenditPage as Xendit Hosted Page
+    %% Step 1 - Create Payment Session
+    note over ClientServer, XenditServer: Step 1 – Create Payment Session
+    ClientApp ->> ClientServer: Create Payment Session (One-Time or Save Payment Method)
+    ClientServer ->> XenditServer: Create Payment Session (API Request)
+    XenditServer -->> ClientServer: Return payment_link_url
+    ClientServer -->> ClientApp: Return payment_link_url
+    %% Step 2 - Redirect Customer
+    note over Customer, ClientApp: Step 2 – Redirect Customer
+    ClientApp -->> Customer: Redirect customer to payment_link_url
+    Customer ->> XenditPage: Open Xendit-hosted checkout page
+    %% Step 3 - Customer Action
+    note over Customer, XenditPage: Step 3 – Customer Action
+    Customer ->> XenditPage: Enter payment details and confirm
+    alt One-Time Payment
+        XenditPage ->> XenditServer: Process payment
+        XenditServer -->> ClientServer: Send webhook (payment.capture or payment.failure)
+        ClientServer ->> ClientServer: Update order or payment status
+    else Save Payment Method
+        XenditPage ->> XenditServer: Send payment method information
+        XenditServer -->> ClientServer: Send webhook (payment_token.activation)
+        ClientServer ->> ClientServer: Store Payment Token for future transactions
+    else Pay and Save
+        XenditPage ->> XenditServer: Process payment
+        XenditServer -->> ClientServer: Send webhook (payment.capture and payment_token.activation or payment.failure)
+        ClientServer ->> ClientServer: Update order or payment status
+    end
+```
 
 Payment link mode simplifies payment collection and payment method management through a Xendit-hosted checkout page.
 
@@ -73,7 +107,43 @@ Depending on your use case, you can follow the guideline to integrate with Payme
 
 ### `COMPONENTS` Mode (Embedded)
 
-![](/images/doc360/Seq_Diagram_for_Refund_Lifecycle-2025-12-23-085643_1_.png)
+```mermaid
+sequenceDiagram
+    participant Customer
+    participant ClientApp as Client App
+    participant ClientServer as Client Server
+    participant XenditServer as Xendit Server
+    participant XenditComponent as Xendit Component
+
+    %% Step 1 - Create Payment Session
+    note over ClientApp, XenditServer: Step 1 – Create Payment Session
+    ClientApp ->> ClientServer: Create Payment Session (One-Time or Save Payment Method)
+    ClientServer ->> XenditServer: Create Payment Session (API Request)
+    XenditServer -->> ClientServer: Return session_sdk_key
+    ClientServer -->> ClientApp: Return session_sdk_key
+
+    %% Step 2 - Embed Component
+    note over ClientApp, XenditServer: Step 2 – Create Payment Component
+    ClientApp ->> XenditComponent: Create Payment Component on top of the Client App
+    XenditComponent -->> ClientApp: Load payment component on top of the Client App
+
+    %% Step 3 - Customer Action
+    note over Customer, XenditComponent: Step 3 – Customer Action
+    Customer ->> XenditComponent: Enter payment details and confirm
+    alt One-Time Payment
+        XenditComponent ->> XenditServer: Process payment
+        XenditServer -->> ClientServer: Send webhook (payment.capture or payment.failure)
+        ClientServer ->> ClientServer: Update order or payment status
+    else Save Payment Method
+        XenditComponent ->> XenditServer: Send payment method information
+        XenditServer -->> ClientServer: Send webhook (payment_token.activation)
+        ClientServer ->> ClientServer: Store Payment Token for future transactions
+    else Pay and Save
+        XenditComponent ->> XenditServer: Process payment
+        XenditServer -->> ClientServer: Send webhook (payment.capture and payment_token.activation or payment.failure)
+        ClientServer ->> ClientServer: Update order or payment status
+    end
+```
 
 Component mode allows you to embed secure, PCI-compliant payment fields directly into your own website. This ensures a seamless user experience where customers never leave your domain, while Xendit handles the payment processes.
 
@@ -105,9 +175,13 @@ Key Notes: All flows use a Xendit-hosted page for secure, PCI-compliant handling
 
 A payment session's status changes throughout its lifecycle, marking different stages of the payment or linking process.
 
-![](/images/doc360/Untitled_diagram-2024-11-28-090900.png)
-
-### 
+```mermaid
+stateDiagram-v2
+    [*] --> ACTIVE: Session created
+    ACTIVE --> COMPLETED: Payment or linking succeeds
+    ACTIVE --> EXPIRED: expiry_date reached
+    ACTIVE --> CANCELED: Session canceled manually
+```
 
 | Status | Description | Webhook event |
 | --- | --- | --- |

@@ -34,4 +34,10 @@ Here are the steps you need to do to integrate Xendit and your Wix store:
 
 ## Payment Flow
 
-![](/images/doc360/Wix_Payment_Flow_VA.gif)
+```mermaid
+flowchart LR
+    A[Customer checks out on Wix] --> B[Wix plugin creates payment via Xendit]
+    B --> C[Customer completes payment]
+    C --> D[Xendit sends payment result]
+    D --> E[Wix order status updated]
+```

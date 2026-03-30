@@ -2,13 +2,35 @@
 title: "Save payment information"
 ---
 
+import CreatePt from '/snippets/payments-api/create-pt.mdx'
+import CreatePtWebhook from '/snippets/payments-api/create-pt-webhook.mdx'
+
 Saving the end user’s payment information for future use is a flow used to increase future payment success rates. This flow is often used by merchants who wants to manage a wallet or set of payment methods for the end user independent of payment collection.
 
 In this article, we will walk through a basic integration with our payments API for saving payment information with `/payment_tokens` endpoint. Before you start, be sure to complete your integration environment set up.
 
 ## Integration Flow
 
-![](/images/doc360/Untitled_diagram-2025-02-09-062834.png)
+```mermaid
+sequenceDiagram
+  actor EndUser as End User
+  participant Client as Client App
+  participant Server as Client Server
+  participant XenditServer as Xendit Server
+  Client ->> EndUser: Present page for saving <br> payment methods
+  EndUser ->> Client: Picks desired payment channel
+  Client ->> Client: Collects required data (channel properties)
+  Client ->> Server: Sends data
+  Server ->> XenditServer: Create Payment Token
+  XenditServer ->> Server: Return to Payment Token
+  Server ->> Client: Informs required action
+  Client ->> EndUser: Orchestrate required action
+  EndUser ->> Client: Completes required action
+  Client ->> Client: Handle end user wait time
+  XenditServer ->> Server: Send payment token webhook
+  Server ->> Client: Forwards information
+  Client ->> EndUser: Present results
+```
 
 ## How to integrate
 
@@ -22,7 +44,7 @@ In this article, we will walk through a basic integration with our payments API 
 3. Create a payment token request   
    Construct an [API request body](https://xendit-docs.document360.io/apidocs/create-payment-token) with information required by your selected channel.
 
-   &#123;&#123;snippet.create\_pt&#125;&#125;
+   <CreatePt />
 4. Handle the required actions
 
    Upon successful creation of a payment token request with Xendit, you will receive our payment token object. If the payment token status is `REQUIRES_ACTION`, you will need to perform some actions on the client app for the end user to complete payment. If no actions are required, the final payment status will be returned synchronously and a webhook with payment status update will be sent.
@@ -34,7 +56,7 @@ In this article, we will walk through a basic integration with our payments API 
 5. Receive a payment token event webhook for payment token activation  
    Once the end user has completed their authentication step and the payment method provider notifies Xendit of an update, Xendit will proceed to send a webhook to the webhook url you configured in your Xendit dashboard settings page.
 
-   &#123;&#123;snippet.create\_pt\_webhook&#125;&#125;
+   <CreatePtWebhook />
 6. Display payment token status to user
 
    With the webhook status, you should be able to complete the save journey for the end user by successfully completing the transaction or directing them back for a retry if it had failed.   
@@ -43,7 +65,14 @@ In this article, we will walk through a basic integration with our payments API 
 
 ## Status Lifecycle
 
-![](/images/doc360/Untitled_Diagram-Page-9.drawio.png)
+```mermaid
+stateDiagram-v2
+    [*] --> REQUIRES_ACTION: Payment token created
+    REQUIRES_ACTION --> ACTIVE: Linking succeeds
+    REQUIRES_ACTION --> FAILED: Linking fails
+    ACTIVE --> CANCELED: Token expired manually
+    ACTIVE --> EXPIRED: Partner token expiry
+```
 
 Here’s the status lifecycle for a payment token
 

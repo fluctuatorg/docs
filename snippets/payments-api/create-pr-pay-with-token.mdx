@@ -1,0 +1,65 @@
+Request - POST /payment_requests
+
+```json
+{
+  "reference_id": "90392f42-d98a-49ef-a7f3-abcezas123",
+  "payment_token_id": "pt-90392f42-d98a-49ef-a7f3-abcezas123",
+  "type": "PAY",
+  "country": "TH",
+  "currency": "THB",
+  "request_amount": 10000.01,
+  "capture_method": "AUTOMATIC",
+  "channel_properties": {
+    "mid_label": "mid_label_acquirer_1",
+    "skip_three_ds": false,
+    "card_on_file_type": "CUSTOMER_UNSCHEDULED",
+    "failure_return_url": "https://xendit.co/failure",
+    "success_return_url": "https://xendit.co/success",
+    "statement_descriptor": "Goods & Services"
+  },
+  "description": "Description examples",
+  "metadata": {
+    "metametadata": "metametametadata"
+  }
+}
+```
+
+Response - POST /payment_requests
+
+```json
+{
+  "business_id": "5f27a14a9bf05c73dd040bc8",
+  "reference_id": "90392f42-d98a-49ef-a7f3-abcezas123",
+  "payment_token_id": "pt-90392f42-d98a-49ef-a7f3-abcezas123",
+  "payment_request_id": "pr-90392f42-d98a-49ef-a7f3-abcezas123",
+  "customer_id": "cust-90392f42-d98a-49ef-a7f3-abcezas123",
+  "type": "PAY",
+  "country": "TH",
+  "currency": "THB",
+  "channel_code": "CARDS",
+  "request_amount": 10000.01,
+  "capture_method": "AUTOMATIC",
+  "channel_properties": {
+    "mid_label": "mid_label_acquirer_1",
+    "skip_three_ds": false,
+    "card_on_file_type": "CUSTOMER_UNSCHEDULED",
+    "failure_return_url": "https://xendit.co/failure",
+    "success_return_url": "https://xendit.co/success",
+    "statement_descriptor": "Goods & Services"
+  },
+  "actions": [
+    {
+      "type": "REDIRECT_CUSTOMER",
+      "value": "xendit.co/example",
+      "descriptor": "WEB_URL"
+    }
+  ],
+  "status": "REQUIRES_ACTION",
+  "description": "Description examples",
+  "metadata": {
+    "metametadata": "metametametadata"
+  },
+  "created": "2021-12-31T23:59:59Z",
+  "updated": "2021-12-31T23:59:59Z"
+}
+```

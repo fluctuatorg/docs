@@ -2,6 +2,8 @@
 title: "How Payments API work"
 ---
 
+import CreatePrPay from '/snippets/payments-api/create-pr-pay.mdx'
+
 Our payments API is designed for our merchants to scale their payments with more channels or more volume while enjoying diminishing development work for every new addition. The integration concepts are designed to be simple and reusable. On average, merchants can expect a quick go to market in weeks for simple use cases while more complex use cases can take up to a month.
 
 ## Endpoints
@@ -20,7 +22,7 @@ Creating a payment is as simple as hitting our `v3/payment_requests` endpoint wi
 
 *Example of a request payload*
 
-&#123;&#123;snippet.create\_pr\_pay&#125;&#125;
+<CreatePrPay />
 
 Our `v3/payment_requests` endpoint follows REST API standards and covers the ability to collect payments for the following scenarios:
 

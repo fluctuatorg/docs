@@ -1,12 +1,20 @@
 ---
-title: "Overview"
+title: "Bill payment overview"
+sidebarTitle: "Bill payment overview"
 ---
 
 Integrating with Xendit Bill Payments is straightforward and follows a consistent flow. This guide will walk you through the key endpoints and integration steps to help you implement Bill Payments in your application.
 
 ## Integration Flow
 
-![](/images/doc360/Untitled_diagram-2025-03-12-172844.png)
+```mermaid
+flowchart LR
+    A[Get product list] --> B[Run bill inquiry]
+    B --> C[Create bill payment]
+    C --> D[Collect user payment]
+    D --> E[Receive callback]
+    E --> F[Check payment status]
+```
 
 Xendit Bill Payment APIs Overall Flow
 

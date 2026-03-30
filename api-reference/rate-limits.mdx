@@ -1,0 +1,52 @@
+---
+title: "Rate Limits"
+description: "Understand Xendit API rate limits and how to handle them"
+---
+
+Xendit enforces rate limits to ensure API stability and fair usage across all merchants.
+
+## Default rate limits
+
+Rate limits vary by endpoint and are measured in requests per second (RPS) or requests per minute (RPM) depending on the API.
+
+| API | Rate limit |
+|-----|-----------|
+| Payment Request (create) | 50 requests/second |
+| Payment Request (get) | 200 requests/second |
+| Payouts (create) | 50 requests/second |
+| Balance | 20 requests/second |
+| xenPlatform Account (create) | 5 requests/second |
+| General read endpoints | 200 requests/second |
+
+<Info>
+  Rate limits may vary depending on your account tier. Contact your Xendit account manager for specific limits applicable to your account.
+</Info>
+
+## Rate limit headers
+
+Xendit returns rate limit information in the response headers:
+
+| Header | Description |
+|--------|-------------|
+| `X-Rate-Limit-Limit` | Maximum number of requests allowed in the current window. |
+| `X-Rate-Limit-Remaining` | Number of requests remaining in the current window. |
+| `X-Rate-Limit-Reset` | Timestamp (Unix epoch) when the rate limit window resets. |
+
+## Handling rate limits
+
+When you exceed the rate limit, the API returns a `429 Too Many Requests` response with error code `REQUEST_THROTTLED`.
+
+```json
+{
+  "error_code": "REQUEST_THROTTLED",
+  "message": "Too many requests. Please retry after some time."
+}
+```
+
+### Best practices
+
+- **Implement exponential backoff** — When you receive a `429` response, wait and retry with increasing delays (e.g., 1s, 2s, 4s).
+- **Use idempotency keys** — For `POST` requests, include an `Idempotency-Key` header so retries don't create duplicate resources.
+- **Spread requests evenly** — Avoid bursting all requests at once. Distribute them over time.
+- **Cache responses** — Cache `GET` responses where possible to reduce unnecessary API calls.
+- **Monitor usage** — Track your rate limit headers to anticipate when you're approaching limits.

@@ -4,7 +4,23 @@ title: "Transaction and settlement statuses"
 
 Use this reference to read the pair of fields `transaction_status` and `settlement_status` you see in the Dashboard, API responses, and reports.
 
-![Flowchart showing possible transitions between transaction statuses and settlement statuses.](/images/doc360/status_transitions.png)
+```mermaid
+flowchart LR
+    subgraph MI["Money-in (Payments)"]
+        MI1["SUCCESS / PENDING"] --> MI2["SUCCESS / SETTLED"]
+        MI1 --> MI3["SUCCESS / EARLY_SETTLED"]
+        MI1 --> MI4["VOIDED / null"]
+        MI2 --> MI5["REVERSED / SETTLED or EARLY_SETTLED"]
+        MI3 --> MI5
+    end
+
+    subgraph MO["Money-out (Payouts & Refunds)"]
+        MO1["PENDING / PENDING"] --> MO2["SUCCESS / SETTLED"]
+        MO1 --> MO3["FAILED / null"]
+        MO1 --> MO4["VOIDED / null"]
+        MO2 --> MO5["REVERSED / SETTLED"]
+    end
+```
 
 High-level flow of status transitions
 

@@ -1,0 +1,2097 @@
+openapi: 3.0.0
+info:
+  title: Others
+  version: 3.0.0
+  description: |
+    These APIs provide merchants with customer management, file operations, and bill payment capabilities.
+    
+    They cover:
+    - Customer profile management
+    - File upload, retrieval, and management
+    - Bill payment services for utility providers and billers in Indonesia
+  contact:
+    name: Xendit API Support
+    email: help@xendit.co
+    url: https://www.xendit.co/support
+  license:
+    name: Proprietary
+    url: https://www.xendit.co/terms-and-conditions/
+servers:
+  - url: 'https://api.xendit.co'
+    description: Xendit API
+tags:
+  - name: Customers
+    description: Operations for managing customer profiles and information
+  - name: Files
+    description: Operations for file upload, retrieval, and management
+  - name: Bill Payments
+    description: Bill payment services for utility providers and billers in Indonesia
+paths:
+  # Customers by List
+  /customers:
+    get:
+      operationId: GetCustomers
+      summary: Get customers list
+      security:
+        - BasicAuth: []
+      tags:
+        - Customers
+      description: |
+        Retrieves an array with a customer object that matches the provided reference_id - the identifier provided by you
+
+        The Customer Object is a standard data structure to hold information relating to one of your customers. It has the following major components:
+        - A Type of customer (Individual or Business)
+        - Basic descriptive details of that customer
+        - Addresses of the customer
+        - Identity accounts and KYC documents to prove the legitimacy of the customer
+        - Other metadata
+      parameters:
+        - $ref: '#/components/parameters/CustAPIVersionHeader'
+        - $ref: '#/components/parameters/ForUserIdHeader'
+        - $ref: '#/components/parameters/ReferenceIdQueryParam'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListCustomerObject'
+              examples:
+                getCustomerByReferenceId:
+                  value:
+                    data:
+                      - id: cust-239c16f4-866d-43e8-9341-7badafbc019f
+                        reference_id: demo_1475801962607
+                        type: INDIVIDUAL
+                        individual_detail:
+                          given_names: John
+                          surname: Doe
+                          nationality: null
+                          place_of_birth: null
+                          date_of_birth: null
+                          gender: MALE
+                          employment: null
+                        email: customer@website.com
+                        mobile_number: null
+                        phone_number: null
+                        hashed_phone_number: null
+                        addresses: []
+                        identity_accounts: []
+                        kyc_documents: []
+                        description: null
+                        metadata: {}
+                        created: '2020-03-30T06:12:47.212Z'
+                        updated: '2020-03-30T06:12:47.212Z'
+                    has_more: false
+        '404':
+          $ref: '#/components/responses/ErrorStatusCode404Response'
+    post:
+      security:
+        - BasicAuth: []
+      operationId: CreateCustomer
+      summary: Create customer request
+      description: |
+        Make a POST request to this endpoint to create a customer for later use with a payments endpoint.
+
+        The Customer Object is a standard data structure to hold information relating to one of your customers. It has the following major components:
+        - A Type of customer (Individual or Business)
+        - Basic descriptive details of that customer
+        - Addresses of the customer
+        - Identity accounts and KYC documents to prove the legitimacy of the customer
+        - Other metadata
+      tags:
+        - Customers
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
+        - $ref: '#/components/parameters/CustAPIVersionHeader'
+        - $ref: '#/components/parameters/ForUserIdHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchCustomerObject'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerObject'
+              examples:
+                getIndividualCustomer:
+                  value:
+                    id: cust-239c16f4-866d-43e8-9341-7badafbc019f
+                    reference_id: demo_1475801962607
+                    type: INDIVIDUAL
+                    individual_detail:
+                      given_names: John
+                      surname: Doe
+                      nationality: ID
+                      place_of_birth: Jakarta
+                      date_of_birth: '1980-01-01'
+                      gender: MALE
+                      employment:
+                        employer_name: Xendit
+                        nature_of_business: Payment Gateway
+                        role_description: Test dummy
+                    email: customer@website.com
+                    mobile_number: '+62812123456'
+                    phone_number: '+62812123456'
+                    hashed_phone_number: +628#######56
+                    addresses:
+                      - street_line1: Panglima Polim IV
+                        street_line2: 'Ruko Grand Panglima Polim, Blok E'
+                        city: Jakarta Selatan
+                        province_state: DKI Jakarta
+                        postal_code: '993448'
+                        country: ID
+                        category: HOME
+                        is_primary: true
+                    kyc_documents:
+                      - type: IDENTITY_CARD
+                        sub_type: NATIONAL_ID
+                        country: ID
+                        document_name: KTP
+                        document_number: '12356789012456'
+                        expires_at: null
+                        holder_name: John Doe
+                        document_images:
+                          - file-ec700c1c-db17-4496-b1fb-04ebe551b412
+                    description: My first customer
+                    date_of_registration: '2020-03-30'
+                    domicile_of_registration: ID
+                    metadata:
+                      foo: bar
+                    created: '2020-03-30T06:12:47.212Z'
+                    updated: '2020-03-30T06:12:47.212Z'
+                getBusinessCustomer:
+                  value:
+                    id: cust-239c16f4-866d-43e8-9341-7badafbc019f
+                    reference_id: demo_1475801962607
+                    type: BUSINESS
+                    business_detail:
+                      business_name: ACME Corp
+                      trading_name: null
+                      business_type: CORPORATION
+                      nature_of_business: null
+                      business_domicile: null
+                      date_of_registration: null
+                    email: customer@website.com
+                    mobile_number: null
+                    phone_number: null
+                    hashed_phone_number: null
+                    addresses: []
+                    kyc_documents: []
+                    description: null
+                    date_of_registration: '2020-03-30'
+                    domicile_of_registration: ID
+                    metadata: {}
+                    created: '2020-03-30T06:12:47.212Z'
+                    updated: '2020-03-30T06:12:47.212Z'
+        '409':
+          $ref: '#/components/responses/ErrorStatusCode409Response'
+  # Customers by Customer Id
+  '/customers/{customer_id}':
+    get:
+      operationId: GetCustomerById
+      security:
+        - BasicAuth: []
+      tags:
+        - Customers
+      summary: Get customer by id
+      description: Retrieves a single customer object
+      parameters:
+        - $ref: '#/components/parameters/CustAPIVersionHeader'
+        - $ref: '#/components/parameters/ForUserIdHeader'
+        - $ref: '#/components/parameters/CustomerIdPathParam'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerObject'
+              examples:
+                getIndividualCustomer:
+                  value:
+                    # TODO: fix indent
+                    id: cust-239c16f4-866d-43e8-9341-7badafbc019f
+                    reference_id: demo_1475801962607
+                    type: INDIVIDUAL
+                    individual_detail:
+                      given_names: John
+                      surname: Doe
+                      nationality: ID
+                      place_of_birth: Jakarta
+                      date_of_birth: '1980-01-01'
+                      gender: MALE
+                      employment:
+                        employer_name: Xendit
+                        nature_of_business: Payment Gateway
+                        role_description: Test dummy
+                    email: customer@website.com
+                    mobile_number: '+62812123456'
+                    phone_number: '+62812123456'
+                    hashed_phone_number: +628#######56
+                    addresses:
+                      - street_line1: Panglima Polim IV
+                        street_line2: 'Ruko Grand Panglima Polim, Blok E'
+                        city: Jakarta Selatan
+                        province_state: DKI Jakarta
+                        postal_code: '993448'
+                        country: ID
+                        category: HOME
+                        is_primary: true
+                    identity_accounts:
+                      - type: CREDIT_CARD
+                        company: OCBC
+                        description: My account
+                        country: ID
+                        properties:
+                          token_id: 586f0ba2ab70de5d2b409e0d
+                    kyc_documents:
+                      - type: IDENTITY_CARD
+                        sub_type: NATIONAL_ID
+                        country: ID
+                        document_name: KTP
+                        document_number: '12356789012456'
+                        expires_at: null
+                        holder_name: John Doe
+                        document_images:
+                          - file-ec700c1c-db17-4496-b1fb-04ebe551b412
+                    description: My first customer
+                    date_of_registration: '2020-03-30'
+                    domicile_of_registration: ID
+                    metadata:
+                      foo: bar
+                    created: '2020-03-30T06:12:47.212Z'
+                    updated: '2020-03-30T06:12:47.212Z'
+                getBusinessCustomer:
+                  value:
+                    id: cust-239c16f4-866d-43e8-9341-7badafbc019f
+                    reference_id: demo_1475801962607
+                    type: BUSINESS
+                    business_detail:
+                      business_name: ACME Corp
+                      trading_name: null
+                      business_type: CORPORATION
+                      nature_of_business: null
+                      business_domicile: null
+                      date_of_registration: null
+                    email: customer@website.com
+                    mobile_number: null
+                    phone_number: null
+                    hashed_phone_number: null
+                    addresses: []
+                    identity_accounts: []
+                    kyc_documents: []
+                    description: null
+                    metadata: {}
+                    created: '2020-03-30T06:12:47.212Z'
+                    updated: '2020-03-30T06:12:47.212Z'
+        '404':
+          $ref: '#/components/responses/ErrorStatusCode404Response'
+    patch:
+      security:
+        - BasicAuth: []
+      operationId: UpdateCustomer
+      summary: Update Customer
+      description: |
+        Make a PATCH request to this endpoint to update the details on a customer. Only fields present in the request will be updated. Any changes to fields on the customer object will replace that item in its entirety. If you wish to append to an array, your PATCH request should contain the desired end state array (i.e., both the current content and the new array element to append to it). Pass a NULL value to remove the existing content.
+
+        Note that the reference_id and type on a customer cannot be updated.
+      tags:
+        - Customers
+      parameters:
+        - $ref: '#/components/parameters/CustAPIVersionHeader'
+        - $ref: '#/components/parameters/ForUserIdHeader'
+        - $ref: '#/components/parameters/CustomerIdPathParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchCustomerObject'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerObject'
+              examples:
+                getIndividualCustomer:
+                  value:
+                    id: cust-239c16f4-866d-43e8-9341-7badafbc019f
+                    reference_id: demo_1475801962607
+                    type: INDIVIDUAL
+                    individual_detail:
+                      given_names: John
+                      surname: Doe
+                      nationality: ID
+                      place_of_birth: Jakarta
+                      date_of_birth: '1980-01-01'
+                      gender: MALE
+                      employment:
+                        employer_name: Xendit
+                        nature_of_business: Payment Gateway
+                        role_description: Test dummy
+                    email: customer@website.com
+                    mobile_number: '+62812123456'
+                    phone_number: '+62812123456'
+                    hashed_phone_number: +628#######56
+                    addresses:
+                      - street_line1: Panglima Polim IV
+                        street_line2: 'Ruko Grand Panglima Polim, Blok E'
+                        city: Jakarta Selatan
+                        province_state: DKI Jakarta
+                        postal_code: '993448'
+                        country: ID
+                        category: HOME
+                        is_primary: true
+                    kyc_documents:
+                      - type: IDENTITY_CARD
+                        sub_type: NATIONAL_ID
+                        country: ID
+                        document_name: KTP
+                        document_number: '12356789012456'
+                        expires_at: null
+                        holder_name: John Doe
+                        document_images:
+                          - file-ec700c1c-db17-4496-b1fb-04ebe551b412
+                    description: My first customer
+                    date_of_registration: '2020-03-30'
+                    domicile_of_registration: ID
+                    metadata:
+                      foo: bar
+                    created: '2020-03-30T06:12:47.212Z'
+                    updated: '2020-03-30T06:12:47.212Z'
+                getBusinessCustomer:
+                  value:
+                    id: cust-239c16f4-866d-43e8-9341-7badafbc019f
+                    reference_id: demo_1475801962607
+                    type: BUSINESS
+                    business_detail:
+                      business_name: ACME Corp
+                      trading_name: null
+                      business_type: CORPORATION
+                      nature_of_business: null
+                      business_domicile: null
+                      date_of_registration: null
+                    email: customer@website.com
+                    mobile_number: null
+                    phone_number: null
+                    hashed_phone_number: null
+                    addresses: []
+                    kyc_documents: []
+                    description: null
+                    date_of_registration: '2020-03-30'
+                    domicile_of_registration: ID
+                    metadata: {}
+                    created: '2020-03-30T06:12:47.212Z'
+                    updated: '2020-03-30T06:12:47.212Z'
+        '404':
+          $ref: '#/components/responses/ErrorStatusCode404Response'
+  # Files
+  '/files/{file_id}':
+    get:
+      operationId: GetFileById
+      security:
+        - BasicAuth: []
+      tags:
+        - Files
+      summary: Get file by ID
+      description: Make a GET request to this endpoint to get file details
+      parameters:
+        - $ref: '#/components/parameters/FileIdPathParam'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileObject'
+              examples:
+                getFile:
+                  value:
+                    id: file-ec700c1c-db17-4496-b1fb-04ebe551b412
+                    business_id: ec700c1c-db17-4496-b1fb-04ebe551b412
+                    purpose: CHARGEBACK_EVIDENCE
+                    created: '2020-10-08T06:38:33.479Z'
+                    updated: '2020-10-08T06:38:33.479Z'
+                    type: image/png
+                    size: 10000
+                    url: 'https://files.xendit.co/file-ec700c1c-db17-4496-b1fb-04ebe551b412'
+        '404':
+          $ref: '#/components/responses/ErrorStatusCode404Response'
+      x-stoplight:
+        id: g5kcrysiv9d6w
+    delete:
+      operationId: DeleteFileById
+      summary: Delete file by ID
+      security:
+        - BasicAuth: []
+      tags:
+        - Files
+      description: Make a Delete request to this endpoint to delete the file
+      parameters:
+        - $ref: '#/components/parameters/FileIdPathParam'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteFileObject'
+              examples:
+                deleteFile:
+                  value:
+                    is_deleted: true
+                    id: file-ec700c1c-db17-4496-b1fb-04ebe551b412
+                    business_id: b647524d-9c5d-414c-843a-3c819853d6b0
+        '404':
+          $ref: '#/components/responses/ErrorStatusCode404Response'
+      x-stoplight:
+        id: 3ztxa7i2zueqo
+
+  # Download Files by File Id
+  '/files/{file_id}/download':
+    get:
+      operationId: DownloadFileById
+      summary: Download file by ID
+      security:
+        - BasicAuth: []
+      tags:
+        - Files
+      description: Retrieves file details
+      parameters:
+        - $ref: '#/components/parameters/FileIdPathParam'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/octet-string:
+              schema:
+                type: string
+                format: binary
+        '404':
+          $ref: '#/components/responses/ErrorStatusCode404Response'
+
+  # Upload File
+  '/files':
+    post:
+      security:
+        - BasicAuth: []
+      operationId: UploadFile
+      summary: Upload file
+      description: |
+        Make a POST request to this endpoint to upload a file. We currently support uploading PNG, JPG/JPEG, PDF files of less than 10 MB.
+      tags:
+        - Files
+      parameters:
+        - $ref: '#/components/parameters/PurposeHeader'
+        - $ref: '#/components/parameters/FileHeader'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileObject'
+              examples:
+                postFileUpload:
+                  value:
+                    id: file-ec700c1c-db17-4496-b1fb-04ebe551b412
+                    business_id: ec700c1c-db17-4496-b1fb-04ebe551b412
+                    purpose: CHARGEBACK_EVIDENCE
+                    created: '2020-10-08T06:38:33.479Z'
+                    updated: '2020-10-08T06:38:33.479Z'
+                    type: image/png
+                    size: 10000
+                    url: https://files.xendit.co/file-ec700c1c-db17-4496-b1fb-04ebe551b412
+        '400':
+          $ref: '#/components/responses/ErrorStatusCode400Response'
+        '403':
+          $ref: '#/components/responses/ErrorStatusCode403Response'
+        '413':
+          $ref: '#/components/responses/ErrorStatusCode413Response'
+        '415':
+          $ref: '#/components/responses/ErrorStatusCode415Response'
+        '429':
+          $ref: '#/components/responses/ErrorStatusCode429Response'
+
+  # Bill Payments API
+  /bill-payments/v1/product:
+    get:
+      tags:
+        - Bill Payments
+      summary: Get Product List
+      description: Gets a list of available products with optional filtering capabilities
+      operationId: getBillPaymentProductList
+      security:
+        - BasicAuth: []
+      parameters:
+        - name: id
+          in: query
+          description: Filter by specific product ID
+          required: false
+          schema:
+            type: string
+          example: PLN_PREPAID_50K
+        - name: biller
+          in: query
+          description: Filter by biller name
+          required: false
+          schema:
+            type: string
+          example: PLN
+        - name: category
+          in: query
+          description: Filter by product category
+          required: false
+          schema:
+            type: string
+            enum:
+              - ELECTRICITY
+          example: ELECTRICITY
+        - name: country
+          in: query
+          description: Filter by country code (e.g. ID)
+          required: false
+          schema:
+            type: string
+          example: ID
+        - name: availability_status
+          in: query
+          description: Filter by product availability status
+          required: false
+          schema:
+            type: string
+            enum:
+              - AVAILABLE
+              - TEMPORARILY_UNAVAILABLE
+              - DISCONTINUED
+          example: AVAILABLE
+        - name: requires_inquiry
+          in: query
+          description: Filter products that require inquiry step
+          required: false
+          schema:
+            type: boolean
+          example: true
+        - name: limit
+          in: query
+          description: Number of records to be fetched per page
+          required: false
+          schema:
+            type: integer
+            default: 50
+          example: 50
+        - name: cursor
+          in: query
+          description: Cursor value for paginating the result
+          required: false
+          schema:
+            type: string
+          example: dummy-cursor-value-001==
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillPaymentProductListResponse'
+              examples:
+                plnPrepaid:
+                  summary: PLN Prepaid 50K Example
+                  value:
+                    limit: 50
+                    cursor: dummy-cursor-value-001==
+                    data:
+                      - type: product
+                        id: PLN_PREPAID_50K
+                        properties:
+                          product_name: PLN Prepaid 50K
+                          category: ELECTRICITY
+                          biller: PLN
+                          country: ID
+                          currency: IDR
+                          requires_inquiry: false
+                          availability_status: AVAILABLE
+                          admin_amount: 3200
+                          base_amount: 50000
+                          total_amount: 53200
+                          revenue_share_amount: 1000
+                          locale:
+                            en: PLN Prepaid 50.000
+                            id: PLN Prabayar 50.000
+        '400':
+          $ref: '#/components/responses/ErrorStatusCode400Response'
+        '401':
+          $ref: '#/components/responses/ErrorStatusCode403Response'
+        '500':
+          $ref: '#/components/responses/ErrorStatusCode500Response'
+  '/bill-payments/v1/product/{id}':
+    get:
+      tags:
+        - Bill Payments
+      summary: Get Product by ID
+      description: Gets a specific product by its ID
+      operationId: getBillPaymentProductById
+      security:
+        - BasicAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: Product ID
+          required: true
+          schema:
+            type: string
+          example: PLN_PREPAID_50K
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillPaymentProduct'
+        '404':
+          $ref: '#/components/responses/ErrorStatusCode404Response'
+  /bill-payments/v1/inquiry:
+    post:
+      tags:
+        - Bill Payments
+      summary: Create Inquiry
+      description: |
+        Facilitates pre-payment verification for products requiring upfront bill checks, 
+        such as PLN electricity services. The response includes comprehensive 
+        bill information and the total amount due.
+      operationId: createBillPaymentInquiry
+      security:
+        - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillPaymentInquiryRequest'
+            examples:
+              plnPrepaid:
+                summary: PLN Prepaid Inquiry
+                value:
+                  product_id: PLN_PREPAID_50K
+                  customer_number: '12345678910'
+              plnPostpaid:
+                summary: PLN Postpaid Inquiry
+                value:
+                  product_id: PLN_POSTPAID
+                  customer_number: '22345678910'
+      responses:
+        '200':
+          description: Successful inquiry response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillPaymentInquiryResponse'
+              examples:
+                plnPrepaid:
+                  summary: PLN Prepaid Inquiry Response
+                  value:
+                    data:
+                      business_id: 5f27a14a9bf05c73dd040bc8
+                      type: inquiry
+                      id: inq-98765
+                      properties:
+                        product_id: PLN_PREPAID_50K
+                        admin_amount: 3200
+                        base_amount: 50000
+                        total_amount: 53200
+                        revenue_share_amount: 500
+                        currency: IDR
+                        customer_number: '12345678910'
+                        customer_details:
+                          - key: Nama Pelanggan
+                            value: John Doe
+                          - key: Nomor Pelanggan
+                            value: '12345678910'
+                        product_details:
+                          - key: Tarif/Daya
+                            value: R2/000003500
+                          - key: Denom
+                            value: '100.000'
+                        bill_details:
+                          - key: Admin
+                            value: '3200'
+        '400':
+          $ref: '#/components/responses/ErrorStatusCode400Response'
+        '404':
+          $ref: '#/components/responses/ErrorStatusCode404Response'
+        '409':
+          $ref: '#/components/responses/ErrorStatusCode409Response'
+        '502':
+          $ref: '#/components/responses/ErrorStatusCode502Response'
+        '503':
+          $ref: '#/components/responses/ErrorStatusCode503Response'
+        '504':
+          $ref: '#/components/responses/ErrorStatusCode504Response'
+  /bill-payments/v1/payment:
+    post:
+      tags:
+        - Bill Payments
+      summary: Create Payment
+      description: |
+        This endpoint allows users to submit a payment for a specific product. 
+        It can be used for various types of payments, including utility bills, 
+        prepaid services, and other products that may or may not require a prior inquiry.
+      operationId: createBillPayment
+      security:
+        - BasicAuth: []
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          description: Unique key to prevent duplicate payments. Must be unique for each payment request.
+          required: true
+          schema:
+            type: string
+          example: unique-idempotency-key-123
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillPaymentRequest'
+            examples:
+              plnPrepaid:
+                summary: PLN Prepaid Payment
+                value:
+                  product_id: PLN_PREPAID_50K
+                  customer_number: '12345678910'
+                  inquiry_id: inq-98765
+                  reference_id: tx-pln-001
+                  total_amount: 53200
+                  additional_properties: {}
+              plnPostpaid:
+                summary: PLN Postpaid Payment
+                value:
+                  product_id: PLN_POSTPAID
+                  customer_number: '22345678910'
+                  inquiry_id: inq-98766
+                  reference_id: tx-pln-postpaid-001
+                  total_amount: 159500
+      responses:
+        '200':
+          description: Payment accepted for processing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillPaymentResponse'
+              examples:
+                plnPrepaidPending:
+                  summary: PLN Prepaid Payment - Pending
+                  value:
+                    data:
+                      business_id: 5f27a14a9bf05c73dd040bc8
+                      type: payment
+                      id: trx-98765
+                      properties:
+                        product_id: PLN_PREPAID_50K
+                        customer_number: '12345678910'
+                        reference_id: tx-pln-001
+                        admin_amount: 3200
+                        base_amount: 50000
+                        total_amount: 53200
+                        currency: IDR
+                        status: PENDING
+                        fulfilled_at: null
+                        failure_code: null
+                        failure_reason: null
+                        customer_details: []
+                        product_details: []
+                        bill_details: []
+                        payment_details: []
+        '400':
+          $ref: '#/components/responses/ErrorStatusCode400Response'
+        '402':
+          $ref: '#/components/responses/ErrorStatusCode402Response'
+        '404':
+          $ref: '#/components/responses/ErrorStatusCode404Response'
+        '409':
+          $ref: '#/components/responses/ErrorStatusCode409Response'
+        '502':
+          $ref: '#/components/responses/ErrorStatusCode502Response'
+        '503':
+          $ref: '#/components/responses/ErrorStatusCode503Response'
+        '504':
+          $ref: '#/components/responses/ErrorStatusCode504Response'
+  '/bill-payments/v1/payment/{id}':
+    get:
+      tags:
+        - Bill Payments
+      summary: Get Payment Detail
+      description: |
+        This endpoint retrieves detailed information about a specific payment, 
+        including its current status and fulfillment results if available.
+      operationId: getBillPaymentDetail
+      security:
+        - BasicAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: Payment transaction ID from post payment response
+          required: true
+          schema:
+            type: string
+          example: trx-98765
+      responses:
+        '200':
+          description: Payment details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillPaymentResponse'
+              examples:
+                plnPrepaidSuccess:
+                  summary: PLN Prepaid Payment - Success
+                  value:
+                    data:
+                      business_id: 5f27a14a9bf05c73dd040bc8
+                      type: payment
+                      id: trx-98765
+                      properties:
+                        reference_id: tx-pln-001
+                        product_id: PLN_PREPAID_50K
+                        customer_number: '12345678910'
+                        admin_amount: 3200
+                        base_amount: 50000
+                        total_amount: 53200
+                        currency: IDR
+                        status: SUCCEEDED
+                        fulfilled_at: '2024-01-23T08:15:30Z'
+                        failure_code: null
+                        failure_reason: null
+                        customer_details:
+                          - key: Nama Pelanggan
+                            value: John Doe
+                          - key: Nomor Pelanggan
+                            value: '12345678910'
+                        product_details:
+                          - key: Tarif/Daya
+                            value: R2/000003500
+                        bill_details:
+                          - key: Admin
+                            value: '3200'
+                        payment_details:
+                          - key: Token
+                            value: 1234-5678-9012-3456-7890
+                          - key: Serial Number
+                            value: PLN987654321
+        '404':
+          $ref: '#/components/responses/ErrorStatusCode404Response'
+  /bill-payments/your-callback-url:
+    post:
+      tags:
+        - Bill Payments
+      summary: Payment Status Callback (Webhook)
+      description: |
+        Callback endpoint that Xendit will POST to your configured webhook URL when payment status updates occur.
+        This endpoint should be implemented by your server to receive payment notifications.
+      parameters:
+        - name: X-Callback-Signature
+          in: header
+          description: HMAC SHA256 signature for webhook verification
+          required: true
+          schema:
+            type: string
+        - name: X-Callback-Timestamp
+          in: header
+          description: Unix timestamp when callback was generated
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillPaymentCallbackData'
+            examples:
+              billPaymentSucceeded:
+                summary: Bill Payment Succeeded Webhook
+                value:
+                  created: '2025-08-01T10:46:08.208Z'
+                  business_id: 60c820d70d4499475d05adb2
+                  event: bill_payment.succeeded
+                  data:
+                    data:
+                      status: SUCCEEDDED
+                      created_at: '2025-08-01T10:46:03Z'
+                      payment_id: 3dd4ebd4-f6cf-4042-bc65-dd847adcfb77
+                      product_id: PLN_PREPAID_50K
+                      updated_at: '2025-08-01T10:46:03Z'
+                      reference_id: PLN-20250801174603-5TV45
+                      total_amount: 53200
+                      customer_number: '50170719442'
+                      ledger_transaction_id: ''
+                    event: bill_payment.succeeded
+                    business_id: 60c820d70d4499475d05adb2
+                  api_version: v1
+      responses:
+        '200':
+          description: Webhook acknowledged successfully
+
+components:
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: Basic
+
+  parameters:
+    ForUserIdHeader:
+      in: header
+      name: for-user-id
+      description: |
+            The sub-account user-id that you want to make this transaction for.
+            
+            This header is only used if you have access to xenPlatform. See xenPlatform for more information
+      required: false
+      schema:
+        type: string
+    ReferenceIdQueryParam:
+      in: query
+      name: reference_id
+      description: Your identifier for the customer
+      required: true
+      schema: 
+        $ref: '#/components/schemas/ReferenceId' 
+    CustomerIdPathParam:
+      in: path
+      name: customer_id
+      description: Your identifier for the customer
+      required: true
+      schema: 
+        $ref: '#/components/schemas/CustomerId'      
+    IdempotencyKeyHeader:
+      in: header
+      name: idempotency-key
+      description: A unique key to prevent processing duplicate requests. Can be your reference_id or any GUID. Must be unique across development & production environments. Idempotency keys are stored on the request layer; it expires after 24 hours from the first request
+      required: false
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 100
+        example: ef73608e-51d1-4770-8396-08a44dd4c9f0
+    CustAPIVersionHeader:
+      in: header
+      name: api-version
+      description: API version in date semantic. Attach this parameter when calling a specific API version. List of API versions can be found here.
+      required: false
+      schema:
+        example: 2020-10-31
+        type: string
+        enum: ['2020-10-31', '2020-05-19' ]
+    PurposeHeader:
+      in: header
+      name: purpose
+      description: Purpose of the file being uploaded
+      required: true
+      schema:
+        type: string
+        enum:
+          - KYC_DOCUMENT
+          - CHARGEBACK_EVIDENCE
+    FileHeader:
+      in: header
+      name: file
+      description: The file
+      required: true
+      schema:
+        type: string
+        enum:
+          - application/pdf
+          - image/png
+          - image/jpg
+          - image/jpeg
+    FileIdPathParam:
+      in: path
+      name: file_id
+      description: Unique ID generated by Xendit for the particular file
+      required: true
+      schema:
+        $ref: '#/components/schemas/FileId'
+
+  responses:
+    #Error Responses
+    ErrorStatusCode400Response:
+      description: 'Inputs are failing validation. The errors field contains details about which fields are violating validation.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error400Schema'
+    ErrorStatusCode403Response:
+      description: 'API key in use does not have necessary permissions to perform the request. Please assign proper permissions for the key.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error403Schema'
+    ErrorStatusCode404Response:
+      description: 'The provided `id` does not exist. Please review the `id` and try again'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error403Schema'
+    ErrorStatusCode409Response:
+      description: 'Conflict'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error409Schema'
+    ErrorStatusCode413Response:
+      description: 'The file size is greater than 10MB and exceeded size limits. Please compress the payload before retrying'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error413Schema'
+    ErrorStatusCode415Response:
+      description: 'The file format is not supported. Please review the file type before retrying'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error415Schema'
+    ErrorStatusCode429Response:
+      description: 'The file format is not supported. Please review the file type before retrying'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error429Schema'
+    ErrorStatusCode402Response:
+      description: 'Payment Required - Insufficient balance'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error400Schema'
+    ErrorStatusCode500Response:
+      description: 'Internal Server Error'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error400Schema'
+    ErrorStatusCode502Response:
+      description: 'Bad Gateway - Biller error'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error400Schema'
+    ErrorStatusCode503Response:
+      description: 'Service Unavailable - Biller maintenance'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error400Schema'
+    ErrorStatusCode504Response:
+      description: 'Gateway Timeout - Biller timeout'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error400Schema'
+
+  schemas:
+    # Customer Object
+    ListCustomerObject:
+      type: object
+      description: List of customer object
+      properties:
+        data:
+          type: array
+          items: 
+            $ref: '#/components/schemas/CustomerObject'
+        has_more:
+          type: boolean
+
+    CustomerObject:
+      type: object
+      description: Customer Object
+      properties:
+        id:
+            $ref: '#/components/schemas/CustomerId'
+        reference_id:
+            $ref: '#/components/schemas/ReferenceId'
+        type:
+          type: string
+          enum:
+            - INDIVIDUAL
+            - BUSINESS
+          description: Type of customer
+        individual_detail:
+          type: object
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/XenditStandardIndividualDetail'
+        business_detail:
+          type: object
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/XenditStandardBusinessDetail'
+        mobile_number:
+            $ref: '#/components/schemas/PhoneNumber'
+        phone_number:
+            $ref: '#/components/schemas/MobileNumber'
+        hashed_phone_number:
+            $ref: '#/components/schemas/HashedPhoneNumber'
+        email:
+            $ref: '#/components/schemas/Email'
+        addresses:
+          type: array
+          items:
+            $ref: '#/components/schemas/XenditStandardAddress'
+        identity_accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentityAccount'
+        kyc_documents:
+            $ref: '#/components/schemas/XenditKYCDocuments'
+        description:
+            $ref: '#/components/schemas/Description'
+        date_of_registration:
+          type: string
+          description: "Date of which the account that the shopper had to create/sign up on the merchant's website"
+          format: date 
+        domicile_of_registration:
+          type: string
+          description: "Country within which the account that the shopper had to create/sign up on the merchant's website resides (e.g. accounts created on Shopee SG have `SG` as the value for this field. ISO 3166-2 Country Code"  
+          minLength: 2
+          maxLength: 2   
+        metadata:
+          type: object
+          description: |
+            Object of additional information related to the customer. Define the JSON properties and values as required to pass information through the APIs.
+            You can specify up to 50 keys, with key names up to 40 characters long and values up to 500 characters long.
+            This is only for your use and will not be used by Xendit.
+        created:
+          type: string
+          format: date-time
+          description: Customer creation timestamp
+        updated:
+          type: string
+          format: date-time
+          description: Customer last update timestamp
+      required:
+        - reference_id
+    PatchCustomerObject:
+      type: object
+      description: Patch body request
+      properties:
+        individual_detail:
+            $ref: '#/components/schemas/XenditStandardIndividualDetail'
+        business_detail:
+            $ref: '#/components/schemas/XenditStandardBusinessDetail'
+        mobile_number:
+            $ref: '#/components/schemas/MobileNumber'
+        phone_number:
+            $ref: '#/components/schemas/PhoneNumber'
+        email:
+            $ref: '#/components/schemas/Email'
+        addresses:
+            $ref: '#/components/schemas/XenditStandardAddress'
+        kyc_documents:
+            $ref: '#/components/schemas/XenditKYCDocuments'
+        description:
+            $ref: '#/components/schemas/Description'
+        date_of_registration:
+          type: string
+          description: 'Business registration date'
+          format: date  
+        domicile_of_registration:
+          type: string
+          description: "Country within which the account that the shopper had to create/sign up on the merchant's website resides (e.g. accounts created on Shopee SG have `SG` as the value for this field. ISO 3166-2 Country Code"  
+          minLength: 2
+          maxLength: 2 
+        metadata:
+          type: object
+          description: |
+            Object of additional information related to the customer. Define the JSON properties and values as required to pass information through the APIs.
+            You can specify up to 50 keys, with key names up to 40 characters long and values up to 500 characters long.
+            This is only for your use and will not be used by Xendit.
+    # File Object
+    FileObject:
+      type: object
+      properties:
+        id:
+            $ref: '#/components/schemas/Id'
+        business_id:
+            $ref: '#/components/schemas/BusinessId'
+        purpose:
+            $ref: '#/components/schemas/Purpose'
+        created:
+            $ref: '#/components/schemas/FileCreated'
+        updated:
+            $ref: '#/components/schemas/FileUpdated'
+        type:
+            $ref: '#/components/schemas/FileType'
+        size:
+            $ref: "#/components/schemas/Size"
+        url:
+            $ref: '#/components/schemas/FileURL'
+    DeleteFileObject:
+      type: object
+      properties:
+        id:
+            $ref: '#/components/schemas/FileId'
+        business_id:
+            $ref: '#/components/schemas/BusinessId'
+        is_deleted:
+          type: boolean
+
+    ReferenceId:
+      type: string
+      minLength: 1
+      maxLength: 255
+      description: 'A Reference ID from merchants to identify their request.'
+    CustomerId:
+      type: string
+      maxLength: 41
+      description: 'Xendit unique Capture ID generated as reference for the end user'
+      example: 'cust-b98d6f63-d240-44ec-9bd5-aa42954c4f48'
+    PhoneNumber:
+      type: string
+      nullable: true
+      description: |
+        Supports both E.164 international format (+<country code><subscriber number>) and local formats with or without a leading zero.
+      minLength: 7
+      maxLength: 15    
+    MobileNumber:
+      type: string
+      nullable: true
+      minLength: 7 # Minimum length to allow short local numbers (without country code)
+      maxLength: 15 # Maximum length for international numbers in E.164 format (+123456789012345)
+      description: |
+        Supports both E.164 international format (+<country code><subscriber number>) and local formats with or without a leading zero.
+    HashedPhoneNumber:
+      type: string
+      nullable: true
+      description: 'Hashed phone number'
+      minLength: 1
+      maxLength: 250
+    Email:
+      type: string
+      nullable: true
+      format: email
+      description: 'E-mail address of customer'
+      minLength: 1
+      maxLength: 50    
+    Country:
+      type: string
+      description: 'ISO 3166-1 alpha-2 Country Code'
+      minLength: 2
+      maxLength: 2  
+    Description:
+      type: string
+      nullable: true
+      description: 'Merchant-provided description for the customer. `Characters` alphanumeric. No special characters is allowed.'
+      minLength: 2
+      maxLength: 500 
+    Id:
+      type: string
+      description: 'Unique ID generated by Xendit for the particular file'
+    BusinessId:
+      type: string
+      description: 'Unique ID generated by Xendit for the particular file'
+    Purpose:
+      type: string
+      description: 'Purpose of the file'
+    FileCreated:
+      type: string
+      description: 'UTC Timestamp of file upload in ISO format'
+    FileUpdated:
+      type: string
+      description: 'UTC Timestamp of last file update in ISO format'
+    FileType:
+      type: string
+      description: 'Type of the file'
+    Size:
+      type: integer
+      description: 'Size of the file in bytes'
+    FileURL:
+      type: string
+      description: 'URL to download the file'
+    IsDeleted:
+      type: boolean
+      description: 'Deletion status. True if file was successfully deleted'
+    FileId:
+      type: string
+      description: 'File ID'
+    CustomerType:
+      type: string
+      enum:
+        - INDIVIDUAL
+        - BUSINESS
+      description: 'Type of customer'
+    XenditStandardIndividualDetail:
+      type: object
+      required:
+        - given_names
+      description: JSON object containing details of the Individual. Required if type is `INDIVIDUAL`
+      properties:
+        given_names:
+          type: string
+          description: 'Primary or first name/s of customer. Alphanumeric. No special characters is allowed.'
+          minLength: 1
+          maxLength: 50
+        surname:
+          type: string
+          nullable: true
+          description: 'Last or family name of customer. Alphanumeric. No special characters is allowed.'
+          minLength: 1
+          maxLength: 50
+        nationality:
+          type: string
+          nullable: true
+          description: 'Country code for customer nationality. ISO 3166-1 alpha-2 Country Code'
+          minLength: 2
+          maxLength: 2
+        place_of_birth:
+          type: string
+          nullable: true
+          description: 'City or other relevant location for the customer birth place. Alphanumeric. No special characters is allowed.'
+          minLength: 1
+          maxLength: 60
+        date_of_birth:
+          type: string
+          nullable: true
+          description: 'Date of birth of the customer. Format: YYYY-MM-DD'
+          minLength: 10
+          maxLength: 10
+        gender:
+          type: string
+          nullable: true
+          enum:
+            - MALE
+            - FEMALE
+            - OTHER
+          description: 'Gender of customer'
+        employment:
+          type: object
+          nullable: true
+          properties:
+            employer_name:
+              type: string
+              description: Name of the employer
+              minLength: 1
+              maxLength: 50
+            nature_of_business:
+              type: string
+              description: Industry or nature of business
+              minLength: 1
+              maxLength: 50
+            role_description:
+              type: string
+              description: Occupation or title
+              minLength: 1
+              maxLength: 50            
+
+    XenditStandardBusinessDetail:
+      type: object
+      required:
+        - business_name
+      description: JSON object containing details of the business. Required if type is `BUSINESS`
+      properties:
+        business_name:
+          type: string
+          description: 'Name of business'
+          minLength: 1
+          maxLength: 50
+        trading_name:
+          type: string
+          nullable: true
+          description: 'Trading name'
+          minLength: 1
+          maxLength: 50
+        business_type:
+          type: string
+          description: 'Legal entity type of the business'
+          enum:
+            - SOLE_PROPRIETOR
+            - PARTNERSHIP
+            - COOPERATIVE
+            - TRUST
+            - NON_PROFIT
+            - GOVERNMENT
+            - CORPORATION
+        nature_of_business:
+          type: string
+          nullable: true
+          description: 'Free text description of the type of business this entity pursues'
+          minLength: 1
+          maxLength: 50
+          example: Ecommerce, Travel
+        business_domicile:
+          type: string
+          nullable: true
+          description: 'Registered country of the business. ISO 3166 format'
+        date_of_registration:
+          type: string
+          nullable: true
+          description: 'Business registration date'
+          format: date       
+
+    XenditStandardAddress:
+      type: object
+      required:
+        - country
+      properties:
+        country:
+         $ref: "#/components/schemas/Country"
+        street_line1:
+          type: string
+          description: 'Line 1 of street address e.g., building name and apartment number'
+          minLength: 1
+          maxLength: 255
+        street_line2:
+          type: string
+          description: 'Line 2 of street address e.g., building name and apartment number'
+          minLength: 1
+          maxLength: 255
+        city:
+          type: string
+          description: 'City, village or town of residence of customer'
+          minLength: 1
+          maxLength: 255     
+        province_state:
+          type: string
+          description: 'Province, state or region of residence of customer'
+          minLength: 1
+          maxLength: 255   
+        postal_code:
+          type: string
+          description: 'ZIP/Postal Code of customer'
+          minLength: 1
+          maxLength: 255                            
+        category:
+          type: string
+          description: 'Address type'
+          enum:
+            - HOME
+            - WORK
+            - PROVINCIAL
+        is_primary:
+          type: boolean
+          description: >
+            Defaults to false. Indicates that the information provided 
+            refers to the customer's primary address
+          default: false
+
+    XenditKYCDocuments:
+      type: array
+      items:
+        $ref: '#/components/schemas/XenditKYCDocumentsObject'
+
+    XenditKYCDocumentsObject:
+      type: object
+      required:
+        - country
+      properties:
+        country:
+            $ref: '#/components/schemas/Country'
+        type:
+          type: string
+          description: ' Generic ID type'
+          enum:
+            - BIRTH_CERTIFICATE
+            - BANK_STATEMENT
+            - DRIVING_LICENSE
+            - IDENTITY_CARD
+            - PASSPORT
+            - VISA
+            - BUSINESS_REGISTRATION
+            - BUSINESS_LICENSE
+        sub_type:
+          type: string
+          description: 'Specific ID type for IDENTITY_CARD types'
+          enum:
+            - NATIONAL_ID
+            - CONSULAR_ID
+            - VOTER_ID
+            - POSTAL_ID
+            - RESIDENCE_PERMIT
+            - TAX_ID
+            - STUDENT_ID
+            - MILITARY_ID
+            - MEDICAL_ID
+            - OTHERS
+        document_name:
+          type: string
+          description: 'Free text description of the type of document (e.g., NIB, SIUP, AKTA). `Characters` alphanumeric. No special characters is allowed.'
+          maxLength: 255
+        document_number:
+          type: string
+          description: 'Unique alphanumeric identity document number or code. `Characters` alphanumeric. No special characters is allowed.'
+          maxLength: 255
+        expires_at:
+          type: string
+          nullable: true
+          description: 'Expiry date, if relevant'
+          example: 2024-11-11
+        holder_name:
+          type: string
+          description: 'Free text to capture the full name(s) of the individual or business as defined on the document, if relevant. `Characters` alphanumeric. No special characters is allowed.'
+          maxLength: 255     
+        document_images:
+          type: array
+          items:
+            type: string
+          description: >
+            Array of file ids returned from uploads to the files endpoint, 
+            representing images of the front/back of the document, in png/jpg/jpeg/pdf format
+
+    IdentityAccount:
+      type: object
+      properties:
+        type:
+          type: string
+          description: 'Type of identity account'
+          enum:
+            - CREDIT_CARD
+            - DEBIT_CARD
+            - BANK_ACCOUNT
+        company:
+          type: string
+          description: 'Financial institution or company name'
+        description:
+          type: string
+          description: 'Description of the account'
+        country:
+            $ref: '#/components/schemas/Country'
+        properties:
+          type: object
+          description: 'Additional properties specific to the account type'
+
+    #API Response Schema
+    Error400Schema:
+      type: object
+      required:
+        - error_code
+        - message
+      properties:
+        error_code:
+          type: string
+          enum:
+            - API_VALIDATION_ERROR
+            - FEATURE_NOT_AVAILABLE
+        message: 
+          type: string
+        errors:
+            $ref: '#/components/schemas/XenditArrayOfErrors'
+    Error403Schema:
+      type: object
+      required:
+        - error_code
+        - message
+      properties:
+        error_code:
+          type: string
+          enum:
+            - RATE_LIMIT_EXCEEDED
+        message: 
+          type: string
+        errors:
+            $ref: '#/components/schemas/XenditArrayOfErrors'
+    Error409Schema:
+      type: object
+      required:
+        - error_code
+        - message
+      properties:
+        error_code:
+          type: string
+          enum:
+            - DUPLICATE_ERROR
+            - IDEMPOTENCY_ERROR
+        message: 
+          type: string
+        errors:
+            $ref: '#/components/schemas/XenditArrayOfErrors'
+    Error413Schema:
+      type: object
+      required:
+        - error_code
+        - message
+      properties:
+        error_code:
+          type: string
+          enum:
+            - FILE_TOO_LARGE_EXCEEDED_ERROR
+        message: 
+          type: string
+        errors:
+            $ref: '#/components/schemas/XenditArrayOfErrors'
+    Error415Schema:
+      type: object
+      required:
+        - error_code
+        - message
+      properties:
+        error_code:
+          type: string
+          enum:
+            - UNSUPPORTED_CONTENT_TYPE_ERROR
+        message: 
+          type: string
+        errors:
+            $ref: '#/components/schemas/XenditArrayOfErrors'
+    Error429Schema:
+      type: object
+      required:
+        - error_code
+        - message
+      properties:
+        error_code:
+          type: string
+          enum:
+            - RATE_LIMIT_EXCEEDED
+        message: 
+          type: string
+        errors:
+            $ref: '#/components/schemas/XenditArrayOfErrors'
+    XenditArrayOfErrors:
+      nullable: true
+      type: array
+      items:
+        oneOf:
+          - type: string
+          - type: object 
+
+    # Bill Payment Schemas
+    BillPaymentProductListResponse:
+      type: object
+      required:
+        - data
+        - limit
+        - cursor
+      properties:
+        data:
+          type: array
+          description: Array of product objects
+          items:
+            $ref: '#/components/schemas/BillPaymentProduct'
+        next_cursor:
+          type: string
+          description: Cursor value for next page. Empty if the last page reached
+        limit:
+          type: integer
+          description: Number of records per page
+
+    BillPaymentProduct:
+      type: object
+      required:
+        - type
+        - id
+        - properties
+      properties:
+        type:
+          type: string
+          description: 'Type of object, always "product"'
+          enum:
+            - product
+        id:
+          type: string
+          description: Unique product identifier
+        properties:
+          type: object
+          required:
+            - product_name
+            - category
+            - biller
+            - country
+            - currency
+            - requires_inquiry
+            - availability_status
+            - admin_amount
+            - base_amount
+            - total_amount
+            - revenue_share_amount
+          properties:
+            product_name:
+              type: string
+              description: Display name of the product
+            category:
+              type: string
+              description: Product category
+              enum:
+                - ELECTRICITY
+            biller:
+              type: string
+              description: Name of the biller/provider
+            country:
+              type: string
+              description: Country code in ISO 3166-1 alpha-2 format
+            currency:
+              type: string
+              description: Currency code in ISO 4217 format
+            requires_inquiry:
+              type: boolean
+              description: Whether product requires inquiry before purchase
+            availability_status:
+              type: string
+              description: Product availability status
+              enum:
+                - AVAILABLE
+                - TEMPORARILY_UNAVAILABLE
+                - DISCONTINUED
+            admin_amount:
+              type: number
+              description: Administrative fee amount
+            base_amount:
+              type: number
+              description: Base product amount (0 for postpaid products)
+            total_amount:
+              type: number
+              description: Total amount including admin fee
+            revenue_share_amount:
+              type: number
+              description: Merchant revenue share amount
+            locale:
+              type: object
+              description: Localized product names
+              properties:
+                en:
+                  type: string
+                  description: Product name in English
+                id:
+                  type: string
+                  description: Product name in Indonesian
+
+    BillPaymentInquiryRequest:
+      type: object
+      required:
+        - product_id
+        - customer_number
+      properties:
+        product_id:
+          type: string
+          description: Product identifier
+        customer_number:
+          type: string
+          description: Customer's account/service number
+        additional_properties:
+          type: object
+          description: Additional parameters required for specific products
+
+    BillPaymentInquiryResponse:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          required:
+            - business_id
+            - type
+            - id
+            - properties
+          properties:
+            business_id:
+              type: string
+              description: Xendit's Business ID
+            type:
+              type: string
+              description: 'Type of response, always "inquiry"'
+              enum:
+                - inquiry
+            id:
+              type: string
+              description: Unique inquiry identifier
+            properties:
+              type: object
+              required:
+                - product_id
+                - admin_amount
+                - base_amount
+                - total_amount
+                - revenue_share_amount
+                - currency
+                - customer_number
+                - customer_details
+                - product_details
+                - bill_details
+              properties:
+                product_id:
+                  type: string
+                  description: Product identifier
+                admin_amount:
+                  type: number
+                  description: Administrative fee amount
+                base_amount:
+                  type: number
+                  description: Base product amount
+                total_amount:
+                  type: number
+                  description: Total amount including admin fee
+                revenue_share_amount:
+                  type: number
+                  description: Partner revenue share amount
+                currency:
+                  type: string
+                  description: Currency of the product
+                customer_number:
+                  type: string
+                  description: Customer's account/service number
+                customer_details:
+                  type: array
+                  description: Array of customer information key-value pairs
+                  items:
+                    $ref: '#/components/schemas/BillPaymentDetailKeyValue'
+                product_details:
+                  type: array
+                  description: Array of product information key-value pairs
+                  items:
+                    $ref: '#/components/schemas/BillPaymentDetailKeyValue'
+                bill_details:
+                  type: array
+                  description: Array of billing information key-value pairs
+                  items:
+                    $ref: '#/components/schemas/BillPaymentDetailKeyValue'
+
+    BillPaymentRequest:
+      type: object
+      required:
+        - product_id
+        - customer_number
+        - reference_id
+        - total_amount
+      properties:
+        product_id:
+          type: string
+          description: Product identifier
+        customer_number:
+          type: string
+          description: Customer's account/service number
+        inquiry_id:
+          type: string
+          description: Inquiry ID from POST /inquiry (optional)
+        reference_id:
+          type: string
+          description: Partner's unique transaction reference
+        total_amount:
+          type: number
+          description: Total payment amount including admin fee
+        additional_properties:
+          type: object
+          description: Additional parameters required for specific products
+
+    BillPaymentResponse:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          required:
+            - business_id
+            - type
+            - id
+            - properties
+          properties:
+            business_id:
+              type: string
+              description: Xendit's Business ID
+            type:
+              type: string
+              description: 'Type of response, always "payment"'
+              enum:
+                - payment
+            id:
+              type: string
+              description: Unique payment transaction ID
+            properties:
+              type: object
+              required:
+                - reference_id
+                - product_id
+                - customer_number
+                - admin_amount
+                - base_amount
+                - total_amount
+                - currency
+                - status
+                - fulfilled_at
+                - customer_details
+                - product_details
+                - bill_details
+                - payment_details
+              properties:
+                reference_id:
+                  type: string
+                  description: Partner's transaction reference
+                product_id:
+                  type: string
+                  description: Product identifier
+                customer_number:
+                  type: string
+                  description: Customer's account/service number
+                admin_amount:
+                  type: number
+                  description: Administrative fee amount
+                base_amount:
+                  type: number
+                  description: Base product amount
+                total_amount:
+                  type: number
+                  description: Total amount including admin fee
+                currency:
+                  type: string
+                  description: Currency of the product
+                status:
+                  type: string
+                  description: Payment status
+                  enum:
+                    - PENDING
+                    - SUCCEEDED
+                    - FAILED
+                fulfilled_at:
+                  type: string
+                  format: date-time
+                  nullable: true
+                  description: ISO8601 timestamp when payment completed (null when pending)
+                failure_code:
+                  type: string
+                  nullable: true
+                  description: Error code in case of FAILED status
+                failure_reason:
+                  type: string
+                  nullable: true
+                  description: Error message in case of FAILED status
+                customer_details:
+                  type: array
+                  description: Array of customer information key-value pairs
+                  items:
+                    $ref: '#/components/schemas/BillPaymentDetailKeyValue'
+                product_details:
+                  type: array
+                  description: Array of product information key-value pairs
+                  items:
+                    $ref: '#/components/schemas/BillPaymentDetailKeyValue'
+                bill_details:
+                  type: array
+                  description: Array of billing information key-value pairs
+                  items:
+                    $ref: '#/components/schemas/BillPaymentDetailKeyValue'
+                payment_details:
+                  type: array
+                  description: Array of payment information key-value pairs
+                  items:
+                    $ref: '#/components/schemas/BillPaymentDetailKeyValue'
+
+    BillPaymentCallbackData:
+      type: object
+      required:
+        - created
+        - business_id
+        - event
+        - data
+        - api_version
+      properties:
+        created:
+          type: string
+          format: date-time
+          description: Timestamp when callback was created
+        business_id:
+          type: string
+          description: Xendit's Business ID
+        event:
+          type: string
+          description: Event type
+          enum:
+            - bill_payment.succeeded
+            - bill_payment.failed
+        data:
+          type: object
+          required:
+            - data
+            - event
+            - business_id
+          properties:
+            data:
+              type: object
+              required:
+                - status
+                - created_at
+                - payment_id
+                - product_id
+                - updated_at
+                - reference_id
+                - total_amount
+                - customer_number
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - SUCCEEDDED
+                    - FAILED
+                created_at:
+                  type: string
+                  format: date-time
+                payment_id:
+                  type: string
+                product_id:
+                  type: string
+                updated_at:
+                  type: string
+                  format: date-time
+                bill_details:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BillPaymentDetailKeyValue'
+                failure_code:
+                  type: string
+                  nullable: true
+                fulfilled_at:
+                  type: string
+                  format: date-time
+                  nullable: true
+                reference_id:
+                  type: string
+                total_amount:
+                  type: number
+                failure_reason:
+                  type: string
+                  nullable: true
+                customer_number:
+                  type: string
+                payment_details:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BillPaymentDetailKeyValue'
+                product_details:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BillPaymentDetailKeyValue'
+                customer_details:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BillPaymentDetailKeyValue'
+                ledger_transaction_id:
+                  type: string
+            event:
+              type: string
+              enum:
+                - bill_payment.succeeded
+                - bill_payment.failed
+            business_id:
+              type: string
+        api_version:
+          type: string
+          enum:
+            - v1
+
+    BillPaymentDetailKeyValue:
+      type: object
+      required:
+        - key
+        - value
+      properties:
+        key:
+          type: string
+          description: Name of the detail field
+        value:
+          type: string
+          description: Value of the detail field

@@ -1,0 +1,1886 @@
+openapi: 3.0.3
+info:
+  title: Payouts
+  version: '1.0'
+  description: This Payouts API can be used to send money at scale to all bank accounts & E-Wallets in Indonesia, Philippines, Thailand, Malaysia and Vietnam by using just a single endpoint.
+servers:
+  - url: https://api.xendit.co
+    description: Xendit API
+paths:
+  /v2/payouts:
+    post:
+      security:
+        - BasicAuth: []
+      operationId: createPayout
+      summary: Create a Payout
+      description: |
+        Initiate a Payout
+      tags:
+        - Payout
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKeyHeaderParam'
+        - $ref: '#/components/parameters/ForUserIdHeaderParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePayoutSchema'
+            examples:
+              createPayoutExample:
+                value:
+                  reference_id: myref-1482928194
+                  channel_code: ID_BCA
+                  channel_properties:
+                    account_number: '000000000099'
+                    account_holder_name: Michael Chen
+                  amount: 10000
+                  description: July payout
+                  currency: IDR
+      responses:
+        '200':
+          description: Payout created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardPayoutResponseSchema'
+              examples:
+                createPayoutResponseExample:
+                  value:
+                    id: disb-571f3644d2b4edf0745e9703
+                    amount: 10000
+                    channel_code: ID_BCA
+                    currency: IDR
+                    status: ACCEPTED
+                    description: July payout
+                    reference_id: myref-1482928194
+                    created: '2024-12-31T23:53:59Z'
+                    updated: '2024-12-31T23:53:59Z'
+                    estimated_arrival_time: '2024-12-31T23:59:59Z'
+                    business_id: 6018306aa16ad90cb3c43ba7
+                    channel_properties:
+                      account_number: '000000000099'
+                      account_holder_name: Michael Chen
+        '400':
+          $ref: '#/components/responses/CreatePayout400Response'
+        '401':
+          $ref: '#/components/responses/ErrorStatusCode401Response'
+        '403':
+          $ref: '#/components/responses/ErrorStatusCode403Response'
+        '500':
+          $ref: '#/components/responses/ErrorStatusCode500Response'
+  /v2/payouts/{payout_id}:
+    get:
+      security:
+        - BasicAuth: []
+      operationId: getPayoutById
+      summary: Get payout by ID
+      description: |
+        This endpoint queries the current status of a payout. 
+        This is often used for checking the status of a transaction using the id from the Payout Object.
+      tags:
+        - Payout
+      parameters:
+        - $ref: '#/components/parameters/ForUserIdHeaderParam'
+        - $ref: '#/components/parameters/PayoutIdPathParam'
+      responses:
+        '200':
+          description: Payout Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardPayoutResponseSchema'
+              examples:
+                getPayoutResponseExample:
+                  value:
+                    id: disb-571f3644d2b4edf0745e9703
+                    amount: 10000
+                    channel_code: ID_BCA
+                    currency: IDR
+                    status: ACCEPTED
+                    description: July payout
+                    reference_id: myref-1482928194
+                    created: '2024-12-31T23:53:59Z'
+                    updated: '2024-12-31T23:53:59Z'
+                    estimated_arrival_time: '2024-12-31T23:59:59Z'
+                    business_id: 6018306aa16ad90cb3c43ba7
+                    channel_properties:
+                      account_number: '000000000099'
+                      account_holder_name: Michael Chen
+        '401':
+          $ref: '#/components/responses/ErrorStatusCode401Response'
+        '404':
+          $ref: '#/components/responses/ErrorStatusCode404Response'
+        '500':
+          $ref: '#/components/responses/ErrorStatusCode500Response'
+  /v2/payouts/?reference_id={reference_id}:
+    get:
+      security:
+        - BasicAuth: []
+      operationId: getPayoutsByReferenceId
+      summary: Get all payouts by reference id
+      description: |
+        Retrieve all matching payouts with reference ID. Returns an array of matching Payout Object if a valid reference_id was provided. 
+        Returns an empty array if there is no payout corresponding to the reference_id.
+      tags:
+        - Payout
+      parameters:
+        - $ref: '#/components/parameters/ForUserIdHeaderParam'
+        - $ref: '#/components/parameters/ReferenceIdPathParam'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StandardPayoutResponseSchema'
+              examples:
+                getPayoutByReferenceResponseExample:
+                  value:
+                    - id: disb-571f3644d2b4edf0745e9703
+                      amount: 10000
+                      channel_code: ID_BCA
+                      currency: IDR,
+                      status: ACCEPTED
+                      description: July payout
+                      reference_id: myref-1482928194
+                      created: '2024-12-31T23:53:59Z'
+                      updated: '2024-12-31T23:53:59Z'
+                      estimated_arrival_time: '2024-12-31T23:59:59Z'
+                      business_id: 6018306aa16ad90cb3c43ba7
+                      channel_properties:
+                        account_number: '000000000099'
+                        account_holder_name: Michael Chen
+        '401':
+          $ref: '#/components/responses/ErrorStatusCode401Response'
+        '403':
+          $ref: '#/components/responses/ErrorStatusCode403Response'
+        '404':
+          $ref: '#/components/responses/ErrorStatusCode404Response'
+        '500':
+          $ref: '#/components/responses/ErrorStatusCode500Response'
+  /v2/payouts/{payout_id}/cancel:
+    get:
+      security:
+        - BasicAuth: []
+      operationId: cancelPayout
+      summary: Cancel payout
+      description: |
+        This endpoint allows cancellation of requested payouts that have not yet been sent to partner banks and E-Wallets.
+
+        Note: Cancellation is possible if the payout has not been sent out via our partner
+
+        Bank and E-Wallet payouts: Cancellation is only allowed when status is ACCEPTED
+      tags:
+        - Payout
+      parameters:
+        - $ref: '#/components/parameters/ForUserIdHeaderParam'
+        - $ref: '#/components/parameters/PayoutIdPathParam'
+      responses:
+        '200':
+          description: Payout Cancelled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardPayoutResponseSchema'
+              examples:
+                cancelPayoutResponseExample:
+                  value:
+                    id: disb-571f3644d2b4edf0745e9703
+                    amount: 10000
+                    channel_code: ID_BCA
+                    currency: IDR
+                    status: ACCEPTED
+                    description: July payout
+                    reference_id: myref-1482928194
+                    created: '2024-12-31T23:53:59Z'
+                    updated: '2024-12-31T23:53:59Z'
+                    estimated_arrival_time: '2024-12-31T23:59:59Z'
+                    business_id: 6018306aa16ad90cb3c43ba7
+                    channel_properties:
+                      account_number: '000000000099'
+                      account_holder_name: Michael Chen
+        '400':
+          $ref: '#/components/responses/CancelPayout400Response'
+        '404':
+          $ref: '#/components/responses/ErrorStatusCode404Response'
+        '500':
+          $ref: '#/components/responses/ErrorStatusCode500Response'
+  /payout_webhook_url:
+    post:
+      security:
+        - BasicAuth: []
+      operationId: payoutWebhook
+      summary: Payout Webhook
+      description: |
+        Xendit notifies your system upon failed and successful payouts via webhook. You need to provide an URL to receive webhook. 
+        Please specify your URL in Webhook Settings in Xendit Dashboard.
+
+        The payment notification will be sent as POST request to the URL you set. Xendit attach x-callback-token header that you can validate against Verification Token in Webhook Settings to verify message authenticity.
+
+        Please response back with status 200 immediately. Xendit marks webhook event as failed if there is no response within 30s. When events failed, automatic retry will kick-off for the next 24h. Alternatively, you can resend any event in Webhook tab at anytime. You can also receive notification via email every 6h to check your webhook health.
+      tags:
+        - Payout
+      responses:
+        '200':
+          description: Payout Webhook
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardPayoutWebhookSchema'
+              examples:
+                payoutWebhookExample:
+                  value:
+                    event: payout.succeeded
+                    business_id: 5f27a14a9bf05c73dd040bc8
+                    created: '2025-01-01T23:55:59Z'
+                    data:
+                      id: disb-571f3644d2b4edf0745e9703
+                      amount: 10000
+                      channel_code: ID_BCA
+                      currency: IDR
+                      status: SUCCEEDED
+                      description: July payout
+                      reference_id: myref-1482928194
+                      created: '2024-12-31T23:53:59Z'
+                      updated: '2024-12-31T23:53:59Z'
+                      estimated_arrival_time: '2024-12-31T23:59:59Z'
+                      business_id: 6018306aa16ad90cb3c43ba7
+                      channel_properties:
+                        account_number: '000000000099'
+                        account_holder_name: Michael Chen
+  /payouts_channels:
+    get:
+      security:
+        - BasicAuth: []
+      operationId: getPaymentChannels
+      summary: Get Payment Channels
+      description: |
+        This API endpoint will provide you the current list of banks and E-Wallets we support for payouts
+      tags:
+        - Payout
+      parameters:
+        - $ref: '#/components/parameters/CurrencyQueryParams'
+        - $ref: '#/components/parameters/ChannelCategoryQueryParams'
+        - $ref: '#/components/parameters/ChannelCodeQueryParams'
+      responses:
+        '200':
+          description: |
+            'Returns array of Payout Channel objects sorted by alphabetical order by channel_code with HTTP status code 200. 
+            Return empty array when not found.
+
+            If query parameters are defined, returns a filtered list of Payout Channel objects matching the query parameter.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PayoutChannelResponseSchema'
+              examples:
+                getPaymentChannelsResponseExample:
+                  value:
+                    - channel_code: ID_BSI
+                      channel_category: BANK
+                      currency: IDR
+                      channel_name: Bank Syariah Indonesia
+                      amount_limits:
+                        minimum: 10000
+                        maximum: 1999999999999
+                        minimum_increment: 1
+                    - channel_code: PH_AUB
+                      channel_category: BANK
+                      currency: PHP
+                      channel_name: Asia United Bank
+                      amount_limits:
+                        minimum: 1
+                        maximum: 100000000
+                        minimum_increment: 1
+        '401':
+          $ref: '#/components/responses/ErrorStatusCode401Response'
+        '404':
+          $ref: '#/components/responses/ErrorStatusCode404Response'
+        '500':
+          $ref: '#/components/responses/ErrorStatusCode500Response'
+  /payout_links:
+    post:
+      security:
+        - BasicAuth: []
+      operationId: createPayoutLink
+      summary: Create Payout Link
+      description: |
+        Our Create Payout Link APIs allow you to send Payouts without having the account information of the recipient
+      tags:
+        - Payout Link
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKeyHeaderParamNonRequired'
+        - $ref: '#/components/parameters/ForUserIdHeaderParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePayoutLinkSchema'
+            examples:
+              createPayoutLinkExample:
+                value:
+                  reference_id: myref-1482928194
+                  currency: IDR
+                  amount: 10000
+                  recipient_email: michael@chen.com
+                  notification_config:
+                    claim_notification: EMAIL
+                    payout_receipt: EMAIL
+                    payout_link_otp: EMAIL
+      responses:
+        '200':
+          description: Payout Link created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardPayoutLinkResponseSchema'
+              examples:
+                createPayoutLinkResponseExample:
+                  value:
+                    payout_link_id: pol-182ba8cb-eee8-47c0-a35d-99e89314e6a2
+                    created: '2024-12-31T23:53:59Z'
+                    updated: '2024-12-31T23:53:59Z'
+                    reference_id: myref-1482928194
+                    currency: IDR
+                    notification_config:
+                      claim_notification: EMAIL
+                      payout_receipt: EMAIL
+                      payout_link_otp: EMAIL
+                    expires_at: '2025-01-05T23:53:59Z'
+                    status: CREATED
+                    amount: 10000
+                    payout_link_url: https://payout.xendit.co/web/67f1b30c-0262-4955-8777-95aa0478c2fc
+        '400':
+          $ref: '#/components/responses/CreatePayoutLink400Response'
+        '401':
+          $ref: '#/components/responses/ErrorStatusCode401Response'
+        '403':
+          $ref: '#/components/responses/ErrorStatusCode403Response'
+        '500':
+          $ref: '#/components/responses/ErrorStatusCode500Response'
+  /payout_links/{payout_link_id}:
+    get:
+      security:
+        - BasicAuth: []
+      operationId: getPayoutLinkById
+      summary: Get Payout Link by Id
+      description: |
+        Retrieve a specific created Payout Link with given Id
+      tags:
+        - Payout Link
+      parameters:
+        - $ref: '#/components/parameters/PayoutLinkIdPathParam'
+      responses:
+        '200':
+          description: Payout Link found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardPayoutLinkResponseSchema'
+              examples:
+                getPayoutLinkResponseExample:
+                  value:
+                    payout_link_id: pol-182ba8cb-eee8-47c0-a35d-99e89314e6a2
+                    created: '2024-12-31T23:53:59Z'
+                    updated: '2024-12-31T23:53:59Z'
+                    reference_id: myref-1482928194
+                    currency: IDR
+                    notification_config:
+                      claim_notification: EMAIL
+                      payout_receipt: EMAIL
+                      payout_link_otp: EMAIL
+                    expires_at: '2025-01-05T23:53:59Z'
+                    status: CLAIMED
+                    amount: 10000
+                    payout_link_url: https://payout.xendit.co/web/67f1b30c-0262-4955-8777-95aa0478c2fc
+        '401':
+          $ref: '#/components/responses/ErrorStatusCode401Response'
+        '404':
+          $ref: '#/components/responses/ErrorStatusCode404Response'
+        '500':
+          $ref: '#/components/responses/ErrorStatusCode500Response'
+  /payout_links/{payout_link_id}/cancel:
+    post:
+      security:
+        - BasicAuth: []
+      operationId: cancelPayoutLink
+      summary: Cancel Payout Link
+      description: |
+        Cancel a specific created Payout Link with given Id.
+
+        Note: Payout Link can only be canceled while in status CREATED
+      tags:
+        - Payout Link
+      parameters:
+        - $ref: '#/components/parameters/PayoutLinkIdPathParam'
+      responses:
+        '200':
+          description: Payout Link Cancelled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardPayoutLinkResponseSchema'
+              examples:
+                cancelPayoutLinkResponseExample:
+                  value:
+                    payout_link_id: pol-182ba8cb-eee8-47c0-a35d-99e89314e6a2
+                    created: '2024-12-31T23:53:59Z'
+                    updated: '2024-12-31T23:53:59Z'
+                    reference_id: myref-1482928194
+                    currency: IDR
+                    notification_config:
+                      claim_notification: EMAIL
+                      payout_receipt: EMAIL
+                      payout_link_otp: EMAIL
+                    expires_at: '2025-01-05T23:53:59Z'
+                    status: CANCELLED
+                    amount: 10000
+                    payout_link_url: https://payout.xendit.co/web/67f1b30c-0262-4955-8777-95aa0478c2fc
+        '403':
+          $ref: '#/components/responses/CancelPayoutLink403Response'
+        '404':
+          $ref: '#/components/responses/ErrorStatusCode404Response'
+        '500':
+          $ref: '#/components/responses/ErrorStatusCode500Response'
+  /payout_link_webhook_url:
+    post:
+      security:
+        - BasicAuth: []
+      operationId: payoutLinkWebhook
+      summary: Payout Link Webhook
+      description: |
+        Xendit notifies your system change of status of your payout link via webhook. You need to provide an URL to receive webhook. 
+        Please specify your URL in Webhook Settings in Xendit Dashboard.
+
+        The payment link notification will be sent as POST request to the URL you set. Xendit attach x-callback-token header that you can validate against Verification Token in Webhook Settings to verify message authenticity.
+
+        Please response back with status 200 immediately. Xendit marks webhook event as failed if there is no response within 30s. When events failed, automatic retry will kick-off for the next 24h. Alternatively, you can resend any event in Webhook tab at anytime. You can also receive notification via email every 6h to check your webhook health.
+      tags:
+        - Payout Link
+      responses:
+        '200':
+          description: Payout Link Webhook
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardPayoutLinkWebhookSchema'
+              examples:
+                payoutLinkWebhookExample:
+                  value:
+                    event: payout_link.succeeded
+                    business_id: 5f27a14a9bf05c73dd040bc8
+                    created: '2025-01-01T23:55:59Z'
+                    data:
+                      payout_link_id: pol-182ba8cb-eee8-47c0-a35d-99e89314e6a2
+                      created: '2024-12-31T23:53:59Z'
+                      updated: '2024-12-31T23:53:59Z'
+                      reference_id: myref-1482928194
+                      currency: IDR
+                      notification_config:
+                        claim_notification: EMAIL
+                        payout_receipt: EMAIL
+                        payout_link_otp: EMAIL
+                      expires_at: '2025-01-05T23:53:59Z'
+                      status: SUCCEEDED
+                      amount: 10000
+                      payout_link_url: https://payout.xendit.co/web/67f1b30c-0262-4955-8777-95aa0478c2fc
+  /remittance_payouts:
+    post:
+      security:
+        - BasicAuth: []
+      operationId: createCrossborderPayout
+      summary: Create a Cross-Border Payout
+      description: |
+        Our Create Cross-Border Payout API allows you to send third party payouts from your Xendit Account on behalf of a sender to your designated recipient.
+      tags:
+        - Cross-Border Payout
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKeyHeaderParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCrossBorderPayoutSchema'
+            examples:
+              createPayoutExample:
+                value:
+                  reference_id: myref-1482928194
+                  destination_currency: IDR
+                  destination_amount: 1000000
+                  sender_customer_id: cust-1752fefb-358c-4043-a690-58036157d851
+                  recipient_customer_id: cust-b8476133-ec15-4f06-9dfb-562d8dca3f43
+                  origin_currency: EUR
+                  origin_amount: 60
+                  source_of_fund: OTHER
+                  purpose_code: OTHER
+                  relationship: CUSTOMER
+                  description: This is a sample Cross-border Payout transaction
+      responses:
+        '200':
+          description: Cross-Border Payout created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardCrossBorderPayoutResponseSchema'
+              examples:
+                createCrossBorderPayoutResponseExample:
+                  value:
+                    id: rpo_288250b4-124b-4be5-93a1-1cd50dd4ad02
+                    business_id: 665990ef233a8b8054549367
+                    description: This is a sample Cross-border Payout transaction
+                    destination_amount: 1000000
+                    destination_currency: IDR
+                    metadata: {}
+                    origin_amount: 60
+                    origin_currency: EUR
+                    purpose_code: OTHER
+                    recipient_customer_id: cust-b8476133-ec15-4f06-9dfb-562d8dca3f43
+                    reference_id: myref-1482928194
+                    relationship: CUSTOMER
+                    sender_customer_id: cust-1752fefb-358c-4043-a690-58036157d851
+                    source_of_fund: OTHER
+                    status: ACCEPTED
+                    created: '2024-12-13T07:51:10.832Z'
+                    updated: '2024-12-13T07:51:10.832Z'
+        '400':
+          $ref: '#/components/responses/CreateCrossBorderPayout400Response'
+        '403':
+          $ref: '#/components/responses/ErrorStatusCode403Response'
+        '404':
+          $ref: '#/components/responses/CreateCrossBorderPayout404Response'
+        '409':
+          $ref: '#/components/responses/ErrorStatusCode409Response'
+        '500':
+          $ref: '#/components/responses/ErrorStatusCode500Response'
+  /remittance_payouts/{cross_border_payout_id}:
+    get:
+      security:
+        - BasicAuth: []
+      operationId: getCrossBorderPayoutById
+      summary: Get cross-border payout by Id
+      description: |
+        This endpoint queries the current status of a cross-border payout. 
+        This is often used for checking the status of a transaction.
+      tags:
+        - Cross-Border Payout
+      parameters:
+        - $ref: '#/components/parameters/CrossBorderPayoutIdPathParam'
+      responses:
+        '200':
+          description: Cross-Border Payout Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardCrossBorderPayoutResponseSchema'
+              examples:
+                getCrossBorderPayoutResponseExample:
+                  value:
+                    id: rpo_288250b4-124b-4be5-93a1-1cd50dd4ad02
+                    created: '2024-12-13T07:51:10.832Z'
+                    updated: '2024-12-13T07:51:10.832Z'
+                    business_id: 665990ef233a8b8054549367
+                    description: This is a sample Cross-border Payout transaction
+                    destination_amount: 1000000
+                    destination_currency: IDR
+                    origin_amount: 60
+                    origin_currency: EUR
+                    purpose_code: OTHER
+                    recipient_customer_id: cust-b8476133-ec15-4f06-9dfb-562d8dca3f43
+                    reference_id: myref-1482928194
+                    relationship: CUSTOMER
+                    sender_customer_id: cust-1752fefb-358c-4043-a690-58036157d851
+                    source_of_fund: OTHER
+                    status: FAILED
+                    failure_code: INVALID_DESTINATION
+                    metadata: {}
+        '403':
+          $ref: '#/components/responses/ErrorStatusCode403Response'
+        '404':
+          $ref: '#/components/responses/ErrorStatusCode404Response'
+        '500':
+          $ref: '#/components/responses/ErrorStatusCode500Response'
+  /remittance_payouts/{cross_border_payout_id}/cancel:
+    get:
+      security:
+        - BasicAuth: []
+      operationId: cancelCrossBorderPayout
+      summary: Cancel cross-border payout
+      description: |
+        This endpoint allows cancellation of requested payouts that have not yet been sent to partner banks and E-Wallets.
+
+        Note: Cancellation is possible if the payout has not been sent out via our partner
+
+        Cancellation is only allowed when status is `ACCEPTED` or `PENDING_COMPLIANCE_ASSESSMENT`
+      tags:
+        - Cross-Border Payout
+      parameters:
+        - $ref: '#/components/parameters/CrossBorderPayoutIdPathParam'
+      responses:
+        '200':
+          description: Cross-Border Payout Cancelled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardCrossBorderPayoutResponseSchema'
+              examples:
+                cancelCrossBorderPayoutResponseExample:
+                  value:
+                    id: rpo_288250b4-124b-4be5-93a1-1cd50dd4ad02
+                    created: '2024-12-13T07:51:10.832Z'
+                    updated: '2024-12-13T07:51:10.832Z'
+                    business_id: 665990ef233a8b8054549367
+                    description: This is a sample Cross-border Payout transaction
+                    destination_amount: 1000000
+                    destination_currency: IDR
+                    origin_amount: 60
+                    origin_currency: EUR
+                    purpose_code: OTHER
+                    recipient_customer_id: cust-b8476133-ec15-4f06-9dfb-562d8dca3f43
+                    reference_id: myref-1482928194
+                    relationship: CUSTOMER
+                    sender_customer_id: cust-1752fefb-358c-4043-a690-58036157d851
+                    source_of_fund: OTHER
+                    status: CANCELLED
+                    failure_code: null
+                    metadata: {}
+        '400':
+          $ref: '#/components/responses/CancelPayout400Response'
+        '403':
+          $ref: '#/components/responses/ErrorStatusCode403Response'
+        '404':
+          $ref: '#/components/responses/ErrorStatusCode404Response'
+        '500':
+          $ref: '#/components/responses/ErrorStatusCode500Response'
+  /cross_border_payout_webhook_url:
+    post:
+      security:
+        - BasicAuth: []
+      operationId: crossBorderPayoutWebhook
+      summary: Cross-Border Payout Webhook
+      description: |
+        Xendit notifies your system change of status of your payout link via webhook. You need to provide an URL to receive webhook. 
+        Please specify your URL in Webhook Settings in Xendit Dashboard.
+
+        The Cross-Border Payout notification will be sent as POST request to the URL you set. Xendit attach x-callback-token header that you can validate against Verification Token in Webhook Settings to verify message authenticity.
+
+        Please response back with status 200 immediately. Xendit marks webhook event as failed if there is no response within 30s. When events failed, automatic retry will kick-off for the next 24h. Alternatively, you can resend any event in Webhook tab at anytime. You can also receive notification via email every 6h to check your webhook health.
+      tags:
+        - Cross-Border Payout
+      responses:
+        '200':
+          description: Cross-Border Payout Webhook
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardCrossBorderPayoutWebhookSchema'
+              examples:
+                crossBorderPayoutWebhookExample:
+                  value:
+                    event: remittance_payout.pending_compliance_assessment
+                    id: rpo_288250b4-124b-4be5-93a1-1cd50dd4ad02
+                    created: '2024-12-13T07:51:10.832Z'
+                    updated: '2024-12-13T07:51:10.832Z'
+                    business_id: 665990ef233a8b8054549367
+                    description: This is a sample Cross-border Payout transaction
+                    destination_amount: 1000000
+                    destination_currency: IDR
+                    origin_amount: 60
+                    origin_currency: EUR
+                    purpose_code: OTHER
+                    recipient_customer_id: cust-b8476133-ec15-4f06-9dfb-562d8dca3f43
+                    reference_id: myref-1482928194
+                    relationship: CUSTOMER
+                    sender_customer_id: cust-1752fefb-358c-4043-a690-58036157d851
+                    source_of_fund: OTHER
+                    status: PENDING_COMPLIANCE_ASSESSMENT
+                    metadata: {}
+components:
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+  parameters:
+    IdempotencyKeyHeaderParam:
+      in: header
+      name: Idempotency-key
+      required: true
+      schema:
+        example: ef73608e-51d1-4770-8396-08a44dd4c9f0
+        type: string
+        minLength: 1
+        maxLength: 100
+      description: |
+        A unique key to prevent processing duplicate requests. Can be your reference_id or any GUID.
+    ForUserIdHeaderParam:
+      in: header
+      name: for-user-id
+      required: false
+      schema:
+        type: string
+      description: |
+        The XenPlatform subaccount user id that you want to make this transaction for.
+        This header is only used if you have access to xenPlatform. See [xenPlatform](https://developers.xendit.co/api-reference/#xenplatform) for more information.
+    PayoutIdPathParam:
+      in: path
+      name: payout_id
+      required: true
+      schema:
+        $ref: '#/components/schemas/PayoutId'
+    ReferenceIdPathParam:
+      in: path
+      name: reference_id
+      required: true
+      schema:
+        $ref: '#/components/schemas/ReferenceId'
+    CurrencyQueryParams:
+      in: query
+      name: currency
+      schema:
+        $ref: '#/components/schemas/Currency'
+    ChannelCategoryQueryParams:
+      in: query
+      name: currency
+      schema:
+        $ref: '#/components/schemas/ChannelCategory'
+    ChannelCodeQueryParams:
+      in: query
+      name: currency
+      schema:
+        $ref: '#/components/schemas/ChannelCode'
+    IdempotencyKeyHeaderParamNonRequired:
+      in: header
+      name: Idempotency-key
+      required: false
+      schema:
+        example: ef73608e-51d1-4770-8396-08a44dd4c9f0
+        type: string
+        minLength: 1
+        maxLength: 100
+      description: |
+        A unique key to prevent processing duplicate requests. Can be your reference_id or any GUID. 
+        If left blank, Xendit System will assign a random value in UUID format
+    PayoutLinkIdPathParam:
+      in: path
+      name: payout_link_id
+      required: true
+      schema:
+        $ref: '#/components/schemas/PayoutLinkId'
+    CrossBorderPayoutIdPathParam:
+      in: path
+      name: cross_border_payout_id
+      required: true
+      schema:
+        $ref: '#/components/schemas/CrossBorderPayoutId'
+  schemas:
+    ReferenceId:
+      type: string
+      minLength: 1
+      maxLength: 255
+      description: A reference to uniquely identify the Payout.
+      example: myref-1482928194
+    ChannelCode:
+      type: string
+      description: |
+        Channel code of destination bank, E-Wallet or OTC channel. 
+        List of supported channels can be found [here](https://docs.xendit.co/xendisburse/channel-codes)
+      example: ID_BCA
+    ChannelProperties:
+      type: object
+      required:
+        - account_holder_name
+        - account_number
+      properties:
+        account_holder_name:
+          type: string
+          description: Name of account holder as per the bank or E-Wallet's records. Needs to match the registered account name exactly.
+          minLength: 1
+          maxLength: 100
+        account_number:
+          type: string
+          description: |
+            Account number of destination. Mobile numbers for E-Wallet accounts.
+            For E-Wallets, standard format should use prefix 0, e.g. 081234567890
+          minLength: 1
+          maxLength: 100
+        account_type:
+          type: string
+          description: |
+            Account type of the destination for currencies and channels that supports proxy transfers (ie: Using mobile number as account number)
+            If you do not specify a value for this field, the default value is BANK_ACCOUNT
+
+            Values:
+
+            For channel_code == MY_DUITNOW:
+            MOBILE_NO
+            NATIONAL_ID
+            PASSPORT
+            BUSINESS_REGISTRATION
+            BANK_ACCOUNT
+
+            For currency == THB:
+            MOBILE_NO
+            NATIONAL_ID
+            BANK_ACCOUNT
+    Amount:
+      type: number
+      minimum: 0
+      description: |
+        Amount to be sent to the destination account. 
+
+        * For `IDR` currency, number should be integer
+        * For `PHP` currency, number can be up to 2 decimal places
+        * For `VND` currency, number should be integer
+        * For `MYR` currency, number can be up to 2 decimal places
+        * For `THB` currency, number can be up to 2 decimal places
+      example: 10000
+    Description:
+      type: string
+      description: |
+        Description to send with the payout. 
+        The recipient may see this e.g. in their bank statement (if supported) or in email receipts we send on your behalf.
+      minLength: 1
+      maxLength: 100
+    Currency:
+      type: string
+      description: ISO 4217 Currency Code.
+    ReceiptNotification:
+      type: object
+      description: |
+        Object containing email addresses to receive payout details upon successful Payout.
+        Maximum of three email addresses each.
+      properties:
+        email_to:
+          type: array
+          items:
+            type: string
+          description: Direct email recipients
+        email_cc:
+          type: array
+          items:
+            type: string
+          description: CC-ed email recipients
+        email_bcc:
+          type: array
+          items:
+            type: string
+          description: BCC-ed email recipients
+    Metadata:
+      type: object
+      nullable: true
+      description: |
+        Key-value entries for your custom data.
+        You can specify up to 50 keys, with key names up to 40 characters and values up to 500 characters.
+        This is for your convenience. Xendit will not use this data for any processing.
+      example:
+        my_custom_id: merchant-123
+        my_custom_order_id: order-123
+    CreatePayoutSchema:
+      type: object
+      required:
+        - reference_id
+        - channel_code
+        - channel_properties
+        - amount
+        - currency
+      properties:
+        reference_id:
+          $ref: '#/components/schemas/ReferenceId'
+        channel_code:
+          $ref: '#/components/schemas/ChannelCode'
+        channel_properties:
+          $ref: '#/components/schemas/ChannelProperties'
+        amount:
+          $ref: '#/components/schemas/Amount'
+        description:
+          $ref: '#/components/schemas/Description'
+        currency:
+          $ref: '#/components/schemas/Currency'
+        receipt_notification:
+          $ref: '#/components/schemas/ReceiptNotification'
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+    PayoutId:
+      type: string
+      description: |
+        Xendit-generated unique identifier for each payout
+
+        Prefix: disb_
+      minLength: 29
+      maxLength: 29
+      example: disb-571f3644d2b4edf0745e9703
+    PayoutStatus:
+      type: string
+      enum:
+        - ACCEPTED
+        - REQUESTED
+        - FAILED
+        - SUCCEEDED
+        - CANCELLED
+        - REVERSED
+      description: |
+        Status of the payout.
+
+        The status in the response will always be ACCEPTED; meaning transfer is initiated but not yet completed by bank or E-Wallet.
+        The final status will be given in a callback.
+
+          * `ACCEPTED` - The payout request has been accepted and has not yet been sent on to a channel. A payout may remain in this status if the chosen channel is currently offline. Xendit will process this automatically when the channel comes back online
+          * `REQUESTED` - The payout has been sent to the channel. Funds have been sent to the channel for processing.
+          * `FAILED` - Payout failed. See possible reasons in Failed Reasons section.
+          * `SUCCEEDED` - Sender bank/channel has sent out the payout
+          * `CANCELLED` - Payout has been cancelled per your request
+          * `REVERSED` - Payout was rejected by the channel after the payout succeeded. Commonly due to invalid or dormant account.
+    CreatedTimestamp:
+      type: string
+      description: |
+        Timestamp when the payout request was made (in ISO 8601 format)
+
+        Timezone UTC+0
+    UpdatedTimestamp:
+      type: string
+      description: |
+        Timestamp when the payout request was updated (in ISO 8601 format)
+
+        Timezone UTC+0
+    EstimatedArrivalTime:
+      type: string
+      description: |
+        Estimated time of arrival of funds in destination account (in ISO 8601 format)
+        For OTC payouts: Estimated time that funds will be available for pick-up
+
+        Timezone UTC+0
+    FailureCode:
+      type: string
+      enum:
+        - INSUFFICIENT_BALANCE
+        - INVALID_DESTINATION
+        - REJECTED_BY_CHANNEL
+        - TEMPORARY_TRANSFER_ERROR
+        - TRANSFER_ERROR
+        - UNKNOWN_BANK_NETWORK_ERROR
+        - DESTINATION_MAXIMUM_LIMIT
+      description: |
+        If the Payout failed, we include a failure code for more details on the failure.
+
+          * `INSUFFICIENT_BALANCE` - Client has insufficient balance for the payout amount
+          * `INVALID_DESTINATION` - The recipient account does not exist/is invalid.
+          * `REJECTED_BY_CHANNEL` - Payout failed due to an error from the destination channel. This is usually because of network issues associated with the destination bank or issues crediting funds into the destination bank account.
+          * `TEMPORARY_TRANSFER_ERROR` - The channel networks are experiencing a temporary error.
+          * `TRANSFER_ERROR` - We’ve encountered a fatal error while processing this payout. Normally, this means that certain API fields in your request are invalid.
+          * `UNKNOWN_BANK_NETWORK_ERROR` - The bank has delivered an error they have not documented. By definition, this means the bank does not know the issue.
+          * `DESTINATION_MAXIMUM_LIMIT` - The recipient is unable to receive the funds due to the payout amount exceeding the recipient’s ability to receive.
+    XenditBusinessId:
+      type: string
+      description: Your Xendit Business ID
+      example: 5785e6334d7b410667d355c4
+    StandardPayoutResponseSchema:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/PayoutId'
+        amount:
+          $ref: '#/components/schemas/Amount'
+        channel_code:
+          $ref: '#/components/schemas/ChannelCode'
+        currency:
+          $ref: '#/components/schemas/Currency'
+        reference_id:
+          $ref: '#/components/schemas/ReferenceId'
+        status:
+          $ref: '#/components/schemas/PayoutStatus'
+        created:
+          $ref: '#/components/schemas/CreatedTimestamp'
+        updated:
+          $ref: '#/components/schemas/UpdatedTimestamp'
+        estimated_arrival_time:
+          $ref: '#/components/schemas/EstimatedArrivalTime'
+        failure_code:
+          $ref: '#/components/schemas/FailureCode'
+        business_id:
+          $ref: '#/components/schemas/XenditBusinessId'
+        channel_properties:
+          $ref: '#/components/schemas/ChannelProperties'
+        receipt_notification:
+          $ref: '#/components/schemas/ReceiptNotification'
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+    400DuplicateError:
+      type: object
+      title: Duplicate error
+      properties:
+        error_code:
+          type: string
+          example: DUPLICATE_ERROR
+        error_message:
+          type: string
+          example: A payout with this idempotency key already exists. If you meant to execute a different request, please use another idempotency key
+    400RequiredPropertyMissingError:
+      type: object
+      title: Required property missing
+      properties:
+        error_code:
+          type: string
+          example: API_VALIDATION_ERROR
+        error_message:
+          type: string
+          example: Should have required property “xxx”
+    400InvalidAmountError:
+      type: object
+      title: Invalid amount
+      properties:
+        error_code:
+          type: string
+          example: API_VALIDATION_ERROR
+        error_message:
+          type: string
+          example: '"amount" should have 2 decimal places or less'
+    400InvalidExpiryDateError:
+      type: object
+      title: Invalid expiry date
+      properties:
+        error_code:
+          type: string
+          example: API_VALIDATION_ERROR
+        error_message:
+          type: string
+          example: '"expires_at" should be at least 2 days from now and not exceeding 90 days'
+    400ChannelCodeNotSupportedError:
+      type: object
+      title: Channel code not supported
+      properties:
+        error_code:
+          type: string
+          example: CHANNEL_CODE_NOT_SUPPORTED
+        error_message:
+          type: string
+          example: “channel_code” is not supported. See list of supported channel codes at the URL below
+    400MinimumTransferLimitError:
+      type: object
+      title: Minimum transfer limit
+      properties:
+        error_code:
+          type: string
+          example: MINIMUM_TRANSFER_LIMIT_ERROR
+        error_message:
+          type: string
+          example: '"amount” is under the minimum amount supported for the channel. See amount limitations at the URL below'
+    400MaximumTransferLimitError:
+      type: object
+      title: Maximum transfer limit
+      properties:
+        error_code:
+          type: string
+          example: MAXIMUM_TRANSFER_LIMIT_ERROR
+        error_message:
+          type: string
+          example: “amount” is more than the maximum amount supported for the channel. See amount limitations at the URL below
+    400AmountIncrementError:
+      type: object
+      title: Amount increment not supported
+      properties:
+        error_code:
+          type: string
+          example: AMOUNT_INCREMENT_NOT_SUPPORTED
+        error_message:
+          type: string
+          example: “amount” needs to be a multiple of the minimum increment supported by the channel
+    401InvalidAPIKeyError:
+      type: object
+      title: Invalid API Key
+      properties:
+        error_code:
+          type: string
+          example: INVALID_API_KEY
+        error_message:
+          type: string
+          example: API key format is invalid
+    403RequestForbiddenError:
+      type: object
+      title: Request Forbidden
+      properties:
+        error_code:
+          type: string
+          example: REQUEST_FORBIDDEN_ERROR
+        error_message:
+          type: string
+          example: The API key is forbidden to perform this request
+    500ServerError:
+      type: object
+      title: Server error
+      properties:
+        error_code:
+          type: string
+          example: SERVER_ERROR
+        error_message:
+          type: string
+          example: Error connecting to our server. Retry safely using Idempotency-key header when available
+    404DataNotFoundError:
+      type: object
+      title: Data Not Found
+      properties:
+        error_code:
+          type: string
+          example: DATA_NOT_FOUND
+        error_message:
+          type: string
+          example: Could not find payout with the corresponding ID. Please try again with a valid Id
+    400CancellationNotAllowedError:
+      type: object
+      title: Cancellation not allowed
+      properties:
+        error_code:
+          type: string
+          example: CANCELLATION_NOT_ALLOWED
+        error_message:
+          type: string
+          example: Payout cannot be canceled because it has already been processed by Xendit
+    StandardPayoutWebhookSchema:
+      type: object
+      properties:
+        event:
+          type: string
+          enum:
+            - payout.succeeded
+            - payout.failed
+            - payout.reversed
+          description: |
+            Type of the event:
+              * `payout.succeeded` - A payout's status has already succeeded and partner bank has credited the funds to the beneficiary
+              * `payout.failed` - A payout's status has already failed and the partner bank rejected the transaction or there was an issue processing the transaction
+              * `payout.reversed` - A payout that was originally in succeeded status received a bounceback or reversal of funds from the partner bank. Funds have been refunded back to the merchant’s available balance.
+        business_id:
+          $ref: '#/components/schemas/XenditBusinessId'
+        created:
+          $ref: '#/components/schemas/CreatedTimestamp'
+        data:
+          $ref: '#/components/schemas/StandardPayoutResponseSchema'
+    ChannelCategory:
+      type: string
+      enum:
+        - BANK
+        - EWALLET
+        - OTC
+    PayoutChannelResponseSchema:
+      type: object
+      properties:
+        channel_name:
+          type: string
+          description: Name of payout channel
+        channel_category:
+          $ref: '#/components/schemas/ChannelCategory'
+        channel_code:
+          $ref: '#/components/schemas/ChannelCode'
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount_limits:
+          type: object
+          description: Object containing amount limitations imposed by the channel.
+          properties:
+            minimum:
+              type: number
+              description: Minimum amount that can be paid out to this channel
+            maximum:
+              type: number
+              description: Maximum amount that can be paid out to this channel
+            minimum_increment:
+              type: number
+              description: Smallest amount increment allowed by the channel
+    RecipientEmail:
+      type: string
+      description: |
+        The contact details of the recipient in email format.
+        Conditionally required if EMAIL is requested in notification_config
+    RecipientPhoneNumber:
+      type: string
+      description: |
+        The contact details of the recipient in mobile format (+<countryCode> n-digits)
+        Conditionally required if WHATSAPP is requested in notification_config
+    NotificationConfig:
+      type: object
+      description: |
+        Object containing preferences of communication channel through which notifications will be sent.
+      properties:
+        claim_notification:
+          type: string
+          enum:
+            - EMAIL
+            - WHATSAPP
+          description: The channel where to send the claim notification
+        payout_receipt:
+          type: string
+          enum:
+            - EMAIL
+            - WHATSAPP
+          description: The channel where to send the payout receipt
+        payout_link_otp:
+          type: string
+          enum:
+            - EMAIL
+            - WHATSAPP
+          description: The channel where to send the payout link OTP
+    ExpiresAt:
+      type: string
+      description: |
+        Timestamp when the payout link will expire
+
+        Format: YYYY-MM-DDTHH:mm.SSSZ
+        Timezone: UTC+0
+
+        If left blank, Xendit System will assign a default value of 5 days from creation
+    CreatePayoutLinkSchema:
+      type: object
+      required:
+        - reference_id
+        - currency
+        - amount
+        - notification_config
+      properties:
+        reference_id:
+          $ref: '#/components/schemas/ReferenceId'
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          $ref: '#/components/schemas/Amount'
+        description:
+          $ref: '#/components/schemas/Description'
+        recipient_email:
+          $ref: '#/components/schemas/RecipientEmail'
+        recipient_phone_number:
+          $ref: '#/components/schemas/RecipientPhoneNumber'
+        notification_config:
+          $ref: '#/components/schemas/NotificationConfig'
+        expires_at:
+          $ref: '#/components/schemas/ExpiresAt'
+    PayoutLinkId:
+      type: string
+      description: |
+        Xendit-generated unique payout link id in UUID format
+
+        Prefix: pol_
+      minLength: 40
+      maxLength: 40
+      example: pl_ffcc391e-9ddb-41c0-8be8-07a55eb914f9
+    PayoutLinkStatus:
+      type: string
+      enum:
+        - CREATED
+        - CLAIMED
+        - SUCCEEDED
+        - FAILED
+        - EXPIRED
+        - CANCELLED
+        - REVERSED
+      description: |
+        Status of the payout link. Default is CREATED.
+
+          * `ACCEPTED` - The payout request has been accepted and has not yet been sent on to a channel. A payout may remain in this status if the chosen channel is currently offline. Xendit will process this automatically when the channel comes back online
+          * `REQUESTED` - The payout has been sent to the channel. Funds have been sent to the channel for processing.
+          * `FAILED` - Payout failed. See possible reasons in Failed Reasons section.
+          * `SUCCEEDED` - Sender bank/channel has sent out the payout
+          * `CANCELLED` - Payout has been cancelled per your request
+          * `REVERSED` - Payout was rejected by the channel after the payout succeeded. Commonly due to invalid or dormant account.
+    PayoutLinkUrl:
+      type: string
+      description: Payout Link URL
+    StandardPayoutLinkResponseSchema:
+      type: object
+      properties:
+        payout_link_id:
+          $ref: '#/components/schemas/PayoutLinkId'
+        created:
+          $ref: '#/components/schemas/CreatedTimestamp'
+        updated:
+          $ref: '#/components/schemas/UpdatedTimestamp'
+        reference_id:
+          $ref: '#/components/schemas/ReferenceId'
+        currency:
+          $ref: '#/components/schemas/Currency'
+        notification_config:
+          $ref: '#/components/schemas/NotificationConfig'
+        expires_at:
+          $ref: '#/components/schemas/ExpiresAt'
+        status:
+          $ref: '#/components/schemas/PayoutLinkStatus'
+        amount:
+          $ref: '#/components/schemas/Amount'
+        payout_link_url:
+          $ref: '#/components/schemas/PayoutLinkUrl'
+        description:
+          $ref: '#/components/schemas/Description'
+        failure_code:
+          $ref: '#/components/schemas/FailureCode'
+    400APIValidationError:
+      type: object
+      title: API Validation Error
+      properties:
+        error_code:
+          type: string
+          example: API_VALIDATION_ERROR
+        error_message:
+          type: string
+          example: Inputs are failing validation. The errors field contains details about which fields are violating validation
+    400InvalidJSONFormatError:
+      type: object
+      title: Invalid JSON Format
+      properties:
+        error_code:
+          type: string
+          example: INVALID_JSON_FORMAT
+        error_message:
+          type: string
+          example: The request body is not a valid JSON format
+    400AmountTooLowError:
+      type: object
+      title: Amount too low
+      properties:
+        error_code:
+          type: string
+          example: INVALID_VALUE_ERROR
+        error_message:
+          type: string
+          example: The transfer amount requested is lower than the prescribed minimum for the region. Amend the transfer amount before retrying
+    400AmountTooHighError:
+      type: object
+      title: Amount too high
+      properties:
+        error_code:
+          type: string
+          example: INVALID_VALUE_ERROR
+        error_message:
+          type: string
+          example: The transfer amount requested is higher than the prescribed maximum for the region. Amend the transfer amount before retrying
+    403PayoutLinkIneligibleTransactionStatus:
+      type: object
+      title: Payout Link Ineligible Transaction Status
+      properties:
+        error_code:
+          type: string
+          example: INELIGIBLE_TRANSACTION_STATUS
+        error_message:
+          type: string
+          example: Status of specified Payout Link Id is not in CREATED status
+    StandardPayoutLinkWebhookSchema:
+      type: object
+      properties:
+        event:
+          type: string
+          enum:
+            - payout_link.succeeded
+            - payout_link.failed
+            - payout_link.expired
+            - payout_link.reversed
+            - payout_link.cancelled
+          description: |
+            Type of the event:
+              * `payout_link.succeeded` - The payout link has been claimed and the payout’s status has already succeeded. The partner bank has credited the funds to the beneficiary
+              * `payout_link.failed` - The payout link has been claimed and the payout’s status has failed. The partner bank rejected the transaction or there was an issue processing the transaction
+              * `payout_link.expired` - The payout link has already reached its expiry. It can no longer be claimed by the recipient. 
+              * `payout_link.reversed` - The payout link has been claimed and the payout that was originally in succeeded status received a bounceback or reversal of funds from the partner bank. Funds have been refunded back to the merchant’s available balance.
+              * `payout_link.cancelled` - The payout link has been canceled by the merchant. The recipient can no longer claim it.
+        business_id:
+          $ref: '#/components/schemas/XenditBusinessId'
+        created:
+          $ref: '#/components/schemas/CreatedTimestamp'
+        data:
+          $ref: '#/components/schemas/StandardPayoutLinkResponseSchema'
+    SenderCustomerId:
+      type: string
+      description: |
+        The Id of the sender customer (as returned by the Create Customer endpoint)
+
+        The following fields are required in the sender customer object: `customer_type` and `addresses`
+        - For INDIVIDUAL `customer_type`, the following parameters are also required: `given_names`, `nationality`, and `date_of_birth` in `customer_type`.`individual_detail` object
+        - For BUSINESS `customer_type`, then the following parameters are also required: `business_name` in `customer_type`.`business_detail` object.
+        - For `addresses` object, the following fields are also required: `addresses`.`country`, `addresses`.`city`, `addresses`.`street_line1`
+
+        Reference: [Customer Object](https://developers.xendit.co/api-reference/#create-customer)
+    RecipientCustomerId:
+      type: string
+      description: |
+        The Id of the recipient customer (as returned by the Create Customer endpoint)
+
+        The following fields are required in the sender customer object: `customer_type`, `addresses`, `identity_accounts`, and one of `phone_number` or `mobile_number`
+        - For INDIVIDUAL `customer_type`, the following parameters are also required: `given_names`, `nationality`, and `date_of_birth` in `customer_type`.`individual_detail` object
+        - For BUSINESS `customer_type`, then the following parameters are also required: `business_name` in `customer_type`.`business_detail` object.
+        - For `addresses` object, the following fields are also required: `addresses`.`country`, `addresses`.`city`, `addresses`.`street_line1`
+        - For `identity_accounts` object, the following fields are also required: `type`, `country`, `company` (with the channel code value), and `properties`
+
+        Reference: [Customer Object](https://developers.xendit.co/api-reference/#create-customer)
+    OriginAmount:
+      type: number
+      description: |
+        The original amount as sent by the sender. 
+        This field will not be used for processing the payout, but is required for monitoring purposes. 
+
+        Xendit will deduct your balance and process the payout in the destination amount and currency.
+    SourceOfFund:
+      type: string
+      enum:
+        - INVESTMENT
+        - PERSONAL_SAVINGS
+        - BUSINESS_REVENUE
+        - LEGACY
+        - BUSINESS_ARRANGEMENT
+        - LOAN
+        - SALARY
+        - OTHER
+      description: |
+        Source of fund
+          * `INVESTMENT` - Bonds, fixed deposits, preference shares, business ownership/equity or property ownership
+          * `PERSONAL_SAVINGS` - Funds kept in an account in a bank or a similar organization
+          * `BUSINESS_REVENUE` - Income from a business or a company
+          * `LEGACY` - Inherited money from a will
+          * `BUSINESS_ARRANGEMENT` - Any understanding, procedure, course of dealing, or arrangement between a creditor and a seller
+          * `LOAN` - A sum of money that is borrowed
+          * `SALARY` - A fixed regular payment made by an employer
+          * `OTHER` - Other
+
+        Default: OTHER
+    PurposeCode:
+      type: string
+      enum:
+        - SELF
+        - FAMILY
+        - EDUCATION
+        - MEDICAL
+        - HOTEL
+        - TRAVEL
+        - UTILITIES
+        - LOAN_REPAYMENT
+        - TAX_PAYMENT
+        - RESIDENCE_PURCHASE
+        - RESIDENCE_RENT
+        - INSURANCE
+        - MUTUAL_FUND
+        - SHARES_INVESTMENT
+        - DONATIONS
+        - ADVERTISING
+        - ROYALTY_FEES
+        - BROKER_FEES
+        - ADVISORS
+        - OFFICE
+        - CONSTRUCTION
+        - SHIPMENT
+        - EXPORT
+        - DELIVERY
+        - TRADES
+        - SALARY
+        - REFUND
+        - OTHER
+      description: |
+        Purpose of the Cross-border Payout
+          * `SELF` - Transfer to own account
+          * `FAMILY` - Family Maintenance
+          * `EDUCATION` - Education-related student expenses
+          * `MEDICAL` - Medical Treatment
+          * `HOTEL` - Hotel Accomodation
+          * `TRAVEL` - Travel
+          * `UTILITIES` - Utility Bills
+          * `LOAN_REPAYMENT` - Repayment of Loans
+          * `TAX_PAYMENT` - Tax Payment
+          * `RESIDENCE_PURCHASE` - Purchase of Residential Property
+          * `RESIDENCE_RENT` - Payment of Property Rental
+          * `INSURANCE` - Insurance
+          * `MUTUAL_FUND` - Mutual Fund Investment
+          * `SHARES_INVESTMENT` - Investment in Shares
+          * `DONATIONS` - Donations
+          * `ADVERTISING` - Advertising & Public relations-related expenses
+          * `ROYALTY_FEES` - Royalty fees, trademark fees, patent fees, and copyright fees
+          * `BROKER_FEES` - Fees for brokers, front end fee, commitment fee, guarantee fee and custodian fee
+          * `ADVISORS` - Fees for advisors, technical assistance, and academic purpose, including remuneration for specialists
+          * `OFFICE` - Representative office expenses
+          * `CONSTRUCTION` - Construction costs / expenses
+          * `SHIPMENT` - Transportation fees for goods
+          * `EXPORT` - For payment of exported goods
+          * `DELIVERY` - Delivery fees for goods
+          * `TRADES` - General Goods Trades - Offline trade
+          * `SALARY` - Salary
+          * `REFUND` - Refund
+          * `OTHER` - Other
+
+        Default: OTHER
+    RelationShip:
+      type: string
+      enum:
+        - BRANCH_REPRESENTATIVE_OFFICE
+        - BUSINESS_PARTNER
+        - CHILDREN
+        - CREDITOR
+        - CUSTOMER
+        - DEBTOR
+        - EMPLOYEE
+        - EX_SPOUSE
+        - FRANCHISEE_FRANCHISOR
+        - GRANDPARENTS
+        - HOLDING_COMPANY
+        - MAID
+        - OWNSELF
+        - PARENTS
+        - RELATIVE
+        - SIBLING
+        - SPOUSE
+        - SUBSIDIARY_COMPANY
+        - SUPPLIER
+        - FRIEND
+        - GOVERNMENT_BODY
+        - EDUCATION_INSTITUTION
+        - NON_GOVERNMENT_BODY
+        - OTHER
+      description: |
+        Relationship between sender and recipient
+
+        Required for PH_GCASH
+        Default: OTHER
+    CreateCrossBorderPayoutSchema:
+      type: object
+      required:
+        - reference_id
+        - destination_currency
+        - destination_amount
+        - sender_customer_id
+        - recipient_customer_id
+        - origin_currency
+        - origin_amount
+        - description
+      properties:
+        reference_id:
+          $ref: '#/components/schemas/ReferenceId'
+        destination_currency:
+          $ref: '#/components/schemas/Currency'
+        destination_amount:
+          $ref: '#/components/schemas/Amount'
+        sender_customer_id:
+          $ref: '#/components/schemas/SenderCustomerId'
+        recipient_customer_id:
+          $ref: '#/components/schemas/RecipientCustomerId'
+        origin_currency:
+          $ref: '#/components/schemas/Currency'
+        origin_amount:
+          $ref: '#/components/schemas/OriginAmount'
+        source_of_fund:
+          $ref: '#/components/schemas/SourceOfFund'
+        purpose_code:
+          $ref: '#/components/schemas/PurposeCode'
+        relationship:
+          $ref: '#/components/schemas/RelationShip'
+        description:
+          $ref: '#/components/schemas/Description'
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+    CrossBorderPayoutId:
+      type: string
+      description: |
+        Xendit-generated unique payout link id in UUID format
+
+        Prefix: rpo_
+      minLength: 40
+      maxLength: 40
+      example: rpo_cde3dcb8-37d7-4ea1-a275-8f54af81feb0
+    CrossBorderPayoutStatus:
+      type: string
+      enum:
+        - ACCEPTED
+        - PENDING_COMPLIANCE_ASSESSMENT
+        - COMPLIANCE_REJECTED
+        - REQUESTED
+        - READY
+        - LOCKED
+        - EXPIRED
+        - FAILED
+        - SUCCEEDED
+        - CANCELLED
+        - REFUNDED
+      description: |
+        Status of the cross-border payout. Default is ACCEPTED.
+
+          * `ACCEPTED` - The payout request has been accepted and has not yet been sent on to a channel. A payout may remain in this status if the chosen channel is currently offline. Xendit will process this automatically when the channel comes back online
+          * `PENDING_COMPLIANCE_ASSESSMENT` - Request is considered medium or high risk, and is being reviewed by our compliance team. Our team will contact you via email for extra information for enhanced due diligence.
+          * `COMPLIANCE_REJECTED` - Request is rejected for compliance reasons.
+          * `REQUESTED` - The payout has been sent to the channel. Funds have been sent to the channel for processing.
+          * `READY` - For cash payout only. Cash is ready for pick-up.
+          * `LOCKED` - For cash payout only. Cash pick-up in progress.
+          * `EXPIRED` - For cash payout only. Cash payout has expired.
+          * `FAILED` - Payout failed. See possible reasons in Failed Reasons section.
+          * `SUCCEEDED` - Sender bank/channel has sent out the payout
+          * `CANCELLED` - Payout has been cancelled per your request
+          * `REFUNDED` - Only valid for SKN/RTGS and cash channel use case.
+    StandardCrossBorderPayoutResponseSchema:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/CrossBorderPayoutId'
+        created:
+          $ref: '#/components/schemas/CreatedTimestamp'
+        updated:
+          $ref: '#/components/schemas/UpdatedTimestamp'
+        business_id:
+          $ref: '#/components/schemas/XenditBusinessId'
+        reference_id:
+          $ref: '#/components/schemas/ReferenceId'
+        destination_currency:
+          $ref: '#/components/schemas/Currency'
+        destination_amount:
+          $ref: '#/components/schemas/Amount'
+        sender_customer_id:
+          $ref: '#/components/schemas/SenderCustomerId'
+        recipient_customer_id:
+          $ref: '#/components/schemas/RecipientCustomerId'
+        status:
+          $ref: '#/components/schemas/CrossBorderPayoutStatus'
+        description:
+          $ref: '#/components/schemas/Description'
+        source_of_fund:
+          $ref: '#/components/schemas/SourceOfFund'
+        origin_currency:
+          $ref: '#/components/schemas/Currency'
+        origin_amount:
+          $ref: '#/components/schemas/OriginAmount'
+        purpose_code:
+          $ref: '#/components/schemas/PurposeCode'
+        relationship:
+          $ref: '#/components/schemas/RelationShip'
+        failure_code:
+          $ref: '#/components/schemas/FailureCode'
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+    400DestinationCurrencyNotSupportedError:
+      type: object
+      title: Destination currency not supported
+      properties:
+        error_code:
+          type: string
+          example: DESTINATION_CURRENCY_NOT_SUPPORTED
+        error_message:
+          type: string
+          example: Destination currency is not supported. Check that the currency is supported for your chosen channel before retrying
+    400AmountFormatError:
+      type: object
+      title: Amount format error
+      properties:
+        error_code:
+          type: string
+          example: AMOUNT_FORMAT_ERROR
+        error_message:
+          type: string
+          example: Incorrect number of decimal places for given amount
+    400AccountBlacklistedError:
+      type: object
+      title: Account blacklisted
+      properties:
+        error_code:
+          type: string
+          example: ACCOUNT_BLACKLISTED_ERROR
+        error_message:
+          type: string
+          example: The provided recipient bank account is blacklisted
+    400PaymentChannelDetailError:
+      type: object
+      title: Payment channel detail error
+      properties:
+        error_code:
+          type: string
+          example: PAYMENT_CHANNEL_DETAIL_ERROR
+        error_message:
+          type: string
+          example: The provided recipient account type is invalid. Please use the valid values (BANK_ACCOUNT or EWALLET)
+    404CustomerDataNotFoundError:
+      type: object
+      title: Customer Data Not Found
+      properties:
+        error_code:
+          type: string
+          example: CUSTOMER_DATA_NOT_FOUND
+        error_message:
+          type: string
+          example: Could not find any customer object with given sender_customer_id or recipient_customer_id. Try again using a valid Customer Id
+    409IdempotencyError:
+      type: object
+      title: Idempotency error
+      properties:
+        error_code:
+          type: string
+          example: IDEMPOTENCY_ERROR
+        error_message:
+          type: string
+          example: Keys for idempotent requests can only be used for the same endpoint they were first used for. Try using a key if you meant to execute a different request
+    409StillProcessingError:
+      type: object
+      title: Still processing
+      properties:
+        error_code:
+          type: string
+          example: STILL_PROCESSING_ERROR
+        error_message:
+          type: string
+          example: Similar request with similar idempotency key is still processing
+    StandardCrossBorderPayoutWebhookSchema:
+      type: object
+      properties:
+        event:
+          type: string
+          enum:
+            - remittance_payout.pending_compliance_assessment
+            - remittance_payout.compliance_rejected
+            - remittance_payout.failed
+            - remittance_payout.succeeded
+            - remittance_payout.ready
+            - remittance_payout.locked
+            - remittance_payout.expired
+          description: |
+            Type of the event:
+              * `remittance_payout.pending_compliance_assessment` - Request is considered medium or high risk, and is being reviewed by our compliance team. Our team will contact you via email for extra information for enhanced due diligence.
+              * `remittance_payout.compliance_rejected` - Request is rejected for compliance reasons.
+              * `remittance_payout.failed` - Payout failed. See possible reasons in Failed Reasons section.
+              * `remittance_payout.succeeded` - Sender bank/channel has sent out the payout
+              * `remittance_payout.ready` - For cash payout only. Cash is ready for pick-up.
+              * `remittance_payout.locked` - For cash payout only. Cash pick-up in progress.
+              * `remittance_payout.expired` - For cash payout only. Cash payout has expired.
+        disbursement_code:
+          type: string
+          description: |
+            Only for event `remittance_payout.ready`
+            Code to be presented by the beneficiary for cash pick-up. Please share this with the beneficiary.
+          example: XENDIT-12341
+          minLength: 1
+          maxLength: 100
+        id:
+          $ref: '#/components/schemas/CrossBorderPayoutId'
+        created:
+          $ref: '#/components/schemas/CreatedTimestamp'
+        updated:
+          $ref: '#/components/schemas/UpdatedTimestamp'
+        business_id:
+          $ref: '#/components/schemas/XenditBusinessId'
+        reference_id:
+          $ref: '#/components/schemas/ReferenceId'
+        destination_currency:
+          $ref: '#/components/schemas/Currency'
+        destination_amount:
+          $ref: '#/components/schemas/Amount'
+        sender_customer_id:
+          $ref: '#/components/schemas/SenderCustomerId'
+        recipient_customer_id:
+          $ref: '#/components/schemas/RecipientCustomerId'
+        status:
+          $ref: '#/components/schemas/CrossBorderPayoutStatus'
+        description:
+          $ref: '#/components/schemas/Description'
+        source_of_fund:
+          $ref: '#/components/schemas/SourceOfFund'
+        origin_currency:
+          $ref: '#/components/schemas/Currency'
+        origin_amount:
+          $ref: '#/components/schemas/OriginAmount'
+        purpose_code:
+          $ref: '#/components/schemas/PurposeCode'
+        relationship:
+          $ref: '#/components/schemas/RelationShip'
+        failure_code:
+          $ref: '#/components/schemas/FailureCode'
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+  responses:
+    CreatePayout400Response:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/400DuplicateError'
+              - $ref: '#/components/schemas/400RequiredPropertyMissingError'
+              - $ref: '#/components/schemas/400InvalidAmountError'
+              - $ref: '#/components/schemas/400InvalidExpiryDateError'
+              - $ref: '#/components/schemas/400ChannelCodeNotSupportedError'
+              - $ref: '#/components/schemas/400MinimumTransferLimitError'
+              - $ref: '#/components/schemas/400MaximumTransferLimitError'
+              - $ref: '#/components/schemas/400AmountIncrementError'
+    ErrorStatusCode401Response:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/401InvalidAPIKeyError'
+    ErrorStatusCode403Response:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/403RequestForbiddenError'
+    ErrorStatusCode500Response:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/500ServerError'
+    ErrorStatusCode404Response:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/404DataNotFoundError'
+    CancelPayout400Response:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/400CancellationNotAllowedError'
+    CreatePayoutLink400Response:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/400APIValidationError'
+              - $ref: '#/components/schemas/400InvalidJSONFormatError'
+              - $ref: '#/components/schemas/400AmountTooLowError'
+              - $ref: '#/components/schemas/400AmountTooHighError'
+              - $ref: '#/components/schemas/400DuplicateError'
+    CancelPayoutLink403Response:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/403PayoutLinkIneligibleTransactionStatus'
+    CreateCrossBorderPayout400Response:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/400APIValidationError'
+              - $ref: '#/components/schemas/400InvalidJSONFormatError'
+              - $ref: '#/components/schemas/400DestinationCurrencyNotSupportedError'
+              - $ref: '#/components/schemas/400AmountFormatError'
+              - $ref: '#/components/schemas/400MinimumTransferLimitError'
+              - $ref: '#/components/schemas/400MaximumTransferLimitError'
+              - $ref: '#/components/schemas/400AmountIncrementError'
+              - $ref: '#/components/schemas/400AccountBlacklistedError'
+              - $ref: '#/components/schemas/400PaymentChannelDetailError'
+              - $ref: '#/components/schemas/400DuplicateError'
+    CreateCrossBorderPayout404Response:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/404CustomerDataNotFoundError'
+    ErrorStatusCode409Response:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/409IdempotencyError'
+              - $ref: '#/components/schemas/409StillProcessingError'

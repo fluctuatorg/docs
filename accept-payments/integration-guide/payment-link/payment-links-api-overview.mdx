@@ -1,10 +1,24 @@
 ---
-title: "Overview"
+title: "Payment links API overview"
+sidebarTitle: "Payment links API overview"
 ---
 
 Payment Link provides a simple, low-code solution for one-time payments. Your customers can complete their payments on a Xendit-hosted checkout page, removing the need for you to build a checkout page and processing the payment. Payment confirmations are sent to your webhook for further handling, such as updating your order status.
 
-![](/images/doc360/Untitled_diagram-2024-11-28-040949.png)
+```mermaid
+sequenceDiagram
+    participant Merchant as Your server
+    participant Xendit
+    participant Customer
+    participant Checkout as Xendit-hosted page
+
+    Merchant->>Xendit: Create Payment Link (POST /v2/invoices)
+    Xendit-->>Merchant: Return invoice_url
+    Merchant-->>Customer: Redirect to invoice_url
+    Customer->>Checkout: Complete payment
+    Xendit-->>Merchant: Send invoice webhook (PAID/EXPIRED)
+    Checkout-->>Customer: Redirect to success/failure URL
+```
 
 ## How to integrate
 
@@ -65,7 +79,12 @@ When the payment is completed, Xendit sends a webhook to your configured endpoin
 
 ## Payment Link lifecycle
 
-![](/images/doc360/Untitled_diagram-2024-11-29-034756.png)
+```mermaid
+stateDiagram-v2
+    [*] --> PENDING: Payment Link created
+    PENDING --> PAID: Customer payment succeeds
+    PENDING --> EXPIRED: invoice_duration reached or manually expired
+```
 
 Here’s a table summarizing the statuses and their descriptions for the Payment Link lifecycle:
 

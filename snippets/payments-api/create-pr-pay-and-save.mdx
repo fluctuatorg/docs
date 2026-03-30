@@ -1,0 +1,66 @@
+Request - POST /payment_requests
+
+```json
+{
+  "reference_id": "90392f42-d98a-49ef-a7f3-abcezas123",
+  "customer": {
+    "reference_id": "demo_1475801962607",
+    "type": "INDIVIDUAL",
+    "individual_detail": {
+      "given_names": "John",
+      "surname": "Doe"
+    },
+    "email": "example@xendit.co",
+    "mobile_number": "+628000000000008"
+  },
+  "type": "PAY_AND_SAVE",
+  "country": "PH",
+  "currency": "PHP",
+  "request_amount": 10000.01,
+  "capture_method": "AUTOMATIC",
+  "channel_code": "MAYA",
+  "channel_properties": {
+    "failure_return_url": "https://xendit.co/failure",
+    "success_return_url": "https://xendit.co/success"
+  },
+  "description": "Description examples",
+  "metadata": {
+    "metametadata": "metametametadata"
+  }
+}
+```
+
+Response - POST /payment_requests
+
+```json
+{
+  "business_id": "5f27a14a9bf05c73dd040bc8",
+  "reference_id": "90392f42-d98a-49ef-a7f3-abcezas123",
+  "payment_request_id": "pr-90392f42-d98a-49ef-a7f3-abcezas123",
+  "customer_id": "cust-90392f42-d98a-49ef-a7f3-abcezas123",
+  "type": "PAY_AND_SAVE",
+  "country": "PH",
+  "currency": "PHP",
+  "request_amount": 10000.01,
+  "capture_method": "AUTOMATIC",
+  "channel_code": "MAYA",
+  "channel_properties": {
+    "failure_return_url": "https://xendit.co/failure",
+    "success_return_url": "https://xendit.co/success"
+  },
+  "actions": [
+    {
+      "type": "REDIRECT_CUSTOMER",
+      "value": "xendit.co/example",
+      "descriptor": "WEB_URL"
+    }
+  ],
+  "status": "REQUIRES_ACTION",
+  "description": "Description examples",
+  "metadata": {
+    "metametadata": "metametametadata"
+  },
+  "created": "2021-12-31T23:59:59Z",
+  "updated": "2021-12-31T23:59:59Z"
+}
+```

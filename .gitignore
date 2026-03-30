@@ -1,0 +1,7 @@
+# Local environment secrets
+.env
+.env.local
+.env.*.local
+
+# Keep template file committed
+!.env.example

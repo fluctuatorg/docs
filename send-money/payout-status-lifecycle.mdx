@@ -8,7 +8,18 @@ The diagram below illustrates the end-to-end journey of a payout, starting from 
 
 ### Payout
 
-![](/images/doc360/Payout_Lifecycle-2025-01-15-051640.png)
+```mermaid
+stateDiagram-v2
+    [*] --> ACCEPTED: Payout request received
+    ACCEPTED --> PENDING_COMPLIANCE_ASSESSMENT: Risk screening required
+    PENDING_COMPLIANCE_ASSESSMENT --> REQUESTED: Compliance approved
+    PENDING_COMPLIANCE_ASSESSMENT --> COMPLIANCE_REJECTED: Compliance rejected
+    ACCEPTED --> REQUESTED: Sent to payout channel
+    ACCEPTED --> CANCELLED: Cancel requested before processing
+    REQUESTED --> SUCCEEDED: Channel processes payout
+    REQUESTED --> FAILED: Channel/process failure
+    SUCCEEDED --> REVERSED: Processor reversal
+```
 
 ## Payout Statuses
 

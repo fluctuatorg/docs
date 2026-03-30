@@ -2,13 +2,34 @@
 title: "Pay (One-off payment)"
 ---
 
+import CreatePrPay from '/snippets/payments-api/create-pr-pay.mdx'
+import PaymentRequestWebhookPay from '/snippets/payments-api/payment-request-webhook-pay.mdx'
+
 The most basic form of a transaction is a guest checkout, also called a one-off payment. Guest checkout is used by most merchants as the starting point of payments collection before moving on to more advanced flows to optimize success rates.
 
 In this article, we will walk through a basic integration with our payments API for our guest checkout under the `PAY` flow type of `/payment_requests`. Before you start, be sure to complete your integration environment setup.
 
 ## A. Integration Flow
 
-![](/images/doc360/guest_checkout_1_.png)
+```mermaid
+sequenceDiagram
+  actor EndUser as End User
+  participant Client as Client App
+  participant Server as Client Server
+  participant XenditServer as Xendit Server
+  Client ->> EndUser: Initiate checkout
+  EndUser ->> Client: Picks desired payment channel
+  Client ->> Client: Collects required data (channel properties)
+  Client ->> Server: Sends data
+  Server ->> XenditServer: Create Payment Request
+  XenditServer ->> Server: Return Payment Request
+  Server ->> Client: Informs required action
+  Client ->> EndUser: Orchestrate required action
+  EndUser ->> Client: Completes payment step
+  Client ->> Client: Handle end user wait time
+  XenditServer ->> Server: Send payment webhook
+  Client ->> EndUser: Present results
+```
 
 ## B. How to integrate
 
@@ -22,7 +43,7 @@ In this article, we will walk through a basic integration with our payments API 
 3. Create a payment request   
    Construct an [API request body](https://xendit-docs.document360.io/apidocs/create-payment-request) with information required by your selected channel. In the guest checkout scenario, your payment request `type` should be `PAY`.
 
-   &#123;&#123;snippet.create\_pr\_pay&#125;&#125;
+   <CreatePrPay />
 
    Additional features can be configured if the payment channel allows it. For example, you will be able to set custom payment request expiry time if the channel properties fields accepts an expires\_at parameter.
 4. Handle the required actions
@@ -40,7 +61,7 @@ In this article, we will walk through a basic integration with our payments API 
 5. Receive a payment event webhook for payment confirmation  
    Once the end user has completed their payment authentication step and the payment method provider notifies Xendit of an update, Xendit will proceed to send a webhook to the webhook url you configured in your Xendit dashboard settings page.
 
-   &#123;&#123;snippet.payment\_request\_web\_hook&#125;&#125;
+   <PaymentRequestWebhookPay />
 6. Display payment status to user
 
    With the webhook status, you should be able to complete the payment journey for the end user by successfully completing the transaction or directing them back for a retry if it had failed.   
@@ -49,9 +70,16 @@ In this article, we will walk through a basic integration with our payments API 
 
 ## C. Status Lifecycle
 
-User action requiredNo user action required
+#### User action required
 
-![](/images/doc360/Payment_API_v3-One_off_payment_REQUIRES_ACTION.drawio__1_.png)
+```mermaid
+stateDiagram-v2
+    [*] --> REQUIRES_ACTION: Request created
+    REQUIRES_ACTION --> SUCCEEDED: User completes required action
+    REQUIRES_ACTION --> FAILED: Payment fails
+    REQUIRES_ACTION --> CANCELED: Merchant cancels request
+    REQUIRES_ACTION --> EXPIRED: Request reaches expiry
+```
 
 Here’s the status lifecycle for a payment request that requires user action:
 
@@ -63,9 +91,16 @@ Here’s the status lifecycle for a payment request that requires user action:
 | CANCELED | You can cancel a payment request that is in the `REQUIRES_ACTION` status. Canceling immediately transitions the payment request to `CANCELED`, and the end user will no longer be able to complete the `actions`. | - |
 | EXPIRED | The payment request transitions to this status when it expires due to the payment partner’s expiry. |  |
 
-#### 
+#### No user action required
 
-![](/images/doc360/Payment_API_v3-one_off-_auto_debit.drawio.png)
+```mermaid
+stateDiagram-v2
+    [*] --> SUCCEEDED: Immediate success
+    [*] --> FAILED: Immediate failure
+    [*] --> PENDING: Waiting for partner result
+    PENDING --> SUCCEEDED: payment.capture webhook
+    PENDING --> FAILED: payment.failure webhook
+```
 
 Here’s the status lifecycle for a payment request that has no action required:
 
@@ -74,5 +109,3 @@ Here’s the status lifecycle for a payment request that has no action required:
 | SUCCEEDED | The payment request transitions to this status synchronously when the payment is immediately successful. You will still receive the payment.capture webhook containing payment details. | payment.capture |
 | FAILED | The payment request transitions to this status synchronously when the payment is immediately failed. You will still receive the payment.failure webhook.  Note: Not all payment channels provide notifications for failed payment. | payment.failure |
 | PENDING | The payment request enters this status synchronously upon API response if the payment partner has not yet responded with a payment result. Wait for the payment webhook to arrive at your configured webhook URL. | - |
-
-####

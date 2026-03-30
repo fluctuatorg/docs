@@ -1,0 +1,83 @@
+---
+title: "Webhook Behavior"
+description: "How Xendit delivers webhook notifications and how to handle them"
+---
+
+Xendit uses webhooks to notify your server about events such as successful payments, completed payouts, and status changes. Webhooks are sent as `POST` requests to URLs you configure in the [Xendit Dashboard](https://dashboard.xendit.co/settings/developers#webhooks).
+
+## Delivery behavior
+
+- Webhooks are delivered as **HTTP POST** requests with a JSON body.
+- Xendit expects your endpoint to return a **`2xx` status code** within **30 seconds** to acknowledge receipt.
+- If your endpoint doesn't respond with `2xx`, Xendit will **retry delivery**.
+
+## Retry schedule
+
+Xendit retries failed webhook deliveries with increasing intervals:
+
+| Attempt | Delay after previous attempt |
+|---------|------------------------------|
+| 1st retry | 2 minutes |
+| 2nd retry | 8 minutes |
+| 3rd retry | 32 minutes |
+| 4th retry | ~2 hours |
+| 5th retry | ~8 hours |
+
+After all retry attempts are exhausted, the webhook is marked as failed. You can manually resend failed webhooks from the Dashboard.
+
+<Info>
+  Retry intervals use exponential backoff. The exact timing may vary slightly.
+</Info>
+
+## Verifying webhooks
+
+Every webhook includes an `x-callback-token` header. Compare this value against your **Webhook Verification Token** (found in Dashboard > Settings > Developers > Webhooks) to verify the webhook came from Xendit.
+
+```javascript
+const WEBHOOK_TOKEN = process.env.XENDIT_WEBHOOK_TOKEN;
+
+app.post('/webhook', (req, res) => {
+  const callbackToken = req.headers['x-callback-token'];
+
+  if (callbackToken !== WEBHOOK_TOKEN) {
+    return res.status(401).send('Unauthorized');
+  }
+
+  // Process the event
+  const event = req.body;
+  console.log('Received event:', event.event);
+
+  res.status(200).send('OK');
+});
+```
+
+## Webhook payload
+
+A typical webhook payload includes:
+
+```json
+{
+  "event": "payment.succeeded",
+  "business_id": "5f9a3fbd571a1c4068aa40ce",
+  "created": "2024-01-15T10:30:00.000Z",
+  "data": {
+    "id": "pr-1234-5678",
+    "reference_id": "order-001",
+    "status": "SUCCEEDED",
+    "amount": 50000,
+    "currency": "IDR"
+  }
+}
+```
+
+## Best practices
+
+- **Respond quickly** — Return `200` immediately, then process the event asynchronously.
+- **Handle duplicates** — Webhooks may be delivered more than once. Use the event `id` to deduplicate.
+- **Verify authenticity** — Always validate the `x-callback-token` header before processing.
+- **Use HTTPS** — Configure your webhook URL with HTTPS to ensure secure delivery.
+- **Log all webhooks** — Store raw webhook payloads for debugging and reconciliation.
+
+For more details on setting up webhooks for specific products, see:
+- [Payments API webhooks](/accept-payments/payment-products/payments-api-intro/how-payments-api-work)
+- [Handling webhooks](/accept-payments/integration-guide/integration-setup-3)

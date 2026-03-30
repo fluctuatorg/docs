@@ -344,31 +344,34 @@ Availability
 - Sandbox Environment: Available now for testing and development
 - Production Environment: Live activation for `BRI_VIRTUAL_ACCOUNT` is scheduled for the second week of August 2025, pending bank approval.
 
-### Frequently Asked Questions
+## FAQ
 
-Q: What happens if I don't include verification data?  
-A: Payments to BRI virtual accounts will fail if verification data is missing after the feature goes live.
-
-Q: Can end users use any bank account to pay?  
-A: Only bank accounts listed in the `allowed_bank_accounts` field will be accepted. Payments from other accounts will be rejected.
-
-Q: What if an end user's name doesn't exactly match?  
-A: Use the `accepted_name_variations` field to include common variations of the end user's name.
-
-Q: Can I still use my existing virtual accounts?  
-A: No, existing virtual accounts cannot be used with the new verification system. You must recreate them using the new flow with verification data.
-
-Q: Do I need to implement this for all payment channels?  
-A: No, this requirement only applies to `BRI_VIRTUAL_ACCOUNT` channels or any channel that required payer verification process.
-
-Q: What should I do with "UNKNOWN" verification results?  
-A: Do not treat these as successful payments. Either process a refund automatically or conduct manual review before accepting the payment, as UNKNOWN results typically indicate network timeouts during verification.
-
-Q: Will the API change during the pilot phase?  
-A: Yes, since this is a pilot feature, there may be changes to the API structure, new fields, or modified behavior. Monitor our documentation for updates.
-
-Q: Can I keep the same virtual account number when updating verification details?  
-A: Yes, you can specify the same `virtual_account_number` in the new payment request after canceling the previous one.
-
-Q: How often do UNKNOWN verification results occur?  
-A: UNKNOWN results are rare and typically only occur due to network timeouts during the verification process. Under normal circumstances, ineligible payments should be rejected outright.
+<AccordionGroup>
+  <Accordion title="What happens if I don't include verification data?">
+    Payments to BRI virtual accounts will fail if verification data is missing after the feature goes live.
+  </Accordion>
+  <Accordion title="Can end users use any bank account to pay?">
+    Only bank accounts listed in the `allowed_bank_accounts` field will be accepted. Payments from other accounts will be rejected.
+  </Accordion>
+  <Accordion title="What if an end user's name doesn't exactly match?">
+    Use the `accepted_name_variations` field to include common variations of the end user's name.
+  </Accordion>
+  <Accordion title="Can I still use my existing virtual accounts?">
+    No, existing virtual accounts cannot be used with the new verification system. You must recreate them using the new flow with verification data.
+  </Accordion>
+  <Accordion title="Do I need to implement this for all payment channels?">
+    No, this requirement only applies to `BRI_VIRTUAL_ACCOUNT` channels or any channel that required payer verification process.
+  </Accordion>
+  <Accordion title='What should I do with "UNKNOWN" verification results?'>
+    Do not treat these as successful payments. Either process a refund automatically or conduct manual review before accepting the payment, as UNKNOWN results typically indicate network timeouts during verification.
+  </Accordion>
+  <Accordion title="Will the API change during the pilot phase?">
+    Yes, since this is a pilot feature, there may be changes to the API structure, new fields, or modified behavior. Monitor our documentation for updates.
+  </Accordion>
+  <Accordion title="Can I keep the same virtual account number when updating verification details?">
+    Yes, you can specify the same `virtual_account_number` in the new payment request after canceling the previous one.
+  </Accordion>
+  <Accordion title="How often do UNKNOWN verification results occur?">
+    UNKNOWN results are rare and typically only occur due to network timeouts during the verification process. Under normal circumstances, ineligible payments should be rejected outright.
+  </Accordion>
+</AccordionGroup>

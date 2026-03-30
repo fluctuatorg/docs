@@ -2,13 +2,27 @@
 title: "Reusable payment codes"
 ---
 
+import CreatePrReusablePaymentCode from '/snippets/payments-api/create-pr-reusable-payment-code.mdx'
+import PaymentRequestWebhookRpc from '/snippets/payments-api/payment-request-webhook-rpc.mdx'
+
 Depending on the payment use case, you might opt to use reusable payment codes to collect multiple instances of payments. This could be the case where a virtual bank account number is tied to a single user’s account for multiple payments or a case where a single QR code is displayed in-store for multiple users to make multiple individual payments.
 
 In this article, we will walk through a basic integration with our payments API for our guest checkout under the `REUSABLE_PAYMENT_CODE` flow type of `/payment_requests`. Before you start, be sure to complete your integration environment set up.
 
 ## Integration Flow
 
-![](/images/doc360/reusable_payment_code.png)
+```mermaid
+sequenceDiagram
+  actor EndUser as End User
+  participant Client as Client App
+  participant Server as Client Server
+  participant XenditServer as Xendit Server
+  Client ->> EndUser: Retrieve payment code
+  EndUser ->> XenditServer: Makes payment to <br> the payment code
+  XenditServer ->> Server: Send payment webhook
+  Server ->> Client: Informs result
+  Client ->> EndUser: Present results
+```
 
 ## How to integrate
 
@@ -20,7 +34,7 @@ In this article, we will walk through a basic integration with our payments API 
 2. Create a payment request   
    When the user enters the page to attempt payment, construct an [API request body](https://xendit-docs.document360.io/apidocs/create-payment-request) for `REUSABLE_PAYMENT_CODE` with information required by your selected channel. In this scenario, your payment request `type` should be `REUSABLE_PAYMENT_CODE`.
 
-   &#123;&#123;snippet.create\_pr\_resuablecode&#125;&#125;
+   <CreatePrReusablePaymentCode />
 
    Additional features can be configured if the payment channel allows it. For example, you will be able to set custom payment request expiry time if the channel properties fields accepts an expires\_at parameter.
 3. Handle the required actions
@@ -34,14 +48,20 @@ In this article, we will walk through a basic integration with our payments API 
 4. Receive a payment event webhook for payment confirmation  
    Once the end user has completed their payment authentication step and the payment method provider notifies Xendit of an update, Xendit will proceed to send a webhook to the webhook url you configured in your Xendit dashboard settings page.
 
-   &#123;&#123;snippet.payment\_request\_webhook\_rpc&#125;&#125;
+   <PaymentRequestWebhookRpc />
 5. Display payment status to user
 
    For reusable payment codes, it is important to provide up-to-date information on payments for your users. To do so, your system should be designed to expect many payment web hooks coming in for a single reusable payment code and expect that these web hooks can happen any time. Often, merchants will prepare a page that can show the full list of payments recognized by the reusable payment code.
 
 ## Payment Lifecycle
 
-![](/images/doc360/Payment_API_v3-Reusable_payment_code.drawio__1_.png)
+```mermaid
+stateDiagram-v2
+    [*] --> ACCEPTING_PAYMENTS: Request created
+    ACCEPTING_PAYMENTS --> ACCEPTING_PAYMENTS: End user payment captured
+    ACCEPTING_PAYMENTS --> CANCELED: Merchant cancels request
+    ACCEPTING_PAYMENTS --> EXPIRED: Request reaches expiry
+```
 
 Here’s the status lifecycle for a payment request for reusable payment code flow:
 
@@ -52,5 +72,3 @@ Here’s the status lifecycle for a payment request for reusable payment code fl
 | EXPIRED | The payment request transitions to this status when it reaches the expiry date specified in the request. | - |
 
 ---
-
-####

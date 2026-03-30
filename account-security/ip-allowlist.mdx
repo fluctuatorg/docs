@@ -10,7 +10,13 @@ IP Allowlist is a feature to secure API traffic against foreign or malicious IPs
 IP Allowlist feature only works for API users through direct API integration and will not work for plugin users (Shopify, woocommerce, etc).
 </Info>
 
-![Steps to manage IP allowlist and API calls in the Xendit dashboard.](/images/doc360/EN_-_IP_Allowlist_Flow.webp)
+```mermaid
+flowchart TD
+    A[API request sent to Xendit] --> B{Source IP in allowlist?}
+    B -->|Yes| C[Request accepted]
+    B -->|No| D[Reject request]
+    D --> E["Return UNAUTHORIZED_SENDER_IP error"]
+```
 
 <Info>
 ##### INFO

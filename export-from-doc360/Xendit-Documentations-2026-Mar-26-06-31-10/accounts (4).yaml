@@ -1,0 +1,2435 @@
+openapi: 3.0.0
+info:
+  title: xenPlatform
+  version: '1.0'
+  description: |
+    xenPlatform is Xendit's solution for platform businesses that work with third-party partners. Platform businesses face complex payments challenges that range from partner onboarding, to moving funds, to payouts and billing.
+    With xenPlatform, you can onboard and create accounts for your partners, transact on behalf of them, split payments, monitor their transactions, and directly bill them.
+
+    **Overview:**
+    Once xenPlatform has been activated for your account, you may use the Account API to create sub accounts that are linked to your master account.
+    Thereafter simply include a for-user-id header in any standard Xendit API call to create a transaction for those accounts.
+    These accounts and their transactions will appear in the xenPlatform tab of your Xendit dashboard.
+servers:
+  - url: https://api.xendit.co
+paths:
+  /v2/accounts:
+    post:
+      security:
+        - BasicAuth: []
+      operationId: createxenPlatformAccount
+      summary: Create account
+      description: |
+        Create Account API allows you to create Accounts for your Partners on your Platform. Once an Account is created, you can accept and route payments through the Transfers API or Platform Fee API.
+        Read more about account types [here](https://docs.xendit.co/docs/sub-accounts).
+        
+        Remember to store the returned account ID value to make transactions for that Account in the future.
+
+        > **Notes**: 
+        > - For the `/v2/accounts` endpoint, we allow a maximum of 5 write requests per second.
+        > - The `OWNED` type is currently restricted for accounts in Indonesia.
+        > 
+        > Please contact help@xendit.co if you need the above features.
+
+        **Version**
+
+        This version of the API is asynchronous to improve performance and scalability. We have also added API permissions in this version. If you are using an existing API key, please edit your permissions in your Settings page.
+
+        It is mandatory to wait for the `account.created` callback before attempting to create transactions. Set a Callback URL in your Dashboard to receive Account Updated Callbacks and know when payments can be processed for your Accounts.
+
+        > Use API key permission Account Write to perform this request
+
+        **Account Suspension Callbacks**
+
+        The Account Suspension webhook can be used to let your system know when Xendit has suspected, suspended or cleared the Accounts linked to your Platform. Our teams and systems automatically and regularly review Account behaviour to help Platforms mitigate potential fraud.
+
+        These events may occur if we have reason to believe that the Account has engaged in fraudulent activity. When these events occur, only the transactions occurring on that specific Account will be affected. This approach allows your Platform to continue accepting payments for your other Accounts normally.
+      tags:
+        - xenPlatform
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAccountRequestSchema'
+            examples:
+              Owned Type:
+                $ref: '#/components/examples/CreateOwnedAccountExample'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateAccountResponseSchema'
+              examples:
+                Owned Sub-account:
+                  $ref: '#/components/examples/GetOwnedAccountResponse'
+        '400':
+          $ref: '#/components/responses/AccountsError400Responses'
+    get:
+      security:
+        - BasicAuth: []
+      operationId: listxenPlatformAccounts
+      summary: List accounts
+      description: |
+        Use this endpoint to retrieve information about your sub accounts. You can filter by email, creation date, type, name, or status. The results are paginated and ordered by creation date
+
+        > Use API key permission Accounts Read to perform this request
+
+        > This endpoint is backward compatible with Accounts created using the /accounts endpoint
+      tags:
+        - xenPlatform
+      parameters:
+        - $ref: '#/components/parameters/email_query_param'
+        - $ref: '#/components/parameters/account_status_query_param'
+        - $ref: '#/components/parameters/business_name_query_param'
+        - $ref: '#/components/parameters/account_type_query_param'
+        - $ref: '#/components/parameters/created_gte_query_param'
+        - $ref: '#/components/parameters/created_lte_query_param'
+        - $ref: '#/components/parameters/updated_gte_query_param'
+        - $ref: '#/components/parameters/updated_lte_query_param'
+        - $ref: '#/components/parameters/limit_query_param'
+        - $ref: '#/components/parameters/before_id_query_param'
+        - $ref: '#/components/parameters/after_id_query_param'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ListAccountResponseSchema'
+                  has_more:
+                    type: boolean
+                    description: |
+                      Indicates whether there are more items to be queried with `after_id` of the last item from the current result.
+                      Use the `links` to follow to the next result.
+                  links:
+                    type: array
+                    description: |
+                      The links to the next page based on HATEOAS if there is next result.
+                      The HATEOAS format are:
+                      `href`: URI of target, this will be to the next link.
+                      `rel`: The relationship between source and target. The value will be `next`.
+                      `method`: The HTTP method, the value will be `GET`.
+                    items:
+                      type: object
+                      properties:
+                        href:
+                          type: string
+                        rel:
+                          type: string
+                        method:
+                          type: string
+              examples:
+                Get Owned Account Response:
+                  value:
+                    data:
+                      - id: 5cafeb170a2b18519b1b8761
+                        created: '2021-01-01T10:00:00Z'
+                        updated: '2021-01-01T10:00:00Z'
+                        type: OWNED
+                        email: angie@pinkpanther.com
+                        public_profile:
+                          business_name: Angie's lemonade stand
+                        status: LIVE
+                      - id: 3cafeb170a2b18519b1b8762
+                        created: '2023-03-22T09:15:00Z'
+                        updated: '2023-03-22T09:30:00Z'
+                        type: MANAGED
+                        email: carol@cooldrinks.com
+                        public_profile:
+                          business_name: Carol's Cool Drinks
+                        status: LIVE
+                    has_more: true
+                    links:
+                      - href: /v2/accounts?after_id=623ace8270bbddf93816b3g1
+                        rel: next
+                        method: GET
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400Response'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404NotFoundResponse'
+  /v2/accounts/{id}:
+    get:
+      security:
+        - BasicAuth: []
+      operationId: getxenPlatformAccount
+      summary: Get account
+      description: The Get Account API allows you to retrieve a sub-account's information.
+      tags:
+        - xenPlatform
+      parameters:
+        - $ref: '#/components/parameters/account_id'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateAccountResponseSchema'
+              examples:
+                Owned Sub-account:
+                  $ref: '#/components/examples/GetOwnedAccountResponse'
+        '404':
+          description: Not found error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404NotFoundResponse'
+              examples:
+                DATA_NOT_FOUND:
+                  value:
+                    error_code: DATA_NOT_FOUND
+                    message: Could not find payout with the corresponding ID. Please try again with a valid ID.
+                    errors:
+                      - Detailed description here
+    patch:
+      security:
+        - BasicAuth: []
+      operationId: updatexenPlatformAccount
+      summary: Update account
+      description: The Update Account API allows you to update a sub-account's information or link an Account Holder (legacy API) to verify the account.
+      tags:
+        - xenPlatform
+      parameters:
+        - $ref: '#/components/parameters/account_id'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAccountRequestSchema'
+            examples:
+              Update Business Name:
+                value:
+                  public profile:
+                    business_name: New Business Name
+              Link Account Holder:
+                value:
+                  account_holder_id: 4376b7b0-1c44-46be-8640-828f79cdc8be
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateAccountResponseSchema'
+              examples:
+                Owned Sub-account:
+                  $ref: '#/components/examples/GetOwnedAccountResponse'
+                Link Account Holder:
+                  $ref: '#/components/examples/LinkAccountHolderResponse'
+        '404':
+          description: Not found error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404NotFoundResponse'
+              examples:
+                DATA_NOT_FOUND:
+                  value:
+                    error_code: DATA_NOT_FOUND
+                    message: Could not find payout with the corresponding ID. Please try again with a valid ID.
+                    errors:
+                      - Detailed description here
+  /split_rules:
+    post:
+      security:
+        - BasicAuth: []
+      operationId: createSplitRule
+      summary: Create split rule
+      description: |
+        A Split Rule object defines how payments in xenPlatform can be routed and split to multiple sub-accounts or the Master account.
+
+        Include the `split_rule_id` returned in the response in supported transaction endpoints to automatically route and split payments to multiple account destinations once payments settle.
+      tags:
+        - xenPlatform
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSplitRuleRequestSchema'
+            example:
+              name: Platform and Delivery Fees
+              description: Platform fee and delivery fee for a Marketplace
+              routes:
+                - flat_amount: 3000
+                  currency: IDR
+                  destination_account_id: 5f8d0c0603ffe06b7d4d9fcf
+                  reference_id: reference-1
+                - percent_amount: 5.25
+                  currency: IDR
+                  destination_account_id: 5f8d0c0603ffe06b7d4d9fcf
+                  reference_id: reference-2
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateSplitRuleResponseSchema'
+              example:
+                id: splitru_d9e069f2-4da7-4562-93b7-ded87023d749
+                name: Standard platform fee
+                description: Platform fee for all transactions accepted on behalf of vendors
+                routes:
+                  - flat_amount: 3000
+                    currency: IDR
+                    destination_account_id: 5f8d0c0603ffe06b7d4d9fcf
+                    reference_id: reference-1
+                  - percent_amount: 5.25
+                    currency: IDR
+                    destination_account_id: 5cafeb170a2b18519b1b8768
+                    reference_id: reference-2
+                created: '2020-09-01T07:00:00.007Z'
+                updated: '2020-09-01T07:00:00.007Z'
+                metadata: {}
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400Response'
+              examples:
+                API_VALIDATION_ERROR:
+                  value:
+                    error_code: INVALID_CONFIGURATION
+                    message: Inputs are failing validation. The errors field contains details about which fields are violating validation.
+                    errors:
+                      - Detailed description here
+                INVALID_FEE_AMOUNT:
+                  value:
+                    error_code: INVALID_FEE_AMOUNT
+                    message: Fee amount and/or unit is negative number or incorrect format.
+                    errors:
+                      - Detailed description here
+                DUPLICATE_ERROR:
+                  value:
+                    error_code: DUPLICATE_ERROR
+                    message: Returned if provided `reference_id` is not unique for the routes
+                    errors:
+                      - Detailed description here
+        '404':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404NotFoundResponse'
+              examples:
+                DESTINATION_ACCOUNT_NOT_FOUND:
+                  value:
+                    error_code: DESTINATION_ACCOUNT_NOT_FOUND
+                    message: Returned when destination_account_id is invalid or not connected to this xenPlatform account
+                    errors:
+                      - Detailed description here
+  /account_holders:
+    post:
+      security:
+        - BasicAuth: []
+      operationId: createAccountHolder
+      summary: Create account holder
+      description: |
+        An Account Holder represents the legal entity that holds the Xendit Account that is created in your Platform. You will need to [Create an Account](#create-account) to link the account holder with.
+        The details that you need to provide in the request depend on the Account holders' legal entity type. Please refer to [this guide](https://docs.xendit.co/docs/xenplatform-account-holder-api) for a comprehensive step-by-step as well as requirements for each country and entity type.
+
+        You will need to use [Update Account](/update-a-xenplatform-account) API to link the Account Holder to the xenPlatform Account before the verification can begin.
+
+        > You will need the Account Holder `Write` API key permission to perform this request
+      tags:
+        - Account Holder (Legacy)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAccountHolderRequestSchema'
+            examples:
+              Philippines Corporation:
+                value:
+                  business_detail:
+                    type: CORPORATION
+                    legal_name: My Store Inc.
+                    trading_name: John's Store
+                    description: description here
+                    industry_category: ELECTRONICS_AND_ACCESSORIES
+                    date_of_registration: '2023-02-02'
+                    country_of_operation: PH
+                  individual_details:
+                    - given_names: John
+                      surname: Doe
+                      phone_number: '+63021234567'
+                      email: test@xendit.co
+                      nationality: PH
+                      place_of_birth: PH
+                      date_of_birth: '2000-02-02'
+                      gender: MALE
+                      type: PIC
+                      role: owner
+                  address:
+                    country: PH
+                    city: Caloocan
+                    street_line1: 9th St
+                    street_line2: Building 101
+                    district: 1st district
+                    sub_district: 2nd subdistrict
+                    province_state: Metro Manila
+                    postal_code: '1400'
+                  kyc_documents:
+                    - type: SEC_CERTIFICATE_REGISTRATION_DOCUMENT
+                      country: PH
+                      file_id: 63f8719642f5856dcb142bd2
+                    - type: ARTICLES_OF_INCORPORATION_DOCUMENT
+                      country: PH
+                      file_id: 63f8719642f5856dcb142bd2
+                    - type: NOTARIZED_SECRETARY_CERTIFICATE_DOCUMENT
+                      country: PH
+                      file_id: 63f8719642f5856dcb142bd2
+                    - type: LATEST_GIS_DOCUMENT
+                      country: PH
+                      file_id: 63f8719642f5856dcb142bd2
+                    - type: ACR_OR_IMMIGRANT_COR_DOCUMENT
+                      country: PH
+                      file_id: 63f8719642f5856dcb142bd2
+                    - type: SERVICE_AGREEMENT_DOCUMENT
+                      country: PH
+                      file_id: 63f8719642f5856dcb142bd2
+                  website_url: https://xendit.co
+                  phone_number: '+6381234567'
+                  email: test@xendit.co
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateAccountHolderResponseSchema'
+              examples:
+                Philippines Corporation:
+                  $ref: '#/components/examples/GetAccountHolderPHResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400Response'
+              examples:
+                API_VALIDATION_ERROR:
+                  value:
+                    error_code: API_VALIDATION_ERROR
+                    message: Inputs are failing validation. The errors field contains details about which fields are violating validation.
+                    errors:
+                      - Detailed description here
+        '401':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401Response'
+              examples:
+                INVALID_API_KEY:
+                  value:
+                    error_code: INVALID_API_KEY
+                    message: The API key format is invalid
+                    errors:
+                      - Detailed description here
+        '403':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403ForbiddenResponse'
+              examples:
+                REQUEST_FORBIDDEN_ERROR:
+                  value:
+                    error_code: REQUEST_FORBIDDEN_ERROR
+                    message: The API key in use does not have the necessary permissions to perform the request. Please assign the xenPlatform Account Holder Write permission for the key.
+                    errors:
+                      - Detailed description here
+                FEATURE_NOT_ACTIVATED:
+                  value:
+                    error_code: FEATURE_NOT_ACTIVATED
+                    message: This feature has not been activated for your account
+                    errors:
+                      - Detailed description here
+        '404':
+          description: Not found error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404NotFoundResponse'
+              examples:
+                DATA_NOT_FOUND:
+                  value:
+                    error_code: DATA_NOT_FOUND
+                    message: Could not find payout with the corresponding ID. Please try again with a valid ID.
+                    errors:
+                      - Detailed description here
+        '500':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500Response'
+              examples:
+                SERVER_ERROR:
+                  value:
+                    error_code: SERVER_ERROR
+                    message: Something unexpected, our developers have been notified to troubleshoot the issue
+                    errors:
+                      - Detailed description here
+  /account_holders/{id}:
+    get:
+      security:
+        - BasicAuth: []
+      operationId: getAccountHolder
+      summary: Get account holder
+      description: |
+        This endpoint retrieves a single Account Holder that was previously created. This is often used for checking the verification status of a Account Holder using the id from the Account Holder Object.
+
+        > Use API key permission Account Holder `Read` to perform this request
+      tags:
+        - Account Holder (Legacy)
+      parameters:
+        - $ref: '#/components/parameters/account_holder_id'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateAccountHolderResponseSchema'
+              examples:
+                Philippines Corporation:
+                  $ref: '#/components/examples/GetAccountHolderPHResponse'
+        '401':
+          description: Not found error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401Response'
+              examples:
+                INVALID_API_KEY:
+                  value:
+                    error_code: INVALID_API_KEY
+                    message: The API key is invalid
+                    errors:
+                      - Detailed description here
+        '403':
+          description: Forbidden error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403ForbiddenResponse'
+              examples:
+                REQUEST_FORBIDDEN_ERROR:
+                  value:
+                    error_code: REQUEST_FORBIDDEN_ERROR
+                    message: API key in use does not have necessary permissions to perform the request. Please assign the xenPlatform Account Holder Read permission for the key.
+                    errors:
+                      - Detailed description here
+        '404':
+          description: Not found error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404NotFoundResponse'
+              examples:
+                DATA_NOT_FOUND:
+                  value:
+                    error_code: DATA_NOT_FOUND
+                    message: Could not find an account holder with the corresponding ID. Please try again with a valid ID.
+                    errors:
+                      - Detailed description here
+    patch:
+      security:
+        - BasicAuth: []
+      operationId: updateAccountHolder
+      summary: Update account holder
+      description: |
+        Use the Update Account Holder endpoint to:
+        1. Update your Account Holder information. This step may be needed when the your information and document submission is insufficient or invalid (e.g invalid website, blurry selfie, invalid ID, etc.).
+        2. Activate a payment channel Capability on an Account Holder object associated with a sub-account
+
+        You need to provide an URL to receive webhooks. Please specify your URL in [Webhook Settings](https://dashboard.xendit.co/settings/developers#callbacks) in the Xendit Dashboard.
+
+        > You will need the Account Holder `Write` API key permission to perform this request.
+      tags:
+        - Account Holder (Legacy)
+      parameters:
+        - $ref: '#/components/parameters/account_holder_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchAccountHolderRequestSchema'
+            examples:
+              Update Website:
+                value:
+                  website_url: valid-marketplace.brand.com
+              Update KYC Document:
+                value:
+                  kyc_documents:
+                    - country: PH
+                      type: LATEST_GIS_DOCUMENT
+                      file_id: 63f8719642f5856dc9feje7
+              Activate Payment Channel Capabilities:
+                value:
+                  capabilities:
+                    - type: MONEY_IN
+                      channel_code: PH_CARDS
+                    - type: MONEY_IN
+                      channel_code: GCASH
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateAccountHolderResponseSchema'
+              examples:
+                Philippines Corporation:
+                  $ref: '#/components/examples/UpdateAccountHolderPHResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400Response'
+              examples:
+                INSUFFICIENT_ACCOUNT_HOLDER_DATA:
+                  value:
+                    error_code: INSUFFICIENT_ACCOUNT_HOLDER_DATA
+                    message: The information in the Account Holder object is not sufficient to request activation for this payment channel. Please update the fields with the correct information.
+                    errors:
+                      - Detailed description here
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403ForbiddenResponse'
+              examples:
+                KYC_VERIFICATION_IN_PROGRESS:
+                  value:
+                    error_code: KYC_VERIFICATION_IN_PROGRESS
+                    message: Account Holder cannot be updated while KYC verification is in progress, please try again when the verification process has been completed.
+                    errors:
+                      - Detailed description here
+                CHANNEL_HAS_BEEN_ACTIVATED:
+                  value:
+                    error_code: CHANNEL_HAS_BEEN_ACTIVATED
+                    message: The payment channel requested has already been activated for this account holder.
+                    errors:
+                      - Detailed description here
+  /callback_urls/{type}:
+    post:
+      security:
+        - BasicAuth: []
+      operationId: setWebhookUrl
+      summary: Set webhook URL
+      description: |
+
+        > ℹ️ Info
+        >
+        > This API can only be used to set Webhook URLs for our [Legacy Payment and Payout APIs](https://archive.developers.xendit.co/api-reference/#payments-api).
+        > For the latest APIs, as a Master Account, you can set up your sub-accounts to send webhooks for their activities to your configured URLs. Otherwise you may
+        > set the webhook URLs from each sub-account's Settings page in their Dashboards.
+        
+        The following can be used in the `type` path parameter:
+
+        Money-In
+
+        - `invoice`: Xendit notifies your system when Invoice has been paid or expired.
+        - `fva_status`: Xendit notifies your system when Virtual Account has been created or updated successfully. Support: Indonesia only 🇲🇨
+        - `fva_paid`: Xendit notifies your system when Virtual Account has been paid successfully. Support: Indonesia only 🇲🇨
+        - `ro_fpc_paid`: Xendit notifies your system when Retail Outlet payment code (Alfamart/Indomaret) in Indonesia has been paid successfully. Support: Indonesia only 🇲🇨
+        - `regional_ro_paid`: Xendit notifies your system when Over-the-Counter payment code (7 Eleven, Cebuana, ECPay) in Philippines has been paid successfully. Support: Philippines only 🇵🇭
+        - `ewallet`: New eWallet type to receive charge and other eWallet events across eWallets channels from /ewallets/charges API.
+        - `payment_method`: Xendit notifies your system when payment method is expiring and/or has expired. Payment Method is a mandatory step to abstract Debit Card/Bank Account for Direct Debit transactions.
+        - `payment_method_v2`: Xendit notifies your system when payment method V2 is expiring and/or has activated or expired. Learn more about Payment Method V2 here.
+        - `direct_debit`: A Direct Debit payment event will be sent to your system for any successful transactions. Use direct_debit type to receive Direct Debit payment event via webhook.
+        - `qr_code`: Xendit notifies your system when QR payment has been made or QR refund has been completed. This field is only supported for qr_codes API version 2022-07-31.
+        - `recurring`: Xendit notifies your system when Subscription plan has been activated/inactivated, cycle created/succeeded/retrying/failed, or force attempt failed.
+        - `payment_succeeded`: Xendit notifies your system when a payment has been successfully confirmed or received from the partner channel (Only for payments initiated via new Payments API). Support: All businesses
+        - `payment_awaiting_capture`: Xendit notifies your system when a payment request with capture_method set to MANUAL has been intialized and a call to the Payment Capture API needed to complete the payment. Support: All businesses
+        - `payment_pending`: Xendit notifies your system when a payment is being processed by the partner channel awaiting for the terminal status of it (Only for payments initiated via new Payments API). Support: All businesses
+        - `payment_failed`: Xendit notifies your system when a pending payment has failed (Only for payments initiated via new Payments API). Support: All businesses
+        - `capture_succeeded`: Xendit notifies your system when a manual capture via the Payment Capture API has succeeded. Support: All businesses
+        - `capture_failed`: Xendit notifies your system when a manual capture via the Payment Capture API has Failed. Support: All businesses
+        - `payment_request_completed`: Xendit notifies your system when a Direct Debit or E-Wallet payment request has succeeded or failed. Please Note that this is for the Payment Request API only. Make sure that other payment callbacks for Direct Debit or E-wallet are not set to prevent duplication. Support: Thailand 🇹🇭 and Malaysia 🇲🇾 only
+
+        Money-Out
+
+        - `disbursement`: Xendit notifies your system when disbursement has been executed successfully by Xendit, either with COMPLETED or FAILED status. Support: Indonesia only 🇲🇨
+        - `ph_disbursement`: Xendit notifies your system when disbursement has been executed successfully by Xendit, either with COMPLETED or FAILED status. Support: Philippines only 🇵🇭
+        - `batch_disbursement`: Xendit notifies your system when Batch Disbursement has been executed successfully by Xendit. Support: Indonesia only 🇲🇨
+        - `payout`: Xendit notifies your system upon failed and successful payouts. Learn more about Payouts V2 webhooks here.
+        Others
+
+        - `report`: Xendit notifies your system to send the report to the specified URLs. Support: All businesses
+      tags:
+        - xenPlatform
+      parameters:
+        - $ref: '#/components/parameters/for_user_id_header'
+        - in: path
+          name: type
+          required: true
+          description: |
+            The type of Webhook URL you want to set
+          schema:
+            type: string
+            enum:
+              - invoice
+              - fva_status
+              - fva_paid
+              - ro_fpc_paid
+              - regional_ro_paid
+              - ewallet
+              - payment_method
+              - payment_method_v2
+              - direct_debit
+              - qr_code
+              - recurring
+              - disbursement
+              - ph_disbursement
+              - batch_disbursement
+              - report
+              - payment_succeeded
+              - payment_awaiting_capture
+              - payment_pending
+              - payment_failed
+              - capture_succeeded
+              - capture_failed
+              - payment_request_completed
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - url
+              properties:
+                url:
+                  type: string
+                  description: The URL of your server that you want to receive our Webhooks
+                  minLength: 1
+            example:
+              url: https://www.xendit.co/webhook_catcher
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: The status of setting the Webhook URL
+                    enum:
+                      - SUCCESSFUL
+                  user_id:
+                    type: string
+                    description: The user_id on which the Webhook URL has been set
+                  url:
+                    type: string
+                    description: The Webhook URL that has been set
+                  environment:
+                    type: string
+                    description: The environment on which the Webhook URL has been set
+                    enum:
+                      - TEST
+                      - LIVE
+                  callback_token:
+                    type: string
+                    description: The unique Webhook token that is attached to each sub-account. Use this to validate that a Webhook is sent from Xendit's servers.
+              example:
+                status: SUCCESSFUL
+                user_id: 5e6b30d967627b957de8c123
+                url: https://www.xendit.co/webhook_catcher
+                environment: TEST
+                callback_token: 66a6680348e1c33ed2b9053a8eb9291b9e2230ff4f4d3057c9f4ac26405d2123
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400Response'
+              examples:
+                INVALID_URL_FORMAT:
+                  value:
+                    error_code: INVALID_URL_FORMAT
+                    message: You have provided an invalid URL format
+                    errors:
+                      - Detailed description here
+        '404':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404NotFoundResponse'
+              examples:
+                CALLBACK_AUTHENTICATION_TOKEN_NOT_FOUND_ERROR:
+                  value:
+                    error_code: CALLBACK_AUTHENTICATION_TOKEN_NOT_FOUND_ERROR
+                    message: No webhook verification token found for this business, please contact help@xendit.co to resolve this issue
+                    errors:
+                      - Detailed description here
+  /transfers/reference={reference}:
+    get:
+      security:
+        - BasicAuth: []
+      operationId: xenplatformTransferByReference
+      summary: Get transfer by reference
+      description: |
+        This endpoint queries the current status of a transfer. This is often used for checking the status of a transaction.
+      tags:
+        - xenPlatform
+      parameters:
+        - $ref: '#/components/parameters/transfer_reference_id'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/transfer_object'
+              examples:
+                Default Transfer:
+                  $ref: '#/components/examples/DefaultTransferResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404NotFoundResponse'
+              examples:
+                DATA_NOT_FOUND:
+                  value:
+                    error_code: DATA_NOT_FOUND
+                    message: Could not find transfer by reference because reference may be invalid.
+                    errors:
+                      - Detailed description here
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401Response'
+              examples:
+                INVALID_API_KEY:
+                  value:
+                    error_code: INVALID_API_KEY
+                    message: API key is not authorized for this API service, access to xenPlatform is needed
+                    errors:
+                      - Detailed description here
+  /transfers:
+    post:
+      security:
+        - BasicAuth: []
+      operationId: xenplatformTransfer
+      summary: Create transfers
+      description: |
+        The Transfers API allows you to transfer balances: i) from your sub-accounts to your master account and vice versa, ii) between your sub-accounts. Use this to manage, or split payments between your platform and your sub accounts within the Xendit ecosystem.
+
+        > You can only create transfers using the Platform's API key. Sub-accounts that you manage through xenPlatform have no ability to create transfers through this endpoint
+      tags:
+        - xenPlatform
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTransfersRequestSchema'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/transfer_object'
+              examples:
+                Transfer:
+                  $ref: '#/components/examples/DefaultTransferResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400Response'
+              examples:
+                API_VALIDATION_ERROR:
+                  value:
+                    error_code: API_VALIDATION_ERROR
+                    message: Inputs are failing validation. The errors field contains details about which fields are violating validation.
+                    errors:
+                      - Detailed description here
+                INVALID_JSON_FORMAT:
+                  value:
+                    error_code: INVALID_JSON_FORMAT
+                    message: The request body is not a valid JSON format.
+                    errors:
+                      - Detailed description here
+                INVALID_SOURCE_OR_DESTINATION_ERROR:
+                  value:
+                    error_code: INVALID_SOURCE_OR_DESTINATION_ERROR
+                    message: Source or destination account does not exist. Please input a valid business ID within your xenPlatform account.
+                    errors:
+                      - Detailed description here
+                INSUFFICIENT_BALANCE:
+                  value:
+                    error_code: INSUFFICIENT_BALANCE
+                    message: The cash balance of your source account is insufficient.
+                    errors:
+                      - Detailed description here
+                MISMATCH_PAYLOAD_FOR_REFERENCE:
+                  value:
+                    error_code: MISMATCH_PAYLOAD_FOR_REFERENCE
+                    message: Reference has been used before. If you'd like to retry this transfer, please use the same payload as your previous request.
+                    errors:
+                      - Detailed description here
+                INVALID_AMOUNT:
+                  value:
+                    error_code: INVALID_AMOUNT
+                    message: Transfer amount has to be greater than 0, Transfer amount of IDR currency should not have decimal point, Transfer amount of PHP currency can only have max 2 decimal point.
+                    errors:
+                      - Detailed description here
+        '401':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401Response'
+              examples:
+                INVALID_API_KEY:
+                  value:
+                    error_code: INVALID_API_KEY
+                    message: The API key format is invalid
+                    errors:
+                      - Detailed description here
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403ForbiddenResponse'
+              examples:
+                REQUEST_FORBIDDEN_ERROR:
+                  value:
+                    error_code: REQUEST_FORBIDDEN_ERROR
+                    message: API key in use does not have necessary permissions to perform the request. Please assign proper permissions for the key
+                    errors:
+                      - Detailed description here
+                DUPLICATE_REFERENCE:
+                  value:
+                    error_code: DUPLICATE_REFERENCE
+                    message: The reference parameter should be unique.
+                    errors:
+                      - Detailed description here
+                XEN_PLATFORM_SUB_ACCOUNT_NOT_LIVE:
+                  value:
+                    error_code: XEN_PLATFORM_SUB_ACCOUNT_NOT_LIVE
+                    message: Your source or destination account is not live yet. Please specify live accounts for live transfers.
+                    errors:
+                      - Detailed description here
+                API_KEY_ENVIRONMENT_NOT_MATCH:
+                  value:
+                    error_code: API_KEY_ENVIRONMENT_NOT_MATCH
+                    message: Use your LIVE API key to transfer between LIVE accounts, or use TEST API key to transfer between TEST accounts.
+                    errors:
+                      - Detailed description here
+        '425':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error425TransferResponse'
+              examples:
+                TRANSFER_IN_PROGRESS:
+                  value:
+                    error_code: TRANSFER_IN_PROGRESS
+                    message: Transfer is currently being processed. Use `GET Transfer By Reference` to check its latest status
+                    errors:
+                      - Detailed description here
+  /your_xenplatform_owned_webhook_url:
+    post:
+      security: []
+      operationId: accountCreatedWebhook
+      summary: Owned account status webhook notification
+      description: |
+        A webhook event sent when your `OWNED` sub-account has been successfully created
+      tags:
+        - xenPlatform
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: ''
+              properties:
+                event:
+                  type: string
+                  enum:
+                    - account.created
+                  example: account.created
+                  description: Your `OWNED` sub-account has been successfully created
+                business_id:
+                  $ref: '#/components/schemas/account_id'
+                created:
+                  type: string
+                  description: Timestamp of when the webhook was sent
+                updated:
+                  type: string
+                  description: Timestamp of when the webhook was updated
+                data:
+                  $ref: '#/components/schemas/CreateAccountResponseSchema'
+            examples:
+              Account Created:
+                value:
+                  event: account.created
+                  created: '2021-01-01T10:00:00Z'
+                  data:
+                    id: 5cafeb170a2b18519b1b8761
+                    created: '2021-01-01T10:00:00Z'
+                    updated: '2021-01-01T10:00:00Z'
+                    type: OWNED
+                    email: test@xendit.co
+                    public_profile:
+                      business_name: My Store
+                    country: ID
+                    status: LIVE
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request - Invalid webhook payload
+  /your_xenplatform_managed_webhook_url:
+    post:
+      security: []
+      operationId: accountUpdatedWebhook
+      summary: Managed account status webhook notification
+      description: |
+        Webhook events sent for your `MANAGED` sub-accounts when they have registered or are activated.
+      tags:
+        - xenPlatform
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: ''
+              properties:
+                event:
+                  type: string
+                  enum:
+                    - account.registered
+                    - account.activated
+                  example: account.created
+                  description: |
+                    `account.registered`: Your `MANAGED` sub-account has successfully registered
+                    `account.activated`: Your `MANAGED` sub-account has been verified and enabled for live payments
+                business_id:
+                  $ref: '#/components/schemas/account_id'
+                created:
+                  type: string
+                  description: Timestamp of when the webhook was sent
+                updated:
+                  type: string
+                  description: Timestamp of when the webhook was updated
+                data:
+                  $ref: '#/components/schemas/AccountCallbackDataSchema'
+            examples:
+              Account Registered:
+                value:
+                  event: account.registered
+                  created: '2021-01-01T10:00:00Z'
+                  data:
+                    user_id: 5cafeb170a2b18519b1b8761
+                    account_info:
+                      payments_enabled: false
+              Account Activated:
+                value:
+                  event: account.activated
+                  created: '2021-01-01T10:00:00Z'
+                  master_acc_business_id: 5cafeb170a2b18529b6120a4
+                  data:
+                    user_id: 5cafeb170a2b18519b1b8761
+                    created: '2021-01-01T10:00:00Z'
+                    account_info:
+                      payments_enabled: true
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request - Invalid webhook payload
+  /your_account_suspension_status_callback_url:
+    post:
+      security: []
+      operationId: accountSuspendedWebhook
+      summary: Account suspension webhook notification
+      description: These events may occur if we have reason to believe that the Account has engaged in fraudulent activity.
+      tags:
+        - xenPlatform
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: ''
+              properties:
+                event:
+                  type: string
+                  enum:
+                    - account.suspected
+                    - account.suspended
+                    - account.cleared
+                  example: account.suspended
+                  description: These events may occur if we have reason to believe that the Account has engaged in fraudulent activity.
+                business_id:
+                  $ref: '#/components/schemas/account_id'
+                created:
+                  type: string
+                  description: Timestamp of when the webhook was sent
+                updated:
+                  type: string
+                  description: Timestamp of when the webhook was updated
+                data:
+                  $ref: '#/components/schemas/AccountSuspensionCallbackSchema'
+            examples:
+              Account Suspended:
+                value:
+                  event: account.suspended
+                  created: '2021-01-01T10:00:00Z'
+                  data:
+                    id: 5cafeb170a2b18519b1b8761
+                    created: '2021-01-01T10:00:00Z'
+                    updated: '2021-01-01T10:00:00Z'
+                    email: test@xendit.co
+                    public_profile:
+                      business_name: My Store
+                    status: SUSPENDED
+                    reason: FRAUD_PROMO_ABUSE
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request - Invalid webhook payload
+  /your_split_payment_webhook_url:
+    post:
+      security: []
+      operationId: splitPaymentStatusWebhook
+      summary: Split payment status notification webhook
+      description: These events will be sent when a split payment is completed or has failed to execute
+      tags:
+        - xenPlatform
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: ''
+              properties:
+                event:
+                  type: string
+                  enum:
+                    - split.payment
+                  example: split.payment
+                  description: Event that occurred for this webhook
+                business_id:
+                  $ref: '#/components/schemas/account_id'
+                created:
+                  type: string
+                  description: Timestamp of when the webhook was sent
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: The unique Split Payment ID created for every split
+                    split_rule_id:
+                      $ref: '#/components/schemas/split_rule_id'
+                    reference_id:
+                      $ref: '#/components/schemas/split_route_reference'
+                    payment_id:
+                      type: string
+                      description: |
+                        The original payment ID that the Split payment was processed for, or that the Split Rule was linked to using the with-split-rule header.
+                        The payment ID is the unique identifier for the payment. Its prefix varies based on the payment method type.
+                    payment_reference_id:
+                      type: string
+                      description: Reference ID of the Payment object
+                    source_account_id:
+                      type: string
+                      description: Business ID of the account where the split was sent from. This is also the account that received the original payment.
+                    destination_account_id:
+                      $ref: '#/components/schemas/split_route_destination_id'
+                    status:
+                      type: string
+                      description: The status of the split payment.
+                      enum:
+                        - COMPLETED
+                        - FAILED
+                    amount:
+                      type: number
+                      description: The total currency amount that is sent to the destination_account_id
+                    currency:
+                      $ref: '#/components/schemas/currency'
+                    failure_code:
+                      type: string
+                      description: The failure code for FAILED events
+                      example: INSUFFICIENT_BALANCE
+            examples:
+              Split Payment Completed:
+                value:
+                  event: split.payment
+                  created: '2021-01-01T10:00:00Z'
+                  business_id: 5fe2b0137b7d62542fe6d7de
+                  data:
+                    id: 57fb4e076fa3fa296b7f5a97
+                    split_rule_id: "splitru_d9e069f2-4da7-4562-93b7-ded87023d749"
+                    reference_id: "my_unique_route_reference_12345"
+                    payment_id: "py-1402feb0-bb79-47ae-9d1e-e69394d3949c"
+                    payment_reference_id: "my_unique_payment_reference_12345"
+                    source_account_id: "5fe2b0137b7d62542fe6d7de"
+                    destination_account_id: "67514ce3b045c2ebade1d94e"
+                    status: "COMPLETED"
+                    amount: 150.45
+                    currency: "PHP"
+              Split Payment Failed:
+                value:
+                  event: split.payment
+                  created: '2021-01-01T10:00:00Z'
+                  business_id: 5fe2b0137b7d62542fe6d7de
+                  data:
+                    id: 57fb4e076fa3fa296b7f5a97
+                    split_rule_id: "splitru_d9e069f2-4da7-4562-93b7-ded87023d749"
+                    reference_id: "my_unique_route_reference_12345"
+                    payment_id: "py-1402feb0-bb79-47ae-9d1e-e69394d3949c"
+                    payment_reference_id: "my_unique_payment_reference_12345"
+                    source_account_id: "5fe2b0137b7d62542fe6d7de"
+                    destination_account_id: "67514ce3b045c2ebade1d94e"
+                    status: "FAILED"
+                    amount: 150.45
+                    currency: "PHP"
+                    failure_code: "INSUFFICIENT_BALANCE"
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request - Invalid webhook payload
+  /your_account_holder_kyc_webhook_url:
+    post:
+      security: []
+      operationId: accountHolderKYCWebhook
+      summary: Account holder KYC status notification webhook
+      description: These events will be sent when there is an update on a sub-account's KYC status
+      tags:
+        - Account Holder (Legacy)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: ''
+              properties:
+                event:
+                  type: string
+                  enum:
+                    - account_holder.kyc.status
+                  example: account_holder.kyc.status
+                  description: Event that occurred for this webhook
+                business_id:
+                  $ref: '#/components/schemas/account_id'
+                created:
+                  type: string
+                  description: Timestamp of when the webhook was sent
+                updated:
+                  type: string
+                  description: Timestamp of when the webhook was updated
+                data:
+                  type: object
+                  properties:
+                    id:
+                      $ref: '#/components/schemas/account_holder_id'
+                    created:
+                      type: string
+                      description: Timestamp of when the webhook was sent
+                    updated:
+                      type: string
+                      description: Timestamp of when the webhook was updated
+                    kyc:
+                      $ref: '#/components/schemas/account_holder_kyc_response'
+                    capabilities:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/account_holder_capability_response'
+            examples:
+              Account Holder KYC Callback:
+                $ref: '#/components/examples/AccountHolderKYCCallback'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request - Invalid webhook payload
+  /your_account_holder_capabilities_webhook_url:
+    post:
+      security: []
+      operationId: accountHolderCapabilitiesWebhook
+      summary: Account holder capabilities notification webhook
+      description: These events will be sent when there is an update on a sub-account's payment activation status
+      tags:
+        - Account Holder (Legacy)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: ''
+              properties:
+                event:
+                  type: string
+                  enum:
+                    - account_holder.capabilities.status
+                  example: account_holder.capabilities.status
+                  description: Event that occurred for this webhook
+                business_id:
+                  $ref: '#/components/schemas/account_id'
+                created:
+                  type: string
+                  description: Timestamp of when the webhook was sent
+                updated:
+                  type: string
+                  description: Timestamp of when the webhook was updated
+                data:
+                  type: object
+                  properties:
+                    id:
+                      $ref: '#/components/schemas/account_holder_id'
+                    created:
+                      type: string
+                      description: Timestamp of when the webhook was sent
+                    updated:
+                      type: string
+                      description: Timestamp of when the webhook was updated
+                    capabilities:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/account_holder_capability_response'
+            examples:
+              Resubmission Required:
+                value:
+                  event: account_holder.capabilities.status
+                  created: '2021-01-01T10:00:00Z'
+                  business_id: 5fe2b0137b7d62542fe6d7de
+                  data:
+                    id: 57fb4e076fa3fa296b7f5a97
+                    created: '2021-01-01T10:00:00Z'
+                    updated: '2021-01-01T10:00:00Z'
+                    capabilities:
+                      - type: MONEY_IN
+                        channel_code: GCASH
+                        activated_at: '2021-01-01T10:00:00Z'
+                        verified_at: '2021-01-01T10:00:00Z'
+                        requested_at: '2021-01-01T10:00:00Z'
+                        status: RESUBMISSION_REQUIRED
+                        failure_reason: Your website URL is not related to your business
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request - Invalid webhook payload
+components:
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+  schemas:
+    email:
+      type: string
+      maxLength: 255
+      description: A valid email address associated with the object
+      format: email
+      example: test@example.co
+    account_status:
+      type: string
+      description: Status of the Account you are creating.
+      enum:
+        - INVITED
+        - REGISTERED
+        - AWAITING_DOCS
+        - PENDING_VERIFICATION
+        - LIVE
+        - SUSPENDED
+    business_name:
+      type: string
+      description: Name of the business
+    account_type:
+      type: string
+      description: The type of account created
+      enum:
+        - MANAGED
+        - OWNED
+    created_gte:
+      type: string
+      description: Start time of accounts by created date. If not specified will list all dates.
+    created_lte:
+      type: string
+      format: date-time
+      description: End time of accounts by created date. If not specified will list all dates.
+    updated_gte:
+      type: string
+      format: date-time
+      description: End time of accounts by updated date. If not specified will list all dates.
+    updated_lte:
+      type: string
+      format: date-time
+      description: Start time of accounts by updated date. If not specified will list all dates.
+    limit:
+      type: number
+      description: A limit on the number of items to be returned for each request. Range 1 - 50
+      minimum: 1
+      maximum: 50
+      default: 10
+    before_id:
+      type: string
+      description: ID of the immediately following item.
+    after_id:
+      type: string
+      description: ID of the immediately previous item. Use this with `links` on the response for pagination.
+    account_id:
+      type: string
+      description: ID of your Account, use this in the for-user-id header to create transactions on behalf of your Account
+    created_time:
+      type: string
+      format: date-time
+      description: Timestamp of when the object was created
+    updated_time:
+      type: string
+      format: date-time
+      description: Timestamp of when the object was updated
+    public_profile:
+      type: object
+      properties:
+        business_name:
+          type: string
+          description: Public name of the account.
+        description:
+          type: string
+          description: Additional description visible publicly.
+    country:
+      type: string
+      description: The country (based on ISO 3166-1 Alpha-2) of incorporation for a business, or the country of residence for an individual.
+      enum:
+        - ID
+        - PH
+        - VN
+        - MY
+        - TH
+    ListAccountResponseSchema:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/account_id'
+        created:
+          $ref: '#/components/schemas/created_time'
+        updated:
+          $ref: '#/components/schemas/updated_time'
+        type:
+          $ref: '#/components/schemas/account_type'
+        email:
+          $ref: '#/components/schemas/email'
+        public_profile:
+          $ref: '#/components/schemas/public_profile'
+        country:
+          $ref: '#/components/schemas/country'
+        status:
+          $ref: '#/components/schemas/account_status'
+    CreateAccountRequestSchema:
+      type: object
+      required:
+        - email
+        - public_profile
+      properties:
+        email:
+          $ref: '#/components/schemas/email'
+        type:
+          $ref: '#/components/schemas/account_type'
+        public_profile:
+          $ref: '#/components/schemas/public_profile'
+    CreateAccountResponseSchema:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/account_id'
+        created:
+          $ref: '#/components/schemas/created_time'
+        updated:
+          $ref: '#/components/schemas/updated_time'
+        type:
+          $ref: '#/components/schemas/account_type'
+        email:
+          $ref: '#/components/schemas/email'
+        public_profile:
+          $ref: '#/components/schemas/public_profile'
+        country:
+          $ref: '#/components/schemas/country'
+        status:
+          $ref: '#/components/schemas/account_status'
+    400ApiValidationError:
+      type: object
+      title: API validation error
+      properties:
+        error_code:
+          type: string
+          example: API_VALIDATION_ERROR
+        error_message:
+          type: string
+          example: Inputs are failing validation. The errors field contains details about which fields are violating validation.
+    400InvalidConfigurationError:
+      type: object
+      title: API validation error
+      properties:
+        error_code:
+          type: string
+          example: INVALID_CONFIGURATION
+        error_message:
+          type: string
+          example: The `configurations` parameter combination is invalid. Please follow the requirement of each parameter written in Request section.
+    400TypeConfigConflictError:
+      type: object
+      title: API validation error
+      properties:
+        error_code:
+          type: string
+          example: TYPE_AND_CONFIGURATION_CONFLICT
+        error_message:
+          type: string
+          example: Please provide either one of the `type` field or the `configurations` field
+    AccountCallbackDataSchema:
+      type: object
+      properties:
+        user_id:
+          type: string
+          description: The sub-account business ID
+        account_info:
+          type: object
+          properties:
+            payments_enabled:
+              type: boolean
+              description: Indicates whether live payments are enabled for the account
+    AccountSuspensionCallbackSchema:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/account_id'
+        created:
+          $ref: '#/components/schemas/created_time'
+        updated:
+          $ref: '#/components/schemas/updated_time'
+        email:
+          $ref: '#/components/schemas/email'
+        public_profile:
+          $ref: '#/components/schemas/public_profile'
+        status:
+          type: string
+          enum:
+            - SUSPECTED
+            - SUSPENDED
+            - CLEARED
+        reason:
+          type: string
+          description: Reason given for the status change
+    XenditArrayOfErrors:
+      type: array
+      nullable: true
+      items:
+        oneOf:
+          - type: string
+          - type: object
+    Error404NotFoundResponse:
+      description: The object being referenced does not exist
+      type: object
+      properties:
+        error_code:
+          type: string
+          enum:
+            - DESTINATION_ACCOUNT_NOT_FOUND
+            - DATA_NOT_FOUND
+            - CALLBACK_AUTHENTICATION_TOKEN_NOT_FOUND_ERROR
+        message:
+          type: string
+        errors:
+          $ref: '#/components/schemas/XenditArrayOfErrors'
+    account_holder_id:
+      type: string
+      description: The unique ID of an Account Holder object
+    UpdateAccountRequestSchema:
+      type: object
+      properties:
+        email:
+          $ref: '#/components/schemas/email'
+        public_profile:
+          $ref: '#/components/schemas/public_profile'
+        account_holder_id:
+          $ref: '#/components/schemas/account_holder_id'
+    split_rule_id:
+      type: string
+      description: The unique Split Rule ID
+    split_rule_name:
+      type: string
+      description: Name to identify a split rule. Typically based on transaction and/or sub-merchant types and does not have to be unique. e.g. "standard platform fee and delivery fee", "commission"
+    split_route_reference:
+      type: string
+      description: |
+        Reference ID which acts as an identifier of the route itself. This is used to distinguish in case one split rule has multiple routes of the same destinations.
+        Its value must be unique and case sensitive for every route object under the same Split Rule.
+    split_route_destination_id:
+      type: string
+      description: Business ID of the destination account where the amount is routed to.This could be the Business ID of your Master or Sub-account.
+    currency:
+      type: string
+      description: ISO 4217 Currency Code
+      enum:
+        - IDR
+        - PHP
+        - VND
+        - MYR
+        - THB
+        - SGD
+        - USD
+    description:
+      type: string
+      description: Describes the purpose of the object
+    route:
+      description: Defines a single amount and destination within a split rule
+      properties:
+        flat_amount:
+          type: number
+          description: Amount of payments to be split, using a flat rate as a unit. This will be null if not applicable, and is required if `percent_amount` is null. All units must be a positive number
+        percent_amount:
+          type: number
+          description: Amount of payments to be split, using a percent rate as unit. This will be null if not applicable. This will be required if `flat_amount` is null All units must be a positive number, with decimals supported up to 2 decimal places. Percent amounts have to be between 0 and 100 Percent amounts are rounded off to the nearest monetary unit (e.g. 0.50 IDR will be rounded to 1 IDR; 0.49 IDR will be rounded to 0 IDR)
+        currency:
+          $ref: '#/components/schemas/currency'
+        destination_account_id:
+          $ref: '#/components/schemas/split_route_destination_id'
+        reference_id:
+          $ref: '#/components/schemas/split_route_reference'
+          maxLength: 255
+    CreateSplitRuleRequestSchema:
+      type: object
+      required:
+        - name
+        - routes
+      properties:
+        name:
+          type: string
+          $ref: '#/components/schemas/split_rule_name'
+        description:
+          $ref: '#/components/schemas/description'
+        routes:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/route'
+    metadata:
+      type: object
+      description: Object of additional key-value pairs that the merchants may use like internal system parameters (business ID, shopping cart). User defines the JSON properties and values. You can specify up to 50 keys, with key names up to 40 characters long and values up to 500 characters long. Otherwise `NULL`
+      additionalProperties: true
+    CreateSplitRuleResponseSchema:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/split_rule_id'
+        name:
+          $ref: '#/components/schemas/split_rule_name'
+        description:
+          $ref: '#/components/schemas/description'
+        routes:
+          type: array
+          items:
+            $ref: '#/components/schemas/route'
+        created:
+          $ref: '#/components/schemas/created_time'
+        updated:
+          $ref: '#/components/schemas/updated_time'
+        metadata:
+          $ref: '#/components/schemas/metadata'
+    Error400Response:
+      description: Inputs are failing validation. The errors field contains details about which fields are violating validation.
+      type: object
+      properties:
+        error_code:
+          type: string
+          enum:
+            - API_VALIDATION_ERROR
+            - INVALID_CONFIGURATION
+            - INVALID_JSON_FORMAT
+            - TYPE_AND_CONFIGURATION_CONFLICT
+            - INVALID_SOURCE_OR_DESTINATION_ERROR
+            - INSUFFICIENT_BALANCE
+            - INVALID_FEE_AMOUNT
+            - DUPLICATE_ERROR
+            - INVALID_AMOUNT
+            - INSUFFICIENT_ACCOUNT_HOLDER_DATA
+            - MISMATCH_PAYLOAD_FOR_REFERENCE
+            - INVALID_URL_FORMAT
+        message:
+          type: string
+        errors:
+          $ref: '#/components/schemas/XenditArrayOfErrors'
+    business_detail:
+      type: object
+      description: An object containing the business detail of the Account Holder
+      properties:
+        type:
+          type: string
+          description: The entity type of the business
+          enum:
+            - CORPORATION
+            - PARTNERSHIP
+            - SOLE_PROPRIETORSHIP
+            - INDIVIDUAL
+            - FOREIGN
+            - FOREIGN_SEC
+            - FOREIGN_NONSEC
+        legal_name:
+          type: string
+          description: Legal name of the business. This must match the documentation submitted.
+        trading_name:
+          type: string
+          description: Trading or brand name of the business. This will be the name that appears to endpayer on payment page.
+        description:
+          type: string
+          description: Description of the business. Please specify what business model or goods and services that the business provide. Max 1000 characters.
+        industry_category:
+          type: string
+          description: |
+            One of our accepted Industry Category Codes depending on your entity type and country of operation.
+
+            Refer to the list of [accepted industry category codes here](https://docs.xendit.co/docs/create-verification-requests#list-of-accepted-industry-categories)
+        date_of_registration:
+          type: string
+          format: date
+          description: Business registration date in YYYY-MM-DD
+        country_of_operation:
+          description: Country in which the business is operating at (in ISO 3166-2 format).
+          $ref: '#/components/schemas/country'
+    address:
+      type: object
+      description: An address object.
+      required:
+        - country
+        - city
+        - province_state
+        - street_line1
+        - street_line2
+        - district
+        - sub_district
+        - postal_code
+      properties:
+        country:
+          type: string
+          $ref: '#/components/schemas/country'
+        city:
+          type: string
+          description: City, village or town
+        province_state:
+          type: string
+          description: Province, state or region
+        street_line1:
+          type: string
+          maxLength: 255
+          description: Line 1 of street address e.g street number and name
+        street_line2:
+          type: string
+          maxLength: 255
+          description: Line 2 of street address e.g building name or apartment number
+        district:
+          type: string
+          description: District
+        sub_district:
+          type: string
+          description: Sub-district
+        postal_code:
+          type: string
+          description: Zip or postal code
+    individual_detail:
+      type: object
+      description: |
+        An object containing the individual details of the Account Holder. This could be the details of the business owner, director etc.
+      required:
+        - type
+        - role
+        - given_names
+        - surname
+        - phone_number
+        - email
+        - nationality
+      properties:
+        type:
+          type: string
+          enum:
+            - PIC
+            - Incorporator
+          description: |
+            At least one individual with the type `PIC` (Person in Charge) is required. You may submit multiple PICs for your business in this object.
+            A minimum 1 Incorporator and 1 PIC is required when they need to activate Cards capabilities.
+        role:
+          type: string
+          description: This role specifies the role of the PIC or Incorporator. E.g. Owner, Director, Administrator.
+        given_names:
+          type: string
+          maxLength: 255
+          description: First and middle name (if any) of the account holder
+        surname:
+          type: string
+          maxLength: 255
+          description: Surname or family name of the account holder
+        phone_number:
+          type: string
+          maxLength: 30
+          description: The contact number of the Account Holder in `E.164` format. This may also be a landline.
+        email:
+          type: string
+          maxLength: 255
+          description: The email address of the account holder
+        nationality:
+          type: string
+          description: Country code for customer's nationality (ISO 3166-2 Country Code)
+        place_of_birth:
+          type: string
+          description: City or other relevant location of the account holder's birth place
+        date_of_birth:
+          type: string
+          format: date
+          description: Date of birth of the customer in YYYY-MM-DD
+        gender:
+          type: string
+          enum:
+            - MALE
+            - FEMALE
+            - OTHER
+          description: The gender of the account holder
+        tax_identification_number:
+          type: string
+          description: |
+            Tax Identification Number of the account holder. This parameter is required when they need to activate Cards capabilities with USD or recurring capabilities.
+
+            Please see more details [here](https://docs.xendit.co/docs/activate-payment-channels)
+        address:
+          type: object
+          description: Address of the incorporator. Only required to activate Cards with USD or recurring capabilities.
+          $ref: '#/components/schemas/address'
+    kyc_document:
+      type: object
+      description: A KYC document file for Account Holder verification
+      properties:
+        country:
+          $ref: '#/components/schemas/country'
+        type:
+          type: string
+          description: |
+            The type of the legal or KYC requirements document
+
+            Refer to the list of [Required KYC Documents for all countries here](https://docs.xendit.co/docs/create-verification-requests#requirements-by-country-and-entity-type)
+        expires_at:
+          type: string
+          description: Expiry date of the document if relevant. Format `YYYY-MM-DD`
+        file_id:
+          type: string
+          description: The file ID returned by the Upload API
+    business_website_url:
+      type: string
+      maxLength: 255
+      description: A valid website associated with the business
+      format: website
+      example: mystore.com
+    business_phone_number:
+      type: string
+      maxLength: 30
+      description: A valid phone number associated with the business
+      format: phone
+      example: 62123456789
+    CreateAccountHolderRequestSchema:
+      type: object
+      required:
+        - business_detail
+        - individual_details
+        - address
+        - kyc_documents
+        - website_url
+        - phone_number
+        - email
+      properties:
+        business_detail:
+          $ref: '#/components/schemas/business_detail'
+        individual_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/individual_detail'
+        address:
+          $ref: '#/components/schemas/address'
+        kyc_documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/kyc_document'
+        website_url:
+          $ref: '#/components/schemas/business_website_url'
+        phone_number:
+          $ref: '#/components/schemas/business_phone_number'
+        email:
+          $ref: '#/components/schemas/email'
+    CreateAccountHolderResponseSchema:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/account_holder_id'
+        business_detail:
+          $ref: '#/components/schemas/business_detail'
+        individual_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/individual_detail'
+        address:
+          $ref: '#/components/schemas/address'
+        kyc_documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/kyc_document'
+        website_url:
+          $ref: '#/components/schemas/business_website_url'
+        phone_number:
+          $ref: '#/components/schemas/business_phone_number'
+        email:
+          $ref: '#/components/schemas/email'
+        kyc:
+          type: object
+          properties:
+            status:
+              type: string
+              enum:
+                - NOT_VERIFIED
+                - VERIFIED
+        created_at:
+          $ref: '#/components/schemas/created_time'
+        updated_at:
+          $ref: '#/components/schemas/updated_time'
+    PatchAccountHolderRequestSchema:
+      type: object
+      properties:
+        business_detail:
+          $ref: '#/components/schemas/business_detail'
+        individual_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/individual_detail'
+        address:
+          $ref: '#/components/schemas/address'
+        kyc_documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/kyc_document'
+        website_url:
+          $ref: '#/components/schemas/business_website_url'
+        phone_number:
+          $ref: '#/components/schemas/business_phone_number'
+        email:
+          $ref: '#/components/schemas/email'
+        capabilities:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                enum:
+                  - MONEY_IN
+              channel_code:
+                type: string
+    Error401Response:
+      description: Invalid API key
+      type: object
+      properties:
+        error_code:
+          type: string
+          enum:
+            - INVALID_API_KEY
+        message:
+          type: string
+        errors:
+          $ref: '#/components/schemas/XenditArrayOfErrors'
+    Error403ForbiddenResponse:
+      description: Forbidden request
+      type: object
+      properties:
+        error_code:
+          type: string
+          enum:
+            - REQUEST_FORBIDDEN_ERROR
+            - FEATURE_NOT_ACTIVATED
+            - DUPLICATE_REFERENCE
+            - XEN_PLATFORM_SUB_ACCOUNT_NOT_LIVE
+            - API_KEY_ENVIRONMENT_NOT_MATCH
+            - CHANNEL_ACTIVATION_IN_PROGRESS
+            - CHANNEL_HAS_BEEN_ACTIVATED
+            - KYC_VERIFICATION_IN_PROGRESS
+        message:
+          type: string
+        errors:
+          $ref: '#/components/schemas/XenditArrayOfErrors'
+    Error500Response:
+      description: Server error
+      type: object
+      properties:
+        error_code:
+          type: string
+          enum:
+            - SERVER_ERROR
+        message:
+          type: string
+        errors:
+          $ref: '#/components/schemas/XenditArrayOfErrors'
+    account_holder_kyc_response:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - PASSED
+            - FAILED
+            - RESUBMISSION_REQUIRED
+        requested_at:
+          $ref: '#/components/schemas/updated_time'
+        kyc_passed_at:
+          $ref: '#/components/schemas/updated_time'
+        verified_at:
+          $ref: '#/components/schemas/updated_time'
+    account_holder_capability_response:
+      type: object
+      description: An object containing the details of the Account Holder capabilities activation process
+      properties:
+        type:
+          type: string
+        channel_code:
+          type: string
+        status:
+          type: string
+          enum:
+            - LIVE
+            - VERIFICATION_IN_PROGRESS
+            - RESUBMISSION_REQUIRED
+            - DECLINED
+        failure_reason:
+          type: string
+        activated_at:
+          $ref: '#/components/schemas/updated_time'
+        verified_at:
+          $ref: '#/components/schemas/updated_time'
+        requested_at:
+          $ref: '#/components/schemas/updated_time'
+    UpdateAccountHolderResponseSchema:
+      type: object
+      properties:
+        business_detail:
+          $ref: '#/components/schemas/business_detail'
+        individual_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/individual_detail'
+        address:
+          $ref: '#/components/schemas/address'
+        kyc_documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/kyc_document'
+        website_url:
+          $ref: '#/components/schemas/business_website_url'
+        phone_number:
+          $ref: '#/components/schemas/business_phone_number'
+        email:
+          $ref: '#/components/schemas/email'
+        capabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/account_holder_capability_response'
+        kyc:
+          $ref: '#/components/schemas/account_holder_kyc_response'
+    transfer_reference:
+      type: string
+      description: A unique reference for this Transfer that you set when making the request
+    source_user_id:
+      type: string
+      description: The source of the transfer. This is the user_id of either your master or sub account
+    destination_user_id:
+      type: string
+      description: The destination of the transfer. This is the `user_id` of either your master or sub account
+    transfer_object:
+      description: Object that would be generated upon creation of a Transfer
+      type: object
+      required:
+        - created
+        - transfer_id
+        - reference
+        - source_user_id
+        - destination_user_id
+        - status
+        - amount
+      properties:
+        created:
+          type: string
+          $ref: '#/components/schemas/created_time'
+          description: Timestamp of when the Transfer was created
+        transfer_id:
+          type: string
+          description: A unique reference for this Transfer set by Xendit systems
+        reference:
+          $ref: '#/components/schemas/transfer_reference'
+        source_user_id:
+          $ref: '#/components/schemas/source_user_id'
+        destination_user_id:
+          $ref: '#/components/schemas/destination_user_id'
+        status:
+          type: string
+          description: The status of the Transfer. Available values `SUCCESSFUL`,`PENDING`, `FAILED`
+        amount:
+          type: number
+          description: The amount that was transferred
+    CreateTransfersRequestSchema:
+      type: object
+      required:
+        - reference
+        - amount
+        - source_user_id
+        - destination_user_id
+      properties:
+        reference:
+          $ref: '#/components/schemas/transfer_reference'
+        amount:
+          type: number
+        source_user_id:
+          $ref: '#/components/schemas/source_user_id'
+        destination_user_id:
+          $ref: '#/components/schemas/destination_user_id'
+    Error425TransferResponse:
+      description: Transfer is currently being processed. Use GET Transfer By Reference to check its latest status
+      type: object
+      properties:
+        error_code:
+          type: string
+          enum:
+            - TRANSFER_IN_PROGRESS
+        message:
+          type: string
+        errors:
+          $ref: '#/components/schemas/XenditArrayOfErrors'
+  parameters:
+    email_query_param:
+      in: query
+      name: email
+      description: The email addresses of the accounts that will be filtered. If not specified, all account emails will be returned.
+      required: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/email'
+    account_status_query_param:
+      in: query
+      name: status
+      description: The statuses of the accounts that will be filtered. If not specified, all account status will be returned.
+      required: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/account_status'
+    business_name_query_param:
+      in: query
+      name: public_profile.business_name
+      description: The public profile or business name of the accounts that will be filtered. If not specified, all account business name will be returned. This is the business name specified during account creation
+      required: false
+      schema:
+        $ref: '#/components/schemas/business_name'
+    account_type_query_param:
+      in: query
+      name: type
+      description: The type of accounts that will be filtered. If not specified, all account types will be returned.
+      required: false
+      schema:
+        $ref: '#/components/schemas/account_type'
+    created_gte_query_param:
+      in: query
+      name: created[gte]
+      description: Start time of accounts by created date. If not specified will list all dates.
+      required: false
+      schema:
+        $ref: '#/components/schemas/created_gte'
+    created_lte_query_param:
+      in: query
+      name: created[lte]
+      description: End time of accounts by created date. If not specified will list all dates.
+      required: false
+      schema:
+        $ref: '#/components/schemas/created_lte'
+    updated_gte_query_param:
+      in: query
+      name: updated[gte]
+      description: Start time of accounts by updated date. If not specified will list all dates.
+      required: false
+      schema:
+        $ref: '#/components/schemas/updated_gte'
+    updated_lte_query_param:
+      in: query
+      name: updated[lte]
+      description: End time of accounts by updated date. If not specified will list all dates.
+      required: false
+      schema:
+        $ref: '#/components/schemas/updated_lte'
+    limit_query_param:
+      in: query
+      name: limit
+      description: A limit on the number of transactions to be returned for each request.
+      required: false
+      schema:
+        $ref: '#/components/schemas/limit'
+    before_id_query_param:
+      in: query
+      name: before_id
+      description: ID of the immediately following item.
+      required: false
+      schema:
+        $ref: '#/components/schemas/before_id'
+    after_id_query_param:
+      in: query
+      name: after_id
+      description: ID of the immediately previous item. Use this with links on the response for pagination.
+      required: false
+      schema:
+        $ref: '#/components/schemas/after_id'
+    account_id:
+      in: path
+      name: id
+      required: true
+      example: 5cafeb170a2b18519b1b8761
+      schema:
+        $ref: '#/components/schemas/account_id'
+    account_holder_id:
+      in: path
+      name: id
+      required: true
+      example: 4376b7b0-1c44-46be-8640-828f79cdc8be
+      schema:
+        $ref: '#/components/schemas/account_holder_id'
+    for_user_id_header:
+      in: header
+      name: for-user-id
+      required: false
+      example: 5cafeb170a2b18519b1b8761
+      schema:
+        $ref: '#/components/schemas/account_id'
+    transfer_reference_id:
+      in: path
+      name: reference
+      required: true
+      example: monthly_transfers_1234
+      schema:
+        $ref: '#/components/schemas/transfer_reference'
+  examples:
+    CreateOwnedAccountExample:
+      value:
+        email: angie@pinkpanther.com
+        type: OWNED
+        public_profile:
+          business_name: Owned Business Account
+    GetOwnedAccountResponse:
+      value:
+        id: 5cafeb170a2b18519b1b8761
+        created: '2021-01-01T10:00:00Z'
+        updated: '2021-01-01T10:00:00Z'
+        type: OWNED
+        email: angie@pinkpanther.com
+        public_profile:
+          business_name: Angie's lemonade stand
+        status: LIVE
+    LinkAccountHolderResponse:
+      value:
+        id: 5cafeb170a2b18519b1b8761
+        created: '2021-01-01T10:00:00Z'
+        updated: '2021-01-01T10:00:00Z'
+        type: OWNED
+        email: angie@pinkpanther.com
+        public_profile:
+          business_name: Angie's lemonade stand
+        status: LIVE
+        account_holder_id: 4376b7b0-1c44-46be-8640-828f79cdc8be
+    GetAccountHolderPHResponse:
+      value:
+        id: 4376b7b0-1c44-46be-8640-828f79cdc8be
+        business_detail:
+          type: CORPORATION
+          legal_name: My Store Inc.
+          trading_name: John's Store
+          description: description here
+          industry_category: ELECTRONICS_AND_ACCESSORIES
+          date_of_registration: '2023-02-02'
+          country_of_operation: PH
+        individual_details:
+          - given_names: John
+            surname: Doe
+            phone_number: '+63021234567'
+            email: test@xendit.co
+            nationality: PH
+            place_of_birth: PH
+            date_of_birth: '2000-02-02'
+            gender: MALE
+            type: PIC
+            role: owner
+        address:
+          country: PH
+          city: Caloocan
+          street_line1: 9th St
+          street_line2: Building 101
+          district: 1st district
+          sub_district: 2nd subdistrict
+          province_state: Metro Manila
+          postal_code: '1400'
+        kyc_documents:
+          - type: SEC_CERTIFICATE_REGISTRATION_DOCUMENT
+            country: PH
+            file_id: 63f8719642f5856dcb142bd2
+          - type: ARTICLES_OF_INCORPORATION_DOCUMENT
+            country: PH
+            file_id: 63f8719642f5856dcb142bd2
+          - type: NOTARIZED_SECRETARY_CERTIFICATE_DOCUMENT
+            country: PH
+            file_id: 63f8719642f5856dcb142bd2
+          - type: LATEST_GIS_DOCUMENT
+            country: PH
+            file_id: 63f8719642f5856dcb142bd2
+          - type: ACR_OR_IMMIGRANT_COR_DOCUMENT
+            country: PH
+            file_id: 63f8719642f5856dcb142bd2
+          - type: SERVICE_AGREEMENT_DOCUMENT
+            country: PH
+            file_id: 63f8719642f5856dcb142bd2
+        website_url: https://xendit.co
+        phone_number: '+6381234567'
+        email: test@xendit.co
+        kyc:
+          status: NOT_VERIFIED
+        created_at: '2023-03-30T11:41:57.881Z'
+        updated_at: '2023-03-30T11:44:01.122Z'
+    AccountHolderKYCCallback:
+      value:
+        event: account_holder.kyc.status
+        created: '2021-01-01T10:00:00Z'
+        business_id: 5fe2b0137b7d62542fe6d7de
+        data:
+          id: 57fb4e076fa3fa296b7f5a97
+          created: '2021-01-01T10:00:00Z'
+          updated: '2021-01-01T10:00:00Z'
+          kyc:
+            status: PASSED
+            verified_at: '2021-01-01T10:00:00Z'
+            requested_at: '2021-01-01T10:00:00Z'
+            kyc_passed_at: '2021-01-01T10:00:00Z'
+    UpdateAccountHolderPHResponse:
+      value:
+        id: 4376b7b0-1c44-46be-8640-828f79cdc8be
+        business_detail:
+          type: CORPORATION
+          legal_name: My Store Inc.
+          trading_name: John's Store
+          description: description here
+          industry_category: ELECTRONICS_AND_ACCESSORIES
+          date_of_registration: '2023-02-02'
+          country_of_operation: PH
+        individual_details:
+          - given_names: John
+            surname: Doe
+            phone_number: '+63021234567'
+            email: test@xendit.co
+            nationality: PH
+            place_of_birth: PH
+            date_of_birth: '2000-02-02'
+            gender: MALE
+            type: PIC
+            role: owner
+        address:
+          country: PH
+          city: Caloocan
+          street_line1: 9th St
+          street_line2: Building 101
+          district: 1st district
+          sub_district: 2nd subdistrict
+          province_state: Metro Manila
+          postal_code: '1400'
+        kyc_documents:
+          - type: SEC_CERTIFICATE_REGISTRATION_DOCUMENT
+            country: PH
+            file_id: 63f8719642f5856dcb142bd2
+          - type: ARTICLES_OF_INCORPORATION_DOCUMENT
+            country: PH
+            file_id: 63f8719642f5856dcb142bd2
+          - type: NOTARIZED_SECRETARY_CERTIFICATE_DOCUMENT
+            country: PH
+            file_id: 63f8719642f5856dcb142bd2
+          - type: LATEST_GIS_DOCUMENT
+            country: PH
+            file_id: 63f8719642f5856dcb142bd2
+          - type: ACR_OR_IMMIGRANT_COR_DOCUMENT
+            country: PH
+            file_id: 63f8719642f5856dcb142bd2
+          - type: SERVICE_AGREEMENT_DOCUMENT
+            country: PH
+            file_id: 63f8719642f5856dcb142bd2
+        website_url: https://xendit.co
+        phone_number: '+6381234567'
+        email: test@xendit.co
+        kyc:
+          status: PASSED
+          requested_at: '2021-01-01T10:00:00Z'
+          verified_at: '2021-01-02T10:00:00Z'
+          kyc_passed_at: '2021-01-03T10:00:00Z'
+        capabilities:
+          - type: MONEY_IN
+            channel_code: GCASH
+            requested_at: '2021-01-01T10:00:00Z'
+            verified_at: '2021-01-02T10:00:00Z'
+            activated_at: '2021-01-03T10:00:00Z'
+            status: VERIFICATION_IN_PROGRESS
+    DefaultTransferResponse:
+      value:
+        created: '2020-11-30T02:47:53.061Z'
+        transfer_id: bd1cc56b-ce7f-4ad7-8901-3eaa689e90eb
+        source_user_id: '`5cafeb170a2b18519b1b8768'
+        destination_user_id: 5f8d0c0603ffe06b7d4d9fcf
+        status: SUCCESSFUL
+        amount: 90000
+        reference: Monthly_Transfers_1234
+  responses:
+    AccountsError400Responses:
+      description: Validation errors for creating accounts
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/400ApiValidationError'
+              - $ref: '#/components/schemas/400InvalidConfigurationError'
+              - $ref: '#/components/schemas/400TypeConfigConflictError'

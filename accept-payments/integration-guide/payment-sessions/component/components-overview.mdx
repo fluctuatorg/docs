@@ -1,5 +1,6 @@
 ---
-title: "Overview"
+title: "Components overview"
+sidebarTitle: "Components overview"
 ---
 
 Xendit Components is a client-side payment integration model that allows you to embed Xendit-managed, PCI-compliant payment UI directly into your web or mobile applications powered by Payment Session.
@@ -13,7 +14,54 @@ It enables:
 
 ## High level flow
 
-![](/images/doc360/image_186_.png)
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Customer
+    participant ClientApp as Client App (Web / Mobile)
+    participant ClientServer as Client Server
+    participant XenditServer as Xendit Server
+    participant XenditComponent as Xendit Components SDK
+
+    %% Step 1 - Create Payment Session
+    note over ClientApp,ClientServer: Step 1 — Create Payment Session
+    Customer ->> ClientApp: Start checkout
+    ClientApp ->> ClientServer: Request to create payment session
+    ClientServer ->> XenditServer: POST /sessions
+    XenditServer -->> ClientServer: Payment Session (components_sdk_key)
+    ClientServer -->> ClientApp: Return components_sdk_key
+
+    %% Step 2 - Load Component
+    note over ClientApp,XenditComponent: Step 2 — Load Xendit Components
+    ClientApp ->> XenditComponent: Initialize SDK with components_sdk_key
+    XenditComponent ->> XenditServer: Load session & available channels
+    XenditComponent -->> ClientApp: Render payment UI (embedded)
+
+    %% Step 3 - Customer Input
+    note over Customer,XenditComponent: Step 3 — Customer enters payment details
+    Customer ->> XenditComponent: Select payment channel
+    Customer ->> XenditComponent: Enter required payment details
+
+    %% Step 4 - Submit Payment
+    note over ClientApp,XenditComponent: Step 4 — Submit payment
+    Customer ->> ClientApp: Click Pay
+    ClientApp ->> XenditComponent: sdk.submit()
+
+    %% Optional actions
+    alt Additional customer action required (3DS / QR / OTP)
+        XenditServer -->> XenditComponent: Action required
+        XenditComponent -->> Customer: Display action (inline or modal)
+        Customer ->> XenditComponent: Complete required action
+    end
+
+    %% Step 5 - Payment Result
+    note over XenditServer,ClientServer: Step 5 — Payment result
+    XenditServer -->> ClientServer: Send Payment Session Webhook
+
+    ClientServer ->> ClientServer: Update order/payment status
+    XenditComponent -->> ClientApp: Emit session-complete event
+    ClientApp -->> Customer: Show payment success or failure state
+```
 
 There will be 2 scopes of responsibility to integrate with Xendit Components
 

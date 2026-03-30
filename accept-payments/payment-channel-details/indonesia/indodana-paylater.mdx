@@ -33,4 +33,19 @@ Indodana PayLater is a digital credit service that allows users to purchase good
 
 ## Payment flow
 
-![](/images/doc360/ENG_-_Indodana_flow_a3kk0w.webp)
+```mermaid
+sequenceDiagram
+    participant Customer
+    participant Merchant as Your app/server
+    participant Xendit
+    participant Indodana
+
+    Customer->>Merchant: Start checkout
+    Merchant->>Xendit: Create payment request (INDODANA)
+    Xendit-->>Merchant: Return redirect/action URL
+    Merchant-->>Customer: Redirect to Indodana approval page
+    Customer->>Indodana: Complete approval
+    Indodana-->>Xendit: Return payment result
+    Xendit-->>Merchant: Send payment webhook
+    Merchant-->>Customer: Show final payment status
+```

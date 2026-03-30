@@ -1,0 +1,51 @@
+Request - POST /payment_tokens
+
+```json
+{
+  "reference_id": "90392f42-d98a-49ef-a7f3-abcezas123",
+  "customer_id": "cust-90392f42-d98a-49ef-a7f3-abcezas123",
+  "country": "ID",
+  "currency": "IDR",
+  "channel_code": "OVO",
+  "channel_properties": {
+    "failure_return_url": "https://xendit.co/failure",
+    "success_return_url": "https://xendit.co/success"
+  },
+  "description": "Description examples",
+  "metadata": {
+    "metametadata": "metametametadata"
+  }
+}
+```
+
+Response - POST /payment_tokens
+
+```json
+{
+  "business_id": "5f27a14a9bf05c73dd040bc8",
+  "reference_id": "90392f42-d98a-49ef-a7f3-abcezas123",
+  "payment_token_id": "pt-90392f42-d98a-49ef-a7f3-abcezas123",
+  "customer_id": "cust-90392f42-d98a-49ef-a7f3-abcezas123",
+  "country": "ID",
+  "currency": "IDR",
+  "channel_code": "OVO",
+  "channel_properties": {
+    "failure_return_url": "https://xendit.co/failure",
+    "success_return_url": "https://xendit.co/success"
+  },
+  "actions": [
+    {
+      "type": "REDIRECT_CUSTOMER",
+      "descriptor": "WEB_URL",
+      "value": "https://ewallet-mock-connector.xendit.co/v1/ewallet_connector/checkouts?token=ciqv4nkabidq0em86ofg"
+    }
+  ],
+  "status": "REQUIRES_ACTION",
+  "description": "Description examples",
+  "metadata": {
+    "metametadata": "metametametadata"
+  },
+  "created": "2021-12-31T23:59:59Z",
+  "updated": "2021-12-31T23:59:59Z"
+}
+```

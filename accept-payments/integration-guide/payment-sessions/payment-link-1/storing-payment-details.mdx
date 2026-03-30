@@ -6,7 +6,21 @@ Payment Sessions allow you to securely store your users' payment channels for fu
 
 ## How to integrate
 
-![](/images/doc360/Untitled_diagram-2024-12-06-031423.png)
+```mermaid
+sequenceDiagram
+    participant Customer
+    participant Merchant as Your app
+    participant Xendit
+    participant Hosted as Xendit-hosted page
+
+    Merchant->>Xendit: Create Payment Session (session_type=SAVE)
+    Xendit-->>Merchant: Return payment_link_url
+    Merchant-->>Customer: Redirect to payment_link_url
+    Customer->>Hosted: Complete payment-method linking
+    Xendit-->>Merchant: Send payment_session.completed webhook
+    Xendit-->>Merchant: Optional payment_token.activation webhook
+    Merchant->>Merchant: Store payment_token_id for future payments
+```
 
 1. During the end user's registration or via a menu option where users can store their payment channels, your system should Create a Payment Session with Xendit using the example payload provided below.
 

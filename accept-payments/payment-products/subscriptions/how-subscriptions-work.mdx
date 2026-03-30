@@ -4,7 +4,15 @@ title: "How subscriptions work"
 
 Subscriptions allows you to manage recurring payments with flexibility and ease, be it weekly, monthly, or yearly. Beyond automated scheduling, Subscriptions is designed to enhance the end-user experience and improve payment success rates with advanced features, ensuring an efficient subscription management process with low-cost integration.
 
-![](/images/doc360/Subscriptions-overview.drawio.png)
+```mermaid
+flowchart LR
+    A[Create subscription plan] --> B[Share linking URL]
+    B --> C[Customer links payment method]
+    C --> D[Plan becomes active]
+    D --> E[Scheduler creates billing cycles]
+    E --> F[Automatic charge attempts]
+    F --> G[Cycle webhooks update your system]
+```
 
 ## Solutions
 

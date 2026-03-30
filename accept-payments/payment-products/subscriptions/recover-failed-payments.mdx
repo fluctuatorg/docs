@@ -10,7 +10,16 @@ Recurring payments often rely on a single payment method for auto debit, which i
 
 ### How it works
 
-![](/images/doc360/multiple_pm.drawio.png)
+```mermaid
+flowchart TD
+    A[Cycle payment attempt starts] --> B[Try priority #1 method]
+    B -->|Success| C[Cycle succeeded]
+    B -->|Fail| D[Try priority #2 method]
+    D -->|Success| C
+    D -->|Fail| E[Continue through configured methods]
+    E -->|Any succeeds| C
+    E -->|All fail| F[Mark attempt failed and evaluate retry config]
+```
 
 For each payment attempt, all attached payment channels will be processed sequentially based on the priority order you set during plan creation. If the first payment channel fails, Xendit will automatically attempt the second payment channel, and so on. Once all payment channels have been retried, Xendit will summarize the retry status before initiating the next retry cycle, ensuring efficient and comprehensive payment recovery.
 
@@ -22,7 +31,16 @@ Retries are crucial for recovering failed payments in recurring transactions. Th
 
 ### How it works
 
-![](/images/doc360/retry.drawio_1_.png)
+```mermaid
+flowchart TD
+    A[Cycle attempt fails] --> B{Retries remaining?}
+    B -->|Yes| C[Schedule next retry by retry configuration]
+    C --> D[Run next attempt across prioritized payment methods]
+    D --> E{Payment succeeded?}
+    E -->|Yes| F[Cycle succeeded]
+    E -->|No| B
+    B -->|No| G[Cycle failed]
+```
 
 Xendit automatically manages payment retries according to the configuration set during Subscription plan creation. For each retry attempt, all attached payment channels are processed sequentially based on their priority ranking. No action is required on your end for handling failed payments. You will receive webhooks updating you on the cycle status, indicating whether the payment is successful, failed, or still undergoing retries.
 

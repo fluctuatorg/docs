@@ -1,0 +1,52 @@
+Request - POST /payment_requests
+
+```json
+{
+  "reference_id": "90392f42-d98a-49ef-a7f3-abcezas123",
+  "type": "REUSABLE_PAYMENT_CODE",
+  "country": "ID",
+  "currency": "IDR",
+  "request_amount": 10000.01,
+  "channel_code": "BRI_VIRTUAL_ACCOUNT",
+  "channel_properties": {
+    "expires_at": "2024-12-31T23:59:59Z"
+  },
+  "description": "Description examples",
+  "metadata": {
+    "metametadata": "metametametadata"
+  }
+}
+```
+
+Response - POST /payment_request
+
+```json
+{
+  "business_id": "5f27a14a9bf05c73dd040bc8",
+  "reference_id": "90392f42-d98a-49ef-a7f3-abcezas123",
+  "payment_request_id": "pr-90392f42-d98a-49ef-a7f3-abcezas123",
+  "type": "REUSABLE_PAYMENT_CODE",
+  "country": "ID",
+  "currency": "IDR",
+  "request_amount": 10000.01,
+  "capture_method": "AUTOMATIC",
+  "channel_code": "BRI_VIRTUAL_ACCOUNT",
+  "channel_properties": {
+    "expires_at": "2024-12-31T23:59:59Z"
+  },
+  "actions": [
+    {
+      "type": "PRESENT_TO_CUSTOMER",
+      "descriptor": "VIRTUAL_ACCOUNT_NUMBER",
+      "value": "1251255"
+    }
+  ],
+  "status": "ACCEPTING_PAYMENTS",
+  "description": "Description examples",
+  "metadata": {
+    "metametadata": "metametametadata"
+  },
+  "created": "2021-12-31T23:59:59Z",
+  "updated": "2021-12-31T23:59:59Z"
+}
+```
